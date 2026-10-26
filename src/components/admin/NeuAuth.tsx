@@ -1,15 +1,31 @@
 import type { ReactNode, InputHTMLAttributes } from "react";
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, PanelRightOpen, PanelRightClose } from "lucide-react";
 import logo from "@/assets/ramky-logo-transparent.png.asset.json";
+import poster from "@/assets/ramky-group-poster.png.asset.json";
 
-/** Soft "neumorphic" shell: light grey page, Ramky logo watermark, large round raised card. */
+/** Poster first; toggle splits into 70% poster / 30% login panel. */
 export function NeuShell({ children }: { children: ReactNode }) {
+  const [split, setSplit] = useState(false);
   return (
-    <div className="neu-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-10">
-      <img src={logo.url} alt="" aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 w-[min(90vw,900px)] -translate-x-1/2 -translate-y-1/2 select-none opacity-[0.07] grayscale" />
-      <div className="neu-raised relative flex aspect-square w-full max-w-[540px] items-center justify-center rounded-full p-10 sm:p-16">
-        <div className="w-full max-w-[320px]">{children}</div>
+    <div className="neu-bg relative flex min-h-screen flex-col overflow-hidden md:h-screen md:flex-row">
+      <div className={`relative flex items-center justify-center bg-background transition-all duration-700 ease-in-out ${split ? "h-[40vh] md:h-full md:w-[70%]" : "h-screen md:w-full"}`}>
+        <img src={poster.url} alt="Ramky Group – Towards sustainable growth" className="h-full w-full object-contain" />
+      </div>
+      <button
+        type="button"
+        onClick={() => setSplit((s) => !s)}
+        aria-label={split ? "Hide login" : "Show login"}
+        className="neu-btn-gradient absolute right-4 top-4 z-20 flex size-12 items-center justify-center rounded-full transition hover:-translate-y-0.5"
+      >
+        {split ? <PanelRightClose className="size-5" /> : <PanelRightOpen className="size-5" />}
+      </button>
+      <div className={`relative flex items-center justify-center overflow-hidden transition-all duration-700 ease-in-out ${split ? "flex-1 px-6 py-10 opacity-100 md:w-[30%]" : "h-0 w-0 opacity-0 md:h-full"}`}>
+        <img src={logo.url} alt="" aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 w-[85%] -translate-x-1/2 -translate-y-1/2 select-none opacity-15" />
+        <div className="neu-raised relative w-full max-w-[340px] rounded-3xl p-7">
+          <img src={logo.url} alt="Ramky" className="mx-auto mb-4 h-14 w-auto object-contain" />
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -18,7 +34,7 @@ export function NeuShell({ children }: { children: ReactNode }) {
 export function NeuTitle({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="mb-6 text-center">
-      <h1 className="font-display text-4xl font-extrabold tracking-tight [text-shadow:2px_2px_3px_var(--neu-light)]">{title}</h1>
+      <h1 className="font-display text-3xl font-extrabold tracking-tight [text-shadow:2px_2px_3px_var(--neu-light)]">{title}</h1>
       <p className="mt-1 text-sm opacity-75">{subtitle}</p>
     </div>
   );
@@ -46,7 +62,7 @@ export function NeuField({ icon, error, type, ...rest }: FieldProps) {
 
 export function NeuButton({ children, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button {...rest} className="neu-raised-sm h-12 w-full rounded-xl text-sm font-bold uppercase tracking-[0.15em] transition active:neu-inset disabled:opacity-60">
+    <button {...rest} className="neu-btn-gradient h-12 w-full rounded-xl text-sm font-bold uppercase tracking-[0.15em] transition hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 disabled:opacity-60">
       {children}
     </button>
   );
