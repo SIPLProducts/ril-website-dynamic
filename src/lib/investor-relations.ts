@@ -237,3 +237,71 @@ export function resolveIr(cat?: string, sub?: string, meet?: string) {
   const leaf = subTab.children ? (subTab.children.find((c) => c.slug === meet) ?? subTab.children[0]!) : subTab;
   return { category, subTab, leaf };
 }
+
+// ---------- Live (database-backed) content ----------
+
+/** A database document row as returned by the investor data server function. */
+export type IrDocumentRow = {
+  id: string;
+  section_key: string;
+  title: string;
+  doc_type: string;
+  doc_date: string;
+  fy_year: string | null;
+  quarter: string | null;
+  disclosure_category: string | null;
+  version: string | null;
+  description: string | null;
+  url: string;
+  published: boolean;
+  sort_order: number;
+};
+
+/** Every editable document section ("leaf"), keyed `category/subTab[/child]`. */
+export type IrSection = { key: string; categoryLabel: string; label: string; layout: IrLayout };
+export const IR_SECTIONS: IrSection[] = IR_CATEGORIES.flatMap((c) =>
+  c.subTabs.flatMap((s) =>
+    s.children
+      ? s.children.map((l) => ({ key: `${c.slug}/${s.slug}/${l.slug}`, categoryLabel: c.label, label: `${s.label} – ${l.label}`, layout: l.layout }))
+      : s.layout === "contacts" ? [] : [{ key: `${c.slug}/${s.slug}`, categoryLabel: c.label, label: s.label, layout: s.layout }],
+  ),
+);
+
+export const rowToDoc = (r: IrDocumentRow): IrDocument => ({
+  id: r.id,
+  title: r.title,
+  type: r.doc_type,
+  date: r.doc_date,
+  url: r.url,
+  published: r.published,
+  ...(r.fy_year ? { year: r.fy_year } : {}),
+  ...(r.quarter ? { quarter: r.quarter as NonNullable<IrDocument["quarter"]> } : {}),
+  ...(r.disclosure_category ? { category: r.disclosure_category } : {}),
+  ...(r.version ? { version: r.version } : {}),
+  ...(r.description ? { description: r.description } : {}),
+});
+
+/** Same tab structure as IR_CATEGORIES, with documents supplied from the database. */
+export function withDocuments(rows: IrDocumentRow[]): IrCategory[] {
+  const by = new Map<string, IrDocument[]>();
+  for (const r of rows) by.set(r.section_key, [...(by.get(r.section_key) ?? []), rowToDoc(r)]);
+  return IR_CATEGORIES.map((c) => ({
+    ...c,
+    subTabs: c.subTabs.map((s) => ({
+      ...s,
+      documents: by.get(`${c.slug}/${s.slug}`) ?? [],
+      ...(s.children ? { children: s.children.map((l) => ({ ...l, documents: by.get(`${c.slug}/${s.slug}/${l.slug}`) ?? [] })) } : {}),
+    })),
+  }));
+}
+
+export function resolveIn(categories: IrCategory[], cat?: string, sub?: string, meet?: string) {
+  const category = categories.find((c) => c.slug === cat) ?? categories[0]!;
+  const subTab = category.subTabs.find((s) => s.slug === sub) ?? category.subTabs[0]!;
+  const leaf = subTab.children ? (subTab.children.find((c) => c.slug === meet) ?? subTab.children[0]!) : subTab;
+  return { category, subTab, leaf };
+}
+
+/** Files uploaded through the admin portal are stored as `storage:<path>` in the investor-documents bucket. */
+export const STORAGE_PREFIX = "storage:";
+export const IR_BUCKET = "investor-documents";

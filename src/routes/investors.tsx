@@ -4,7 +4,9 @@ import { ChevronDown, Download, ExternalLink, Eye, FileText, Mail, Search, X } f
 import { z } from "zod";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { IR_CATEGORIES, IR_CONTACTS, resolveIr, rollingFyLabels, type IrDocument, type IrSubTab } from "@/lib/investor-relations";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { resolveIn, rollingFyLabels, withDocuments, type IrContact, type IrDocument, type IrSubTab } from "@/lib/investor-relations";
+import { irDataQuery } from "@/lib/ir-data.functions";
 
 const TITLE = "Investor Relations | Ramky Infrastructure";
 const DESC = "Quarterly results, annual reports, general meetings, MOA & AOA, Regulation 46 disclosures and investor contacts of Ramky Infrastructure Limited.";
@@ -21,7 +23,10 @@ export const Route = createFileRoute("/investors")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(irDataQuery),
   component: InvestorsPage,
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center text-sm">Investor documents could not be loaded: {error instanceof Error ? error.message : String(error)}</div>,
+  notFoundComponent: () => <div className="p-10 text-center text-sm">Not found.</div>,
 });
 
 const fmt = (iso: string) => new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
@@ -30,7 +35,9 @@ const selectCls = "h-10 w-full rounded-sm border border-border bg-background px-
 function InvestorsPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
-  const { category, subTab, leaf } = resolveIr(search.cat, search.sub, search.meet);
+  const { data } = useSuspenseQuery(irDataQuery);
+  const IR_CATEGORIES = useMemo(() => withDocuments(data.docs), [data.docs]);
+  const { category, subTab, leaf } = resolveIn(IR_CATEGORIES, search.cat, search.sub, search.meet);
   const [viewing, setViewing] = useState<IrDocument | null>(null);
   const go = (cat: string, sub?: string, meet?: string) => navigate({ search: { cat, sub, meet }, resetScroll: false });
 
@@ -116,10 +123,9 @@ function InvestorsPage() {
           </div>
 
           <section className="mt-8" key={`${category.slug}-${subTab.slug}-${leaf.slug}`}>
-            {leaf.layout === "contacts" ? <Contacts /> : leaf.layout === "repository" ? <Repository tab={leaf} onView={setViewing} /> : <YearWise tab={leaf} onView={setViewing} />}
+            {leaf.layout === "contacts" ? <Contacts contacts={data.contacts} /> : leaf.layout === "repository" ? <Repository tab={leaf} onView={setViewing} /> : <YearWise tab={leaf} onView={setViewing} />}
           </section>
-          <p className="mt-10 text-xs text-muted-foreground">Documents shown are sample placeholders for demonstration and are not official company disclosures.</p>
-        </div>
+                  </div>
       </main>
       <SiteFooter />
       {viewing && <Viewer doc={viewing} onClose={() => setViewing(null)} />}
@@ -285,7 +291,7 @@ function Empty() {
   return <div className="mt-5 rounded-sm border border-dashed border-border bg-background px-6 py-12 text-center text-sm text-muted-foreground">No documents available for this period.</div>;
 }
 
-function Contacts() {
+function Contacts({ contacts: IR_CONTACTS }: { contacts: IrContact[] }) {
   return (
     <div className="grid gap-5 md:grid-cols-3">
       {IR_CONTACTS.map((c) => (
