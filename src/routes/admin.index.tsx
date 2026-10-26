@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getStaff } from "@/lib/admin-auth";
 import { CONTACTS_SECTION } from "@/lib/admin-modules";
 import { IR_BUCKET, IR_SECTIONS, STORAGE_PREFIX, rollingFyLabels, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
-import logo from "@/assets/ramky-logo-transparent.png.asset.json";
+import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection, adminSelect } from "@/components/admin/AdminDialog";
 import { confirmDelete } from "@/components/admin/ConfirmDelete";
