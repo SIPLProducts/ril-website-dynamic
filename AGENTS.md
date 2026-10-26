@@ -12,3 +12,8 @@
 ## Website architecture
 - Keep the target TanStack bootstrap and pinned dependencies; import site pages, shared site components, and static content modules from the supplied website to preserve its experience without replacing runtime infrastructure.
 - Store imported binary media as Lovable asset pointers; keep the favicon as a real public file so browser icons resolve.
+
+## Admin & dynamic content
+- Investor Relations documents and contacts live in the database (`ir_documents` keyed by `section_key` = `category/subTab[/child]`, `ir_contacts`); the tab structure stays in `src/lib/investor-relations.ts` so layouts stay code-controlled while content is admin-editable.
+- The admin portal lives at `/admin` (client-only, noindex, never linked from the public site); access requires the `admin` role in `user_roles`, checked via `has_role` and enforced by RLS on every write.
+- Uploaded files go to the private `investor-documents` bucket and are stored as `storage:<path>`; the public read server function converts them to signed URLs (public buckets are blocked by workspace policy).
