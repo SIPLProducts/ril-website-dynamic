@@ -391,7 +391,7 @@ function ContactCard({ row, onChange }: { row: ContactRow; onChange: () => void 
         <Button size="sm" variant="outline" onClick={() => setLines((ls) => [...ls, { value: "" }])}><Plus className="size-4" /> Add line</Button>
       </div>
       <div className="flex justify-between border-t border-border px-5 py-3">
-        <Button variant="ghost" className="text-destructive" onClick={remove}><Trash2 className="size-4" /> Delete block</Button>
+        <Button onClick={remove} className="btn-grad-danger border-0 hover:opacity-90"><Trash2 className="size-4" /> Delete block</Button>
         <Button onClick={save} className="admin-accent border-0 px-6 hover:opacity-90">Save</Button>
       </div>
     </div>
