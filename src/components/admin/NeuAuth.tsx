@@ -5,8 +5,8 @@ import logo from "@/assets/ramky-logo-transparent.png.asset.json";
 import poster from "@/assets/ramky-group-poster.png.asset.json";
 
 /** Poster first (whole image, never cropped); toggle splits into 60% poster / 40% login panel. */
-export function NeuShell({ children }: { children: ReactNode }) {
-  const [split, setSplit] = useState(false);
+export function NeuShell({ children, defaultSplit = false }: { children: ReactNode; defaultSplit?: boolean }) {
+  const [split, setSplit] = useState(defaultSplit);
   return (
     <div className="neu-bg relative flex min-h-screen flex-col overflow-hidden md:h-screen md:flex-row">
       <div className={`relative flex items-center justify-center overflow-hidden bg-background transition-all duration-700 ease-in-out ${split ? "h-[40vh] md:h-full md:w-[60%]" : "h-screen md:w-full"}`}>

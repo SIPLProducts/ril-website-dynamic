@@ -54,7 +54,7 @@ function ResetPassword() {
 
   if (link === "expired" && !done) {
     return (
-      <NeuShell>
+      <NeuShell defaultSplit>
         <div className="space-y-4">
           <NeuTitle title="Link expired" subtitle="This reset link is invalid or was already used" />
           <p className="text-center text-xs opacity-80">Each link works only once. Use "Forgot password?" on the login page to get a new one.</p>
@@ -65,7 +65,7 @@ function ResetPassword() {
   }
 
   return (
-    <NeuShell>
+    <NeuShell defaultSplit>
       <form onSubmit={submit} noValidate className="space-y-4">
         <NeuTitle title="New Password" subtitle={done ? "Your password has been updated" : link === "checking" ? "Checking your link…" : "Choose a new password"} />
         {done ? (
