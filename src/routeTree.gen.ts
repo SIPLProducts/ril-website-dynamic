@@ -10,43 +10,220 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as AccoladesRouteImport } from './routes/accolades'
+import { Route as CareersRouteImport } from './routes/careers'
+import { Route as CurrentPositionsRouteImport } from './routes/current-positions'
+import { Route as HistoryMilestonesRouteImport } from './routes/history-milestones'
+import { Route as InvestorsRouteImport } from './routes/investors'
+import { Route as LifeAtRamkyRouteImport } from './routes/life-at-ramky'
+import { Route as MediaRouteImport } from './routes/media'
+import { Route as SeniorManagementRouteImport } from './routes/senior-management'
+import { Route as AboutSlugRouteImport } from './routes/about.$slug'
+import { Route as BoardOfDirectorsSlugRouteImport } from './routes/board-of-directors.$slug'
+import { Route as BusinessesSlugRouteImport } from './routes/businesses.$slug'
+import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
+import { Route as ExecutiveLeadershipSlugRouteImport } from './routes/executive-leadership.$slug'
+import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.partners.subsidiaries'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const AccoladesRoute = AccoladesRouteImport.update({
+  id: '/accolades',
+  path: '/accolades',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CurrentPositionsRoute = CurrentPositionsRouteImport.update({
+  id: '/current-positions',
+  path: '/current-positions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoryMilestonesRoute = HistoryMilestonesRouteImport.update({
+  id: '/history-milestones',
+  path: '/history-milestones',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestorsRoute = InvestorsRouteImport.update({
+  id: '/investors',
+  path: '/investors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LifeAtRamkyRoute = LifeAtRamkyRouteImport.update({
+  id: '/life-at-ramky',
+  path: '/life-at-ramky',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MediaRoute = MediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeniorManagementRoute = SeniorManagementRouteImport.update({
+  id: '/senior-management',
+  path: '/senior-management',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutSlugRoute = AboutSlugRouteImport.update({
+  id: '/about/$slug',
+  path: '/about/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoardOfDirectorsSlugRoute = BoardOfDirectorsSlugRouteImport.update({
+  id: '/board-of-directors/$slug',
+  path: '/board-of-directors/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BusinessesSlugRoute = BusinessesSlugRouteImport.update({
+  id: '/businesses/$slug',
+  path: '/businesses/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsgSlugRoute = EsgSlugRouteImport.update({
+  id: '/esg/$slug',
+  path: '/esg/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExecutiveLeadershipSlugRoute = ExecutiveLeadershipSlugRouteImport.update({
+  id: '/executive-leadership/$slug',
+  path: '/executive-leadership/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutPartnersSubsidiariesRoute =
+  AboutPartnersSubsidiariesRouteImport.update({
+    id: '/about/partners/subsidiaries',
+    path: '/about/partners/subsidiaries',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/accolades': typeof AccoladesRoute
+  '/careers': typeof CareersRoute
+  '/current-positions': typeof CurrentPositionsRoute
+  '/history-milestones': typeof HistoryMilestonesRoute
+  '/investors': typeof InvestorsRoute
+  '/life-at-ramky': typeof LifeAtRamkyRoute
+  '/media': typeof MediaRoute
+  '/senior-management': typeof SeniorManagementRoute
+  '/about/$slug': typeof AboutSlugRoute
+  '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
+  '/businesses/$slug': typeof BusinessesSlugRoute
+  '/esg/$slug': typeof EsgSlugRoute
+  '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/accolades': typeof AccoladesRoute
+  '/careers': typeof CareersRoute
+  '/current-positions': typeof CurrentPositionsRoute
+  '/history-milestones': typeof HistoryMilestonesRoute
+  '/investors': typeof InvestorsRoute
+  '/life-at-ramky': typeof LifeAtRamkyRoute
+  '/media': typeof MediaRoute
+  '/senior-management': typeof SeniorManagementRoute
+  '/about/$slug': typeof AboutSlugRoute
+  '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
+  '/businesses/$slug': typeof BusinessesSlugRoute
+  '/esg/$slug': typeof EsgSlugRoute
+  '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
+  '/accolades': typeof AccoladesRoute
+  '/careers': typeof CareersRoute
+  '/current-positions': typeof CurrentPositionsRoute
+  '/history-milestones': typeof HistoryMilestonesRoute
+  '/investors': typeof InvestorsRoute
+  '/life-at-ramky': typeof LifeAtRamkyRoute
+  '/media': typeof MediaRoute
+  '/senior-management': typeof SeniorManagementRoute
+  '/about/$slug': typeof AboutSlugRoute
+  '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
+  '/businesses/$slug': typeof BusinessesSlugRoute
+  '/esg/$slug': typeof EsgSlugRoute
+  '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/accolades'
+    | '/careers'
+    | '/current-positions'
+    | '/history-milestones'
+    | '/investors'
+    | '/life-at-ramky'
+    | '/media'
+    | '/senior-management'
+    | '/about/$slug'
+    | '/board-of-directors/$slug'
+    | '/businesses/$slug'
+    | '/esg/$slug'
+    | '/executive-leadership/$slug'
+    | '/about/partners/subsidiaries'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/accolades'
+    | '/careers'
+    | '/current-positions'
+    | '/history-milestones'
+    | '/investors'
+    | '/life-at-ramky'
+    | '/media'
+    | '/senior-management'
+    | '/about/$slug'
+    | '/board-of-directors/$slug'
+    | '/businesses/$slug'
+    | '/esg/$slug'
+    | '/executive-leadership/$slug'
+    | '/about/partners/subsidiaries'
+  id:
+    | '__root__'
+    | '/'
+    | '/accolades'
+    | '/careers'
+    | '/current-positions'
+    | '/history-milestones'
+    | '/investors'
+    | '/life-at-ramky'
+    | '/media'
+    | '/senior-management'
+    | '/about/$slug'
+    | '/board-of-directors/$slug'
+    | '/businesses/$slug'
+    | '/esg/$slug'
+    | '/executive-leadership/$slug'
+    | '/about/partners/subsidiaries'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
+  AccoladesRoute: typeof AccoladesRoute
+  CareersRoute: typeof CareersRoute
+  CurrentPositionsRoute: typeof CurrentPositionsRoute
+  HistoryMilestonesRoute: typeof HistoryMilestonesRoute
+  InvestorsRoute: typeof InvestorsRoute
+  LifeAtRamkyRoute: typeof LifeAtRamkyRoute
+  MediaRoute: typeof MediaRoute
+  SeniorManagementRoute: typeof SeniorManagementRoute
+  AboutSlugRoute: typeof AboutSlugRoute
+  BoardOfDirectorsSlugRoute: typeof BoardOfDirectorsSlugRoute
+  BusinessesSlugRoute: typeof BusinessesSlugRoute
+  EsgSlugRoute: typeof EsgSlugRoute
+  ExecutiveLeadershipSlugRoute: typeof ExecutiveLeadershipSlugRoute
+  AboutPartnersSubsidiariesRoute: typeof AboutPartnersSubsidiariesRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +235,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/accolades': {
+      id: '/accolades'
+      path: '/accolades'
+      fullPath: '/accolades'
+      preLoaderRoute: typeof AccoladesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/current-positions': {
+      id: '/current-positions'
+      path: '/current-positions'
+      fullPath: '/current-positions'
+      preLoaderRoute: typeof CurrentPositionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/history-milestones': {
+      id: '/history-milestones'
+      path: '/history-milestones'
+      fullPath: '/history-milestones'
+      preLoaderRoute: typeof HistoryMilestonesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investors': {
+      id: '/investors'
+      path: '/investors'
+      fullPath: '/investors'
+      preLoaderRoute: typeof InvestorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/life-at-ramky': {
+      id: '/life-at-ramky'
+      path: '/life-at-ramky'
+      fullPath: '/life-at-ramky'
+      preLoaderRoute: typeof LifeAtRamkyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/media': {
+      id: '/media'
+      path: '/media'
+      fullPath: '/media'
+      preLoaderRoute: typeof MediaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/senior-management': {
+      id: '/senior-management'
+      path: '/senior-management'
+      fullPath: '/senior-management'
+      preLoaderRoute: typeof SeniorManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about/$slug': {
+      id: '/about/$slug'
+      path: '/about/$slug'
+      fullPath: '/about/$slug'
+      preLoaderRoute: typeof AboutSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/board-of-directors/$slug': {
+      id: '/board-of-directors/$slug'
+      path: '/board-of-directors/$slug'
+      fullPath: '/board-of-directors/$slug'
+      preLoaderRoute: typeof BoardOfDirectorsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/businesses/$slug': {
+      id: '/businesses/$slug'
+      path: '/businesses/$slug'
+      fullPath: '/businesses/$slug'
+      preLoaderRoute: typeof BusinessesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/esg/$slug': {
+      id: '/esg/$slug'
+      path: '/esg/$slug'
+      fullPath: '/esg/$slug'
+      preLoaderRoute: typeof EsgSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/executive-leadership/$slug': {
+      id: '/executive-leadership/$slug'
+      path: '/executive-leadership/$slug'
+      fullPath: '/executive-leadership/$slug'
+      preLoaderRoute: typeof ExecutiveLeadershipSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about/partners/subsidiaries': {
+      id: '/about/partners/subsidiaries'
+      path: '/about/partners/subsidiaries'
+      fullPath: '/about/partners/subsidiaries'
+      preLoaderRoute: typeof AboutPartnersSubsidiariesRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +338,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
+  AccoladesRoute: AccoladesRoute,
+  CareersRoute: CareersRoute,
+  CurrentPositionsRoute: CurrentPositionsRoute,
+  HistoryMilestonesRoute: HistoryMilestonesRoute,
+  InvestorsRoute: InvestorsRoute,
+  LifeAtRamkyRoute: LifeAtRamkyRoute,
+  MediaRoute: MediaRoute,
+  SeniorManagementRoute: SeniorManagementRoute,
+  AboutSlugRoute: AboutSlugRoute,
+  BoardOfDirectorsSlugRoute: BoardOfDirectorsSlugRoute,
+  BusinessesSlugRoute: BusinessesSlugRoute,
+  EsgSlugRoute: EsgSlugRoute,
+  ExecutiveLeadershipSlugRoute: ExecutiveLeadershipSlugRoute,
+  AboutPartnersSubsidiariesRoute: AboutPartnersSubsidiariesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,0 +1,114 @@
+[
+  {
+    "capability": "code",
+    "source": "uploaded ZIP",
+    "outcome": "migrate",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "schema",
+    "source": "No schema detected",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "records",
+    "source": "Bundled static content",
+    "outcome": "migrate",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "auth identities",
+    "source": "No auth detected",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "authorization",
+    "source": "Public website",
+    "outcome": "preserve",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "uploaded file bytes",
+    "source": "11 bundled media files and 87 original-project asset references",
+    "outcome": "All original asset bytes recovered from the public original website and imported into target storage",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "external providers",
+    "source": "External document and website links",
+    "outcome": "preserve",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "public endpoints",
+    "source": "No API detected",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "callbacks",
+    "source": "No callbacks detected",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "webhooks",
+    "source": "No webhooks detected",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "schedules",
+    "source": "No schedules detected",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "secrets",
+    "source": "No variables detected",
+    "outcome": "not_applicable",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "cutover",
+    "source": "Unpublished target",
+    "outcome": "preserve",
+    "status": "pending",
+    "next_action": "User may publish after reviewing"
+  },
+  {
+    "capability": "verification",
+    "source": "Preview routes and navigation",
+    "outcome": "34 linked/detail pages returned 200; slideshow, project status filter, quarterly PDF preview, email career application, and mobile menu verified; routing test passed; no runtime errors",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "career applications",
+    "source": "Email application with disabled online form",
+    "outcome": "preserve",
+    "status": "verified",
+    "next_action": null
+  },
+  {
+    "capability": "investor documents",
+    "source": "Source includes sample PDFs and placeholder contacts",
+    "outcome": "preserve",
+    "status": "pending",
+    "next_action": "Real documents and contact details needed for production"
+  }
+]
