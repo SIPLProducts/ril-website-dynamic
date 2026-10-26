@@ -8,6 +8,13 @@
       "when": 1792992677134,
       "tag": "0000_investor_relations_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792993546086,
+      "tag": "0001_admin_roles_profiles",
+      "breakpoints": true
     }
   ]
 }

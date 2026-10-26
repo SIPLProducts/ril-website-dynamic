@@ -22,6 +22,8 @@ import { Route as SeniorManagementRouteImport } from './routes/senior-management
 import { Route as AboutSlugRouteImport } from './routes/about.$slug'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as BoardOfDirectorsSlugRouteImport } from './routes/board-of-directors.$slug'
 import { Route as BusinessesSlugRouteImport } from './routes/businesses.$slug'
 import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
@@ -93,6 +95,16 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const BoardOfDirectorsSlugRoute = BoardOfDirectorsSlugRouteImport.update({
   id: '/board-of-directors/$slug',
   path: '/board-of-directors/$slug',
@@ -133,6 +145,8 @@ export interface FileRoutesByFullPath {
   '/senior-management': typeof SeniorManagementRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/users': typeof AdminUsersRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
@@ -152,6 +166,8 @@ export interface FileRoutesByTo {
   '/senior-management': typeof SeniorManagementRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/users': typeof AdminUsersRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
@@ -173,6 +189,8 @@ export interface FileRoutesById {
   '/senior-management': typeof SeniorManagementRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/users': typeof AdminUsersRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
@@ -195,6 +213,8 @@ export interface FileRouteTypes {
     | '/senior-management'
     | '/about/$slug'
     | '/admin/login'
+    | '/admin/reset-password'
+    | '/admin/users'
     | '/board-of-directors/$slug'
     | '/businesses/$slug'
     | '/esg/$slug'
@@ -214,6 +234,8 @@ export interface FileRouteTypes {
     | '/senior-management'
     | '/about/$slug'
     | '/admin/login'
+    | '/admin/reset-password'
+    | '/admin/users'
     | '/board-of-directors/$slug'
     | '/businesses/$slug'
     | '/esg/$slug'
@@ -234,6 +256,8 @@ export interface FileRouteTypes {
     | '/senior-management'
     | '/about/$slug'
     | '/admin/login'
+    | '/admin/reset-password'
+    | '/admin/users'
     | '/board-of-directors/$slug'
     | '/businesses/$slug'
     | '/esg/$slug'
@@ -354,6 +378,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/reset-password': {
+      id: '/admin/reset-password'
+      path: '/reset-password'
+      fullPath: '/admin/reset-password'
+      preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/board-of-directors/$slug': {
       id: '/board-of-directors/$slug'
       path: '/board-of-directors/$slug'
@@ -394,11 +432,15 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
+  AdminResetPasswordRoute: AdminResetPasswordRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
