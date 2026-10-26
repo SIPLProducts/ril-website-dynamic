@@ -129,7 +129,7 @@ function IconAction({ label, onClick, children, danger }: { label: string; onCli
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button onClick={onClick} aria-label={label} className={`grid size-8 place-items-center rounded-md transition-colors ${danger ? "text-destructive hover:bg-destructive/10" : "text-muted-foreground hover:bg-surface hover:text-brand-blue"}`}>{children}</button>
+        <button onClick={onClick} aria-label={label} className={`grid size-8 place-items-center rounded-md shadow-sm transition hover:opacity-90 ${danger ? "btn-grad-danger" : label === "Edit" ? "btn-grad-edit" : "border border-border bg-card text-muted-foreground hover:text-foreground"}`}>{children}</button>
       </TooltipTrigger>
       <TooltipContent>{label}</TooltipContent>
     </Tooltip>
@@ -391,7 +391,7 @@ function ContactCard({ row, onChange }: { row: ContactRow; onChange: () => void 
         <Button size="sm" variant="outline" onClick={() => setLines((ls) => [...ls, { value: "" }])}><Plus className="size-4" /> Add line</Button>
       </div>
       <div className="flex justify-between border-t border-border px-5 py-3">
-        <Button variant="ghost" className="text-destructive" onClick={remove}><Trash2 className="size-4" /> Delete block</Button>
+        <Button onClick={remove} className="btn-grad-danger border-0 hover:opacity-90"><Trash2 className="size-4" /> Delete block</Button>
         <Button onClick={save} className="admin-accent border-0 px-6 hover:opacity-90">Save</Button>
       </div>
     </div>

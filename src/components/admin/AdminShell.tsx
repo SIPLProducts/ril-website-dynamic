@@ -25,7 +25,7 @@ const hItem = (on: boolean) =>
   `inline-flex h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors ${on ? "bg-brand-orange/10 text-brand-orange" : "text-foreground/75 hover:bg-surface hover:text-foreground"}`;
 
 export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; active: Active; crumbs: string[]; children: ReactNode }) {
-  const [layout, setLayout] = useState<Layout>("vertical");
+  const [layout, setLayout] = useState<Layout>("horizontal");
   const [collapsed, setCollapsed] = useState(false);
   const [invOpen, setInvOpen] = useState(active.kind === "investors");
   const [usersOpen, setUsersOpen] = useState(active.kind === "users");
