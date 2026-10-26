@@ -1,59 +1,143 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { Lock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { KeyRound, Lock, Mail } from "lucide-react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { getAdminUser } from "@/lib/admin-auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { getStaff, readStaff } from "@/lib/admin-auth";
+import { NeuButton, NeuField, NeuShell, NeuTitle } from "@/components/admin/NeuAuth";
 
 export const Route = createFileRoute("/admin/login")({
   ssr: false,
   beforeLoad: async () => {
-    const { isAdmin } = await getAdminUser();
-    if (isAdmin) throw redirect({ to: "/admin" });
+    if (await getStaff()) throw redirect({ to: "/admin" });
   },
   component: AdminLogin,
 });
 
+const emailSchema = z.string().trim().toLowerCase().email("Enter a valid email address");
+type Step = "login" | "otp" | "forgot";
+
 function AdminLogin() {
   const navigate = useNavigate();
+  const [step, setStep] = useState<Step>("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
   const [busy, setBusy] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
-  async function submit(e: React.FormEvent) {
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
+
+  const fail = async (msg: string) => {
+    await supabase.auth.signOut();
+    setError(msg);
+    setBusy(false);
+  };
+
+  async function sendOtp(addr: string) {
+    const { error } = await supabase.auth.signInWithOtp({ email: addr, options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/admin` } });
+    if (error) throw error;
+    setCooldown(60);
+  }
+
+  async function login(e: React.FormEvent) {
     e.preventDefault();
+    setError(""); setInfo("");
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) return setError(parsed.error.issues[0]!.message);
+    if (!password) return setError("Enter your password");
     setBusy(true);
-    setError("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setBusy(false);
-      return setError("Invalid email or password.");
-    }
-    const { isAdmin } = await getAdminUser();
-    if (!isAdmin) {
+    const { error } = await supabase.auth.signInWithPassword({ email: parsed.data, password });
+    if (error) return fail("Invalid email or password.");
+    const staff = await readStaff();
+    if (!staff) return fail("This account does not have admin access.");
+    if (!staff.isActive) return fail("Your account is inactive. Contact the Super Admin.");
+    if (staff.otpRequired) {
       await supabase.auth.signOut();
+      try {
+        await sendOtp(parsed.data);
+        setStep("otp");
+        setInfo(`A verification code has been sent to ${parsed.data}.`);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not send the code");
+      }
       setBusy(false);
-      return setError("This account does not have admin access.");
+      return;
     }
     navigate({ to: "/admin", replace: true });
   }
 
+  async function verify(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!/^\d{6,8}$/.test(code)) return setError("Enter the code from your email");
+    setBusy(true);
+    const { error } = await supabase.auth.verifyOtp({ email: email.trim().toLowerCase(), token: code, type: "email" });
+    if (error) { setBusy(false); return setError("Invalid or expired code."); }
+    const staff = await getStaff();
+    if (!staff) return fail("Your account is inactive. Contact the Super Admin.");
+    navigate({ to: "/admin", replace: true });
+  }
+
+  async function forgot(e: React.FormEvent) {
+    e.preventDefault();
+    setError(""); setInfo("");
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) return setError(parsed.error.issues[0]!.message);
+    setBusy(true);
+    await supabase.auth.resetPasswordForEmail(parsed.data, { redirectTo: `${window.location.origin}/admin/reset-password` });
+    setBusy(false);
+    setInfo("If this email belongs to an admin account, a reset link has been sent.");
+  }
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface px-4">
-      <form onSubmit={submit} className="w-full max-w-sm rounded-sm border border-border bg-background p-8 shadow-sm">
-        <div className="flex size-11 items-center justify-center rounded-full bg-brand-blue text-primary-foreground"><Lock className="size-5" /></div>
-        <h1 className="mt-4 font-display text-2xl font-bold text-brand-blue">Admin Portal</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Ramky Infrastructure · authorised staff only</p>
-        <div className="mt-6 space-y-4">
-          <div><Label htmlFor="email">Email</Label><Input id="email" type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1" /></div>
-          <div><Label htmlFor="password">Password</Label><Input id="password" type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1" /></div>
-          {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" disabled={busy} className="w-full">{busy ? "Signing in…" : "Sign in"}</Button>
-        </div>
-      </form>
-    </div>
+    <NeuShell>
+      {step === "login" && (
+        <form onSubmit={login} noValidate className="space-y-4">
+          <NeuTitle title="Login" subtitle="Sign in to your account" />
+          <NeuField icon={<Mail className="size-4" />} type="email" placeholder="Email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Email" />
+          <NeuField icon={<Lock className="size-4" />} type="password" placeholder="Password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} aria-label="Password" />
+          <div className="flex justify-end text-xs">
+            <button type="button" onClick={() => { setStep("forgot"); setError(""); setInfo(""); }} className="opacity-75 hover:opacity-100">Forgot password?</button>
+          </div>
+          {error && <p role="alert" className="neu-accent text-center text-sm">{error}</p>}
+          <NeuButton type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</NeuButton>
+          <p className="pt-1 text-center text-xs opacity-70">Authorised Ramky staff only</p>
+        </form>
+      )}
+
+      {step === "otp" && (
+        <form onSubmit={verify} className="space-y-4">
+          <NeuTitle title="Verify OTP" subtitle="Enter the code sent to your email" />
+          {info && <p className="text-center text-xs opacity-80">{info}</p>}
+          <NeuField icon={<KeyRound className="size-4" />} inputMode="numeric" autoComplete="one-time-code" maxLength={8} placeholder="6-digit code" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} aria-label="Verification code" className="tracking-[0.5em]" />
+          {error && <p role="alert" className="neu-accent text-center text-sm">{error}</p>}
+          <NeuButton type="submit" disabled={busy}>{busy ? "Verifying…" : "Verify"}</NeuButton>
+          <div className="flex justify-between text-xs">
+            <button type="button" onClick={() => { setStep("login"); setCode(""); setError(""); }} className="opacity-75 hover:opacity-100">Back to login</button>
+            <button type="button" disabled={cooldown > 0} onClick={async () => { setError(""); try { await sendOtp(email.trim().toLowerCase()); setInfo("A new code has been sent."); } catch (err) { setError(err instanceof Error ? err.message : "Could not resend"); } }} className="neu-accent font-semibold disabled:opacity-50">
+              {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {step === "forgot" && (
+        <form onSubmit={forgot} noValidate className="space-y-4">
+          <NeuTitle title="Reset" subtitle="We'll email you a reset link" />
+          <NeuField icon={<Mail className="size-4" />} type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Email" />
+          {error && <p role="alert" className="neu-accent text-center text-sm">{error}</p>}
+          {info && <p className="text-center text-sm">{info}</p>}
+          <NeuButton type="submit" disabled={busy}>{busy ? "Sending…" : "Send reset link"}</NeuButton>
+          <p className="text-center text-xs"><button type="button" onClick={() => { setStep("login"); setError(""); setInfo(""); }} className="neu-accent font-semibold">Back to login</button></p>
+        </form>
+      )}
+    </NeuShell>
   );
 }
