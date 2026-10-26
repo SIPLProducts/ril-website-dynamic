@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getStaff } from "@/lib/admin-auth";
 import { CONTACTS_SECTION } from "@/lib/admin-modules";
 import { IR_BUCKET, IR_SECTIONS, STORAGE_PREFIX, rollingFyLabels, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
+import logo from "@/assets/ramky-logo-transparent.png.asset.json";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection, adminSelect } from "@/components/admin/AdminDialog";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ function AdminPage() {
 
 function PageHeader({ eyebrow, title, desc, action }: { eyebrow: string; title: string; desc?: string; action?: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-4 flex shrink-0 flex-wrap items-end justify-between gap-4">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">{eyebrow}</p>
         <h1 className="mt-1 font-display text-2xl font-bold text-foreground md:text-3xl">{title}</h1>
@@ -80,23 +81,31 @@ function Dashboard({ isSuper, name }: { isSuper: boolean; name: string }) {
   const label = (k: string) => IR_SECTIONS.find((s) => s.key === k);
   return (
     <div>
-      <PageHeader eyebrow="Overview" title={`Welcome back, ${name.split(" ")[0]}`} desc="Manage website content module by module. Changes go live instantly." />
+      <div className="relative mb-4 flex items-center justify-between gap-4 overflow-hidden rounded-xl border border-border bg-background px-6 py-5 shadow-[var(--shadow-card)]">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">Overview</p>
+          <h1 className="mt-1 font-display text-2xl font-bold">Welcome back, {name.split(" ")[0]}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Manage website content module by module. Changes go live instantly.</p>
+        </div>
+        <img src={logo.url} alt="Ramky Infrastructure" className="hidden h-14 w-auto sm:block" />
+        <div className="admin-accent-line absolute inset-x-0 bottom-0 h-[3px]" />
+      </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c) => (
-          <div key={c.label} className="rounded-xl border border-border bg-background p-5 shadow-[var(--shadow-card)]">
+          <div key={c.label} className="rounded-xl border border-border bg-background p-4 shadow-[var(--shadow-card)]">
             <div className="flex items-center justify-between"><p className="text-sm text-muted-foreground">{c.label}</p><span className="admin-accent grid size-9 place-items-center rounded-lg"><c.icon className="size-4" /></span></div>
-            <p className="mt-3 font-display text-3xl font-bold text-foreground">{data ? c.value : "—"}</p>
+            <p className="mt-2 font-display text-3xl font-bold text-foreground">{data ? c.value : "—"}</p>
           </div>
         ))}
       </div>
-      <div className="mt-6 rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
+      <div className="mt-4 rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
         <div className="border-b border-border px-5 py-4"><h2 className="font-display font-semibold">Recently updated</h2></div>
         <ul className="divide-y divide-border">
-          {docs.slice(0, 6).map((d) => {
+          {docs.slice(0, 5).map((d) => {
             const m = label(d.section_key);
             return (
               <li key={d.id}>
-                <Link to="/admin" search={{ section: d.section_key }} className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-surface">
+                <Link to="/admin" search={{ section: d.section_key }} className="flex items-center gap-3 px-5 py-2.5 text-sm hover:bg-surface">
                   <FileText className="size-4 shrink-0 text-brand-orange" />
                   <span className="flex-1 truncate font-medium">{d.title}</span>
                   <span className="hidden text-muted-foreground sm:inline">{m ? `${m.categoryLabel} · ${m.label}` : d.section_key}</span>
@@ -171,12 +180,12 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
   const liveCount = docs.filter((d) => d.published).length;
 
   return (
-    <div>
+    <div className="flex min-h-0 flex-1 flex-col">
       <PageHeader eyebrow={`Investors · ${meta.categoryLabel}`} title={meta.label} desc={`${docs.length} documents · ${liveCount} live · ${docs.length - liveCount} draft`}
         action={<Button onClick={() => setEditing(blank)} className="admin-accent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Upload document</Button>} />
 
-      <div className="rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
-        <div className="flex flex-wrap items-center gap-3 border-b border-border p-4">
+      <div className="flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
+        <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-border p-3">
           <div className="relative min-w-[220px] flex-1">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input placeholder="Search by title…" value={q} onChange={(e) => setQ(e.target.value)} className="h-10 pl-9" />
@@ -186,9 +195,9 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
           )}
           <select className={adminSelect.replace("w-full", "w-44")} value={status} onChange={(e) => setStatus(e.target.value)}><option value="">All status</option><option value="live">Live</option><option value="draft">Draft</option></select>
         </div>
-        <div className="overflow-x-auto">
+        <div className="thin-scroll min-h-0 flex-1 overflow-auto">
           <table className="w-full text-sm">
-            <thead className="text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+            <thead className="sticky top-0 z-10 bg-background text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
               <tr className="border-b border-border"><th className="px-5 py-3 font-semibold">Document</th><th className="px-4 py-3 font-semibold">Year / Qtr</th><th className="px-4 py-3 font-semibold">Date</th><th className="px-4 py-3 font-semibold">Status</th><th className="px-4 py-3 font-semibold">Publish</th><th className="px-5 py-3 text-right font-semibold">Actions</th></tr>
             </thead>
             <tbody className="divide-y divide-border">

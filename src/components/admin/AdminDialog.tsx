@@ -1,21 +1,26 @@
 import { useRef, useState, type ReactNode } from "react";
 import { UploadCloud, X, type LucideIcon } from "lucide-react";
+import logo from "@/assets/ramky-logo-transparent.png.asset.json";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 /** Branded popup used across the admin portal: gradient header, scrollable body, sticky footer. */
 export function AdminDialog({ icon: Icon, title, subtitle, onClose, footer, children, wide }: { icon: LucideIcon; title: string; subtitle?: string; onClose: () => void; footer: ReactNode; children: ReactNode; wide?: boolean }) {
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className={`flex max-h-[92vh] flex-col gap-0 overflow-hidden rounded-xl border-0 p-0 shadow-2xl ${wide ? "sm:max-w-2xl" : "sm:max-w-lg"} [&>button]:hidden`}>
-        <div className="admin-header-strip flex items-start gap-4 px-6 py-5">
-          <span className="admin-accent grid size-11 shrink-0 place-items-center rounded-lg shadow-md"><Icon className="size-5" /></span>
-          <div className="min-w-0 flex-1">
-            <DialogTitle className="font-display text-lg font-bold">{title}</DialogTitle>
-            {subtitle && <DialogDescription className="mt-0.5 text-sm text-primary-foreground/75">{subtitle}</DialogDescription>}
+      <DialogContent className={`flex max-h-[calc(100vh-2rem)] flex-col gap-0 overflow-hidden rounded-xl border-0 p-0 shadow-2xl ${wide ? "sm:max-w-2xl" : "sm:max-w-lg"} [&>button]:hidden`}>
+        <div className="relative bg-background px-6 pb-4 pt-5">
+          <div className="flex items-start gap-4">
+            <span className="admin-accent grid size-11 shrink-0 place-items-center rounded-xl shadow-md"><Icon className="size-5" /></span>
+            <div className="min-w-0 flex-1">
+              <DialogTitle className="font-display text-lg font-bold text-foreground">{title}</DialogTitle>
+              {subtitle && <DialogDescription className="mt-0.5 text-sm text-muted-foreground">{subtitle}</DialogDescription>}
+            </div>
+            <img src={logo.url} alt="Ramky" className="hidden h-8 w-auto opacity-90 sm:block" />
+            <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 text-muted-foreground hover:bg-surface hover:text-foreground"><X className="size-5" /></button>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"><X className="size-5" /></button>
+          <div className="admin-accent-line absolute inset-x-0 bottom-0 h-[3px]" />
         </div>
-        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+        <div className="thin-scroll min-h-0 flex-1 overflow-y-auto px-6 py-5">{children}</div>
         <div className="flex justify-end gap-2 border-t border-border bg-surface px-6 py-4">{footer}</div>
       </DialogContent>
     </Dialog>
