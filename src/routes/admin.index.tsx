@@ -165,9 +165,9 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
 }
 
 async function openDoc(url: string) {
-  if (!url.startsWith(STORAGE_PREFIX)) return window.open(url, "_blank", "noopener");
+  if (!url.startsWith(STORAGE_PREFIX)) { window.open(url, "_blank", "noopener"); return; }
   const { data, error } = await supabase.storage.from(IR_BUCKET).createSignedUrl(url.slice(STORAGE_PREFIX.length), 600);
-  if (error || !data) return toast.error("Could not open file");
+  if (error || !data) { toast.error("Could not open file"); return; }
   window.open(data.signedUrl, "_blank", "noopener");
 }
 
@@ -180,7 +180,7 @@ function DocDialog({ draft, layout, onClose, onSaved }: { draft: Draft; layout: 
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    if (!file && !d.url) return toast.error("Choose a file to upload or paste a link.");
+    if (!file && !d.url) { toast.error("Choose a file to upload or paste a link."); return; }
     setSaving(true);
     try {
       let url = d.url;
@@ -263,7 +263,7 @@ function ContactsEditor() {
 
   async function add() {
     const { error } = await supabase.from("ir_contacts").insert({ heading: "New contact block", lines: [], sort_order: rows.length });
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     refresh();
   }
 
@@ -286,14 +286,14 @@ function ContactCard({ row, onChange }: { row: ContactRow; onChange: () => void 
 
   async function save() {
     const { error } = await supabase.from("ir_contacts").update({ heading, lines: lines.filter((l) => l.value) }).eq("id", row.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success("Contact saved — now live on the website");
     onChange();
   }
   async function remove() {
     if (!confirm(`Delete “${row.heading}”?`)) return;
     const { error } = await supabase.from("ir_contacts").delete().eq("id", row.id);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     onChange();
   }
 

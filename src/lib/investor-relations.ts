@@ -272,13 +272,13 @@ export const rowToDoc = (r: IrDocumentRow): IrDocument => ({
   title: r.title,
   type: r.doc_type,
   date: r.doc_date,
-  year: r.fy_year ?? undefined,
-  quarter: (r.quarter as IrDocument["quarter"]) ?? undefined,
-  category: r.disclosure_category ?? undefined,
-  version: r.version ?? undefined,
-  description: r.description ?? undefined,
   url: r.url,
   published: r.published,
+  ...(r.fy_year ? { year: r.fy_year } : {}),
+  ...(r.quarter ? { quarter: r.quarter as NonNullable<IrDocument["quarter"]> } : {}),
+  ...(r.disclosure_category ? { category: r.disclosure_category } : {}),
+  ...(r.version ? { version: r.version } : {}),
+  ...(r.description ? { description: r.description } : {}),
 });
 
 /** Same tab structure as IR_CATEGORIES, with documents supplied from the database. */
@@ -290,7 +290,7 @@ export function withDocuments(rows: IrDocumentRow[]): IrCategory[] {
     subTabs: c.subTabs.map((s) => ({
       ...s,
       documents: by.get(`${c.slug}/${s.slug}`) ?? [],
-      children: s.children?.map((l) => ({ ...l, documents: by.get(`${c.slug}/${s.slug}/${l.slug}`) ?? [] })),
+      ...(s.children ? { children: s.children.map((l) => ({ ...l, documents: by.get(`${c.slug}/${s.slug}/${l.slug}`) ?? [] })) } : {}),
     })),
   }));
 }

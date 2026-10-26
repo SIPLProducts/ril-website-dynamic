@@ -25,7 +25,7 @@ export const Route = createFileRoute("/investors")({
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(irDataQuery),
   component: InvestorsPage,
-  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center text-sm">Investor documents could not be loaded: {error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-10 text-center text-sm">Investor documents could not be loaded: {error instanceof Error ? error.message : String(error)}</div>,
   notFoundComponent: () => <div className="p-10 text-center text-sm">Not found.</div>,
 });
 
