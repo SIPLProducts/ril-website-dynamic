@@ -5,7 +5,8 @@ import { ExternalLink, FileText, LogOut, Pencil, Plus, Trash2, Users } from "luc
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
-import { getAdminUser } from "@/lib/admin-auth";
+import { getStaff } from "@/lib/admin-auth";
+import { Link } from "@tanstack/react-router";
 import { IR_BUCKET, IR_SECTIONS, STORAGE_PREFIX, rollingFyLabels, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,9 +21,9 @@ export const Route = createFileRoute("/admin/")({
   ssr: false,
   validateSearch: z.object({ section: z.string().optional() }),
   beforeLoad: async () => {
-    const { user, isAdmin } = await getAdminUser();
-    if (!user || !isAdmin) throw redirect({ to: "/admin/login" });
-    return { adminEmail: user.email ?? "" };
+    const staff = await getStaff();
+    if (!staff) throw redirect({ to: "/admin/login" });
+    return { adminEmail: staff.email, isSuper: staff.role === "super_admin" };
   },
   component: AdminDashboard,
 });
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/admin/")({
 const selectCls = "h-9 w-full rounded-md border border-input bg-background px-3 text-sm";
 
 function AdminDashboard() {
-  const { adminEmail } = Route.useRouteContext();
+  const { adminEmail, isSuper } = Route.useRouteContext();
   const search = Route.useSearch();
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -54,6 +55,7 @@ function AdminDashboard() {
         <div className="font-display text-sm font-bold tracking-wide">RAMKY INFRASTRUCTURE <span className="ml-2 rounded-sm bg-brand-orange px-2 py-0.5 text-xs">Admin Portal</span></div>
         <div className="flex items-center gap-3 text-sm">
           <a href="/investors" target="_blank" rel="noreferrer" className="hidden items-center gap-1 opacity-90 hover:opacity-100 sm:inline-flex">View live site <ExternalLink className="size-3.5" /></a>
+          {isSuper && <Link to="/admin/users" className="inline-flex items-center gap-1 opacity-90 hover:opacity-100"><Users className="size-4" /> Users</Link>}
           <span className="hidden opacity-80 md:inline">{adminEmail}</span>
           <Button size="sm" variant="secondary" onClick={signOut}><LogOut className="size-4" /> Logout</Button>
         </div>
