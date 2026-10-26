@@ -47,6 +47,48 @@ export type Database = {
         }
         Relationships: []
       }
+      email_settings: {
+        Row: {
+          cc: string[]
+          enabled: boolean
+          from_email: string
+          from_name: string
+          host: string
+          id: number
+          password: string
+          port: number
+          secure: boolean
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          cc?: string[]
+          enabled?: boolean
+          from_email?: string
+          from_name?: string
+          host?: string
+          id?: number
+          password?: string
+          port?: number
+          secure?: boolean
+          updated_at?: string
+          username?: string
+        }
+        Update: {
+          cc?: string[]
+          enabled?: boolean
+          from_email?: string
+          from_name?: string
+          host?: string
+          id?: number
+          password?: string
+          port?: number
+          secure?: boolean
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
       ir_contacts: {
         Row: {
           heading: string

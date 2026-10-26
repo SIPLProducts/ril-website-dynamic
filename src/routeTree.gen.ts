@@ -21,6 +21,7 @@ import { Route as MediaRouteImport } from './routes/media'
 import { Route as SeniorManagementRouteImport } from './routes/senior-management'
 import { Route as AboutSlugRouteImport } from './routes/about.$slug'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AdminEmailSettingsRouteImport } from './routes/admin.email-settings'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
@@ -90,6 +91,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminEmailSettingsRoute = AdminEmailSettingsRouteImport.update({
+  id: '/email-settings',
+  path: '/email-settings',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/media': typeof MediaRoute
   '/senior-management': typeof SeniorManagementRoute
   '/about/$slug': typeof AboutSlugRoute
+  '/admin/email-settings': typeof AdminEmailSettingsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/media': typeof MediaRoute
   '/senior-management': typeof SeniorManagementRoute
   '/about/$slug': typeof AboutSlugRoute
+  '/admin/email-settings': typeof AdminEmailSettingsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/media': typeof MediaRoute
   '/senior-management': typeof SeniorManagementRoute
   '/about/$slug': typeof AboutSlugRoute
+  '/admin/email-settings': typeof AdminEmailSettingsRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
     | '/media'
     | '/senior-management'
     | '/about/$slug'
+    | '/admin/email-settings'
     | '/admin/login'
     | '/admin/reset-password'
     | '/admin/users'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/media'
     | '/senior-management'
     | '/about/$slug'
+    | '/admin/email-settings'
     | '/admin/login'
     | '/admin/reset-password'
     | '/admin/users'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/media'
     | '/senior-management'
     | '/about/$slug'
+    | '/admin/email-settings'
     | '/admin/login'
     | '/admin/reset-password'
     | '/admin/users'
@@ -371,6 +383,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/email-settings': {
+      id: '/admin/email-settings'
+      path: '/email-settings'
+      fullPath: '/admin/email-settings'
+      preLoaderRoute: typeof AdminEmailSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -431,6 +450,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminEmailSettingsRoute: typeof AdminEmailSettingsRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminUsersRoute: typeof AdminUsersRoute
@@ -438,6 +458,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminEmailSettingsRoute: AdminEmailSettingsRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminUsersRoute: AdminUsersRoute,

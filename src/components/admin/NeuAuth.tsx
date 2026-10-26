@@ -10,8 +10,7 @@ export function NeuShell({ children, defaultSplit = false }: { children: ReactNo
   return (
     <div className="neu-bg relative flex min-h-screen flex-col overflow-hidden md:h-screen md:flex-row">
       <div className={`relative flex items-center justify-center overflow-hidden bg-background transition-all duration-700 ease-in-out ${split ? "h-[40vh] md:h-full md:w-[60%]" : "h-screen md:w-full"}`}>
-        <img src={poster.url} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full scale-110 select-none object-cover blur-2xl opacity-80" />
-        <img src={poster.url} alt="Ramky Group – Towards sustainable growth" className="relative h-full w-full object-contain" />
+        <img src={poster.url} alt="Ramky Group – Towards sustainable growth" className="absolute inset-0 h-full w-full object-fill" />
       </div>
       <button
         type="button"

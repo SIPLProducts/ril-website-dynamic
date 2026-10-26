@@ -4,6 +4,7 @@ import { KeyRound, Lock, Mail } from "lucide-react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { getStaff, readStaff } from "@/lib/admin-auth";
+import { sendLoginOtp, sendPasswordReset } from "@/lib/email-settings.functions";
 import { NeuButton, NeuField, NeuShell, NeuTitle } from "@/components/admin/NeuAuth";
 
 export const Route = createFileRoute("/admin/login")({
@@ -41,6 +42,8 @@ function AdminLogin() {
   };
 
   async function sendOtp(addr: string) {
+    const viaSmtp = await sendLoginOtp({ data: { email: addr } }).catch(() => ({ sent: false }));
+    if (viaSmtp.sent) { setCooldown(60); return; }
     const { error } = await supabase.auth.signInWithOtp({ email: addr, options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/admin` } });
     if (error) throw error;
     setCooldown(60);
@@ -91,7 +94,9 @@ function AdminLogin() {
     const parsed = emailSchema.safeParse(email);
     if (!parsed.success) return setError(parsed.error.issues[0]!.message);
     setBusy(true);
-    await supabase.auth.resetPasswordForEmail(parsed.data, { redirectTo: `${window.location.origin}/admin/reset-password` });
+    const redirectTo = `${window.location.origin}/admin/reset-password`;
+    const viaSmtp = await sendPasswordReset({ data: { email: parsed.data, redirectTo } }).catch(() => ({ sent: false }));
+    if (!viaSmtp.sent) await supabase.auth.resetPasswordForEmail(parsed.data, { redirectTo });
     setBusy(false);
     setInfo("If this email belongs to an admin account, a reset link has been sent.");
   }

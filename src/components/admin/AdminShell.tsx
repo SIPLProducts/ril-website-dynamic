@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown, ChevronRight, Columns2, ExternalLink, LogOut, PanelLeftClose, PanelLeftOpen, Rows2, UserPlus } from "lucide-react";
+import { ChevronDown, ChevronRight, Columns2, ExternalLink, LogOut, PanelLeftClose, PanelLeftOpen, Rows2, UserPlus, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Staff } from "@/lib/admin-auth";
 import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGroups } from "@/lib/admin-modules";
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" };
+type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" } | { kind: "email" };
 type Layout = "vertical" | "horizontal";
 const LAYOUT_KEY = "ril-admin-layout";
 
@@ -28,7 +28,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const [layout, setLayout] = useState<Layout>("horizontal");
   const [collapsed, setCollapsed] = useState(false);
   const [invOpen, setInvOpen] = useState(active.kind === "investors");
-  const [usersOpen, setUsersOpen] = useState(active.kind === "users");
+  const [usersOpen, setUsersOpen] = useState(active.kind === "users" || active.kind === "email");
   const groups = investorGroups();
   const activeGroup = active.kind === "investors" ? groups.find((g) => g.items.some((i) => i.key === active.section))?.label : undefined;
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(activeGroup ? { [activeGroup]: true } : {});
@@ -59,7 +59,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
     <aside className={`admin-nav hidden h-full shrink-0 flex-col transition-[width] duration-300 md:flex ${collapsed ? "w-[76px]" : "w-72"}`}>
       <div className="flex h-16 shrink-0 items-center justify-center border-b border-primary-foreground/10 px-4">
         <div>
-          <img src={logo.url} alt="Ramky Infrastructure" className={collapsed ? "h-7 w-9 object-contain" : "h-10 w-auto"} />
+          <img src={logo.url} alt="Ramky Infrastructure" className={`brightness-0 invert ${collapsed ? "h-7 w-9 object-contain" : "h-10 w-auto"}`} />
         </div>
       </div>
       <nav className="thin-scroll thin-scroll-dark min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-4">
@@ -104,8 +104,8 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
           <>
             {!collapsed && <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-nav-muted)]">Administration</p>}
             <Tip label="User Management">
-              <button onClick={() => { if (collapsed) { setCollapsed(false); setUsersOpen(true); } else setUsersOpen((o) => !o); }} className={itemCls(active.kind === "users")}>
-                <span className={iconWrap(active.kind === "users")}><USERS_ICON className="size-4" /></span>
+              <button onClick={() => { if (collapsed) { setCollapsed(false); setUsersOpen(true); } else setUsersOpen((o) => !o); }} className={itemCls(active.kind === "users" || active.kind === "email")}>
+                <span className={iconWrap(active.kind === "users" || active.kind === "email")}><USERS_ICON className="size-4" /></span>
                 {!collapsed && <><span className="flex-1 text-left">User Management</span><ChevronDown className={`size-4 transition-transform duration-200 ${usersOpen ? "" : "-rotate-90"}`} /></>}
               </button>
             </Tip>
@@ -113,6 +113,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
               <div className="ml-5 space-y-0.5 border-l border-primary-foreground/10 py-1 pl-2">
                 <Link to="/admin/users" search={{}} className={subCls(active.kind === "users")}>All users</Link>
                 <Link to="/admin/users" search={{ new: true }} className={subCls(false)}><span className="inline-flex items-center gap-1.5"><UserPlus className="size-3.5" /> Create user</span></Link>
+                <Link to="/admin/email-settings" className={subCls(active.kind === "email")}><span className="inline-flex items-center gap-1.5"><Mail className="size-3.5" /> Email Configuration</span></Link>
               </div>
             )}
           </>
@@ -150,10 +151,11 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
       </DropdownMenu>
       {isSuper && (
         <DropdownMenu>
-          <DropdownMenuTrigger className={hItem(active.kind === "users")}><USERS_ICON className="size-4" /> User Management <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
+          <DropdownMenuTrigger className={hItem(active.kind === "users" || active.kind === "email")}><USERS_ICON className="size-4" /> User Management <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-48">
             <DropdownMenuItem onClick={() => navigate({ to: "/admin/users", search: {} })}>All users</DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate({ to: "/admin/users", search: { new: true } })}><UserPlus className="size-4" /> Create user</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate({ to: "/admin/email-settings" })}><Mail className="size-4" /> Email Configuration</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
@@ -171,7 +173,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
                 {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
               </button>
             ) : (
-              <img src={logo.url} alt="Ramky Infrastructure" className="h-9 w-auto" />
+              <img src={logo.url} alt="Ramky Infrastructure" className="h-9 w-auto brightness-0 invert" />
             )}
             <nav aria-label="Breadcrumb" className={`flex min-w-0 items-center gap-1.5 text-sm ${vertical ? "text-muted-foreground" : "text-[var(--admin-nav-muted)]"}`}>
               {crumbs.map((c, i) => (
