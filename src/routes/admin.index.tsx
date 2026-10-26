@@ -182,9 +182,9 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
             <Input placeholder="Search by title…" value={q} onChange={(e) => setQ(e.target.value)} className="h-10 pl-9" />
           </div>
           {meta.layout !== "repository" && years.length > 0 && (
-            <select className={`${adminSelect} w-auto`} value={fy} onChange={(e) => setFy(e.target.value)}><option value="">All years</option>{years.map((y) => <option key={y}>{y}</option>)}</select>
+            <select className={adminSelect.replace("w-full", "w-44")} value={fy} onChange={(e) => setFy(e.target.value)}><option value="">All years</option>{years.map((y) => <option key={y}>{y}</option>)}</select>
           )}
-          <select className={`${adminSelect} w-auto`} value={status} onChange={(e) => setStatus(e.target.value)}><option value="">All status</option><option value="live">Live</option><option value="draft">Draft</option></select>
+          <select className={adminSelect.replace("w-full", "w-44")} value={status} onChange={(e) => setStatus(e.target.value)}><option value="">All status</option><option value="live">Live</option><option value="draft">Draft</option></select>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
