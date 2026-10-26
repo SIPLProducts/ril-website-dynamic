@@ -58,7 +58,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const sidebar = (
     <aside className={`admin-nav hidden h-full shrink-0 flex-col transition-[width] duration-300 md:flex ${collapsed ? "w-[76px]" : "w-72"}`}>
       <div className="flex h-16 shrink-0 items-center justify-center border-b border-primary-foreground/10 px-4">
-        <div className={`rounded-lg bg-primary-foreground px-3 py-1.5 shadow-sm ${collapsed ? "px-1.5" : ""}`}>
+        <div>
           <img src={logo.url} alt="Ramky Infrastructure" className={collapsed ? "h-7 w-9 object-contain" : "h-10 w-auto"} />
         </div>
       </div>
@@ -171,7 +171,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
                 {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
               </button>
             ) : (
-              <div className="rounded-lg bg-primary-foreground px-3 py-1.5"><img src={logo.url} alt="Ramky Infrastructure" className="h-7 w-auto" /></div>
+              <img src={logo.url} alt="Ramky Infrastructure" className="h-9 w-auto" />
             )}
             <nav aria-label="Breadcrumb" className={`flex min-w-0 items-center gap-1.5 text-sm ${vertical ? "text-muted-foreground" : "text-[var(--admin-nav-muted)]"}`}>
               {crumbs.map((c, i) => (

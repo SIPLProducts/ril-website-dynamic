@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
+import { ConfirmDeleteHost } from "@/components/admin/ConfirmDelete";
 
 export const Route = createFileRoute("/admin")({
   ssr: false,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/admin")({
     <>
       <Outlet />
       <Toaster richColors position="top-right" />
+      <ConfirmDeleteHost />
     </>
   ),
 });
