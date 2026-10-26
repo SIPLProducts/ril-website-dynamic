@@ -20,6 +20,7 @@ import { Route as LifeAtRamkyRouteImport } from './routes/life-at-ramky'
 import { Route as MediaRouteImport } from './routes/media'
 import { Route as SeniorManagementRouteImport } from './routes/senior-management'
 import { Route as AboutSlugRouteImport } from './routes/about.$slug'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as BoardOfDirectorsSlugRouteImport } from './routes/board-of-directors.$slug'
 import { Route as BusinessesSlugRouteImport } from './routes/businesses.$slug'
@@ -82,6 +83,11 @@ const AboutSlugRoute = AboutSlugRouteImport.update({
   path: '/about/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -131,12 +137,12 @@ export interface FileRoutesByFullPath {
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
   '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/accolades': typeof AccoladesRoute
-  '/admin': typeof AdminRouteWithChildren
   '/careers': typeof CareersRoute
   '/current-positions': typeof CurrentPositionsRoute
   '/history-milestones': typeof HistoryMilestonesRoute
@@ -150,6 +156,7 @@ export interface FileRoutesByTo {
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
   '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
 }
 export interface FileRoutesById {
@@ -170,6 +177,7 @@ export interface FileRoutesById {
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
   '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
 }
 export interface FileRouteTypes {
@@ -191,12 +199,12 @@ export interface FileRouteTypes {
     | '/businesses/$slug'
     | '/esg/$slug'
     | '/executive-leadership/$slug'
+    | '/admin/'
     | '/about/partners/subsidiaries'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/accolades'
-    | '/admin'
     | '/careers'
     | '/current-positions'
     | '/history-milestones'
@@ -210,6 +218,7 @@ export interface FileRouteTypes {
     | '/businesses/$slug'
     | '/esg/$slug'
     | '/executive-leadership/$slug'
+    | '/admin'
     | '/about/partners/subsidiaries'
   id:
     | '__root__'
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/businesses/$slug'
     | '/esg/$slug'
     | '/executive-leadership/$slug'
+    | '/admin/'
     | '/about/partners/subsidiaries'
   fileRoutesById: FileRoutesById
 }
@@ -330,6 +340,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -377,10 +394,12 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
+  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
