@@ -5,9 +5,11 @@
 - The column headings (Document, Year/Qtr, Date...) stay pinned below the menu while you scroll, so you always know which column is which.
 - The top bar and menu stay fixed at the top.
 - The Ramky logo in the admin top bar and sidebar loses its white box and sits directly on the teal-green background.
+- Create / Edit user popup: fields placed 3 per row (e.g. Full name, Email, Mobile / Password, Confirm password, Role), with a wider popup; drops to 1 per row on phones.
 
 ## Technical details
 - `admin.index.tsx` (documents table card, line ~187/198) and `admin.users.tsx` (line ~73): remove `min-h-0 flex-1 overflow-auto` / `overflow-hidden` / `min-h-[320px]` from the table wrappers so they grow to full height; keep `overflow-x-auto` only for narrow screens.
 - Keep `main` in `AdminShell` as the single `overflow-y-auto` scroller; `thead` stays `sticky top-0` relative to `main`.
 - `AdminShell`: remove the white/padded wrapper (`bg-background`, rounded box) around the transparent logo in both layouts.
+- `admin.users.tsx` user form: `grid sm:grid-cols-3`, dialog widened via `AdminDialog` size prop.
 - Check in preview at 1366x768 that only one scrollbar appears and scrolling reaches the last row.
