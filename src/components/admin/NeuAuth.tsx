@@ -1,7 +1,7 @@
 import type { ReactNode, InputHTMLAttributes } from "react";
 import { useState } from "react";
 import { Eye, EyeOff, PanelRightOpen, PanelRightClose } from "lucide-react";
-import logo from "@/assets/ramky-logo-transparent.png.asset.json";
+import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import poster from "@/assets/ramky-group-poster.png.asset.json";
 
 /** Poster first (whole image, never cropped); toggle splits into 60% poster / 40% login panel. */

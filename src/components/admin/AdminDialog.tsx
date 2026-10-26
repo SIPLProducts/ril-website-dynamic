@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from "react";
 import { UploadCloud, X, type LucideIcon } from "lucide-react";
-import logo from "@/assets/ramky-logo-transparent.png.asset.json";
+import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 /** Branded popup used across the admin portal: gradient header, scrollable body, sticky footer. */
