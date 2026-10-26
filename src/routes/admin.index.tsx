@@ -132,7 +132,7 @@ function IconAction({ label, onClick, children, danger }: { label: string; onCli
       <TooltipTrigger asChild>
         <button onClick={onClick} aria-label={label} className={`grid size-8 place-items-center rounded-md shadow-sm transition hover:opacity-90 ${danger ? "btn-grad-danger" : label === "Edit" ? "btn-grad-edit" : "border border-border bg-card text-muted-foreground hover:text-foreground"}`}>{children}</button>
       </TooltipTrigger>
-      <TooltipContent>{label}</TooltipContent>
+      <TooltipContent className={danger ? "btn-grad-danger" : label === "Edit" ? "btn-grad-edit" : ""}>{label}</TooltipContent>
     </Tooltip>
   );
 }

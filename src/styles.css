@@ -40,6 +40,7 @@
   --color-surface: var(--surface);
   --color-footer-background: var(--footer-background);
   --color-footer-accent: var(--footer-accent);
+  --color-admin-nav: var(--admin-nav);
   --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Hind", ui-sans-serif, system-ui, sans-serif;
 }
