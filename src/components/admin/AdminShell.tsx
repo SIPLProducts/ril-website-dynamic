@@ -162,13 +162,13 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
       <div className="admin-canvas flex h-screen w-full overflow-hidden">
         {vertical && sidebar}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className={`z-20 flex h-16 shrink-0 items-center gap-3 px-4 md:px-6 relative admin-nav`}>
+          <header className={`z-20 flex h-[72px] shrink-0 items-center gap-3 px-4 md:px-6 relative admin-nav`}>
             {vertical ? (
               <button onClick={() => setCollapsed((c) => !c)} aria-label="Toggle sidebar" className="hidden rounded-md p-2 text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground md:inline-flex">
                 {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
               </button>
             ) : null}
-            <img src={logo.url} alt="Ramky Infrastructure" className="logo-glow h-12 w-auto shrink-0" />
+            <img src={logo.url} alt="Ramky Infrastructure" className="logo-glow h-[60px] w-auto shrink-0" />
             <span className="mx-1 hidden h-8 w-px bg-primary-foreground/20 md:block" />
             <nav aria-label="Breadcrumb" className={`flex min-w-0 items-center gap-1.5 text-sm ${"text-[var(--admin-nav-muted)]"}`}>
               {crumbs.map((c, i) => (
