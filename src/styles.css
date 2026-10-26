@@ -265,3 +265,6 @@
   color: oklch(1 0 0);
   box-shadow: 0 10px 24px -8px color-mix(in oklab, oklch(0.68 0.19 40) 60%, transparent);
 }
+@utility neu-field-line {
+  background-image: linear-gradient(90deg, oklch(0.7 0.18 50), oklch(0.62 0.17 145));
+}
