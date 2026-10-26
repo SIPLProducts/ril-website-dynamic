@@ -21,7 +21,7 @@
    - Inactive account: blocked, with the message "Your account is inactive. Contact the Super Admin."
    - OTP off: the user goes straight to the dashboard.
    - OTP on: after a correct password, a 6-digit code is emailed. A second round screen shows "Enter OTP" with 6 boxes, Verify, and Resend after 60 seconds. The dashboard opens only after the right code.
-5. **First Super Admin**: you give me one email address and I make that account the Super Admin. After that, the Super Admin creates everyone else from the Users page.
+5. **First Super Admin**: masteradmin@sharviinfotech.com. I create this account with a temporary password, which you change after your first login using "Forgot password?". After that, the Super Admin creates everyone else from the Users page.
 
 ## Things to know
 - OTP emails are sent from the built-in sign-in email system. For branding, you can later set up your own sender domain (e.g. no-reply@siplproducts.com).
