@@ -9,8 +9,8 @@ export function NeuShell({ children }: { children: ReactNode }) {
   const [split, setSplit] = useState(false);
   return (
     <div className="neu-bg relative flex min-h-screen flex-col overflow-hidden md:h-screen md:flex-row">
-      <div className={`relative flex items-center justify-center bg-background transition-all duration-700 ease-in-out ${split ? "h-[40vh] md:h-full md:w-[70%]" : "h-screen md:w-full"}`}>
-        <img src={poster.url} alt="Ramky Group – Towards sustainable growth" className="h-full w-full object-contain" />
+      <div className={`relative flex items-center justify-center bg-background transition-all duration-700 ease-in-out ${split ? "h-[40vh] md:h-full md:w-[60%]" : "h-screen md:w-full"}`}>
+        <img src={poster.url} alt="Ramky Group – Towards sustainable growth" className={`h-full w-full ${split ? "object-contain" : "object-cover"}`} />
       </div>
       <button
         type="button"
@@ -20,11 +20,13 @@ export function NeuShell({ children }: { children: ReactNode }) {
       >
         {split ? <PanelRightClose className="size-5" /> : <PanelRightOpen className="size-5" />}
       </button>
-      <div className={`relative flex items-center justify-center overflow-hidden transition-all duration-700 ease-in-out ${split ? "flex-1 px-6 py-10 opacity-100 md:w-[30%]" : "h-0 w-0 opacity-0 md:h-full"}`}>
+      <div className={`relative flex items-center justify-center overflow-hidden transition-all duration-700 ease-in-out ${split ? "flex-1 px-4 py-10 opacity-100 md:w-[40%]" : "h-0 w-0 opacity-0 md:h-full"}`}>
         <img src={logo.url} alt="" aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 w-[85%] -translate-x-1/2 -translate-y-1/2 select-none opacity-15" />
-        <div className="neu-raised relative w-full max-w-[340px] rounded-3xl p-7">
-          <img src={logo.url} alt="Ramky" className="mx-auto mb-4 h-14 w-auto object-contain" />
-          {children}
+        <div className="neu-raised relative flex aspect-square w-[min(92vw,520px)] items-center justify-center rounded-full p-8 md:w-[min(36vw,520px)]">
+          <div className="w-full max-w-[300px]">
+            <img src={logo.url} alt="Ramky" className="mx-auto mb-3 h-12 w-auto object-contain" />
+            {children}
+          </div>
         </div>
       </div>
     </div>
