@@ -3,8 +3,8 @@
     "capability": "code",
     "source": "uploaded ZIP",
     "outcome": "migrate",
-    "status": "in_progress",
-    "next_action": "Import original pages and design"
+    "status": "verified",
+    "next_action": null
   },
   {
     "capability": "schema",
@@ -17,8 +17,8 @@
     "capability": "records",
     "source": "Bundled static content",
     "outcome": "migrate",
-    "status": "in_progress",
-    "next_action": "Preserve static data modules"
+    "status": "verified",
+    "next_action": null
   },
   {
     "capability": "auth identities",
@@ -31,22 +31,22 @@
     "capability": "authorization",
     "source": "Public website",
     "outcome": "preserve",
-    "status": "in_progress",
-    "next_action": "Check all routes"
+    "status": "verified",
+    "next_action": null
   },
   {
     "capability": "uploaded file bytes",
-    "source": "Bundled images and asset pointers",
-    "outcome": "preserve",
-    "status": "in_progress",
-    "next_action": "Upload binary assets and verify URLs"
+    "source": "11 bundled media files and 87 original-project asset references",
+    "outcome": "All original asset bytes recovered from the public original website and imported into target storage",
+    "status": "verified",
+    "next_action": null
   },
   {
     "capability": "external providers",
     "source": "External document and website links",
     "outcome": "preserve",
-    "status": "in_progress",
-    "next_action": "Verify asset access"
+    "status": "verified",
+    "next_action": null
   },
   {
     "capability": "public endpoints",
@@ -93,16 +93,16 @@
   {
     "capability": "verification",
     "source": "Preview routes and navigation",
-    "outcome": "verify",
-    "status": "in_progress",
-    "next_action": "Run browser checks and existing tests"
+    "outcome": "34 linked/detail pages returned 200; slideshow, project status filter, quarterly PDF preview, email career application, and mobile menu verified; routing test passed; no runtime errors",
+    "status": "verified",
+    "next_action": null
   },
   {
     "capability": "career applications",
     "source": "Email application with disabled online form",
     "outcome": "preserve",
-    "status": "in_progress",
-    "next_action": "Verify email application link"
+    "status": "verified",
+    "next_action": null
   },
   {
     "capability": "investor documents",
