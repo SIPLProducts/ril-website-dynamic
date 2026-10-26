@@ -3,8 +3,10 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CareersLayout } from "@/components/site/CareersLayout";
 import { careersHead } from "@/lib/careers";
-import cultureImage from "@/assets/careers-people-culture.jpg";
-import projectImage from "@/assets/careers-opportunities.jpg";
+import cultureImageAsset from "@/assets/careers-people-culture.jpg.asset.json";
+import projectImageAsset from "@/assets/careers-opportunities.jpg.asset.json";
+const cultureImage = cultureImageAsset.url;
+const projectImage = projectImageAsset.url;
 
 export const Route = createFileRoute("/careers")({
   head: () => careersHead("People & Careers", "Explore Life at Ramky and Current Positions at Ramky Infrastructure Limited."),

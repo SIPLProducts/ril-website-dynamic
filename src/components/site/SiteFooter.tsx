@@ -1,9 +1,10 @@
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
-import logo from "@/assets/ramky-logo-transparent.png";
+import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
 import milesCityLogo from "@/assets/miles-city.png.asset.json";
 import ramkyEstatesLogo from "@/assets/ramky-estates.svg.asset.json";
 import recepsLogo from "@/assets/receps.png.asset.json";
 import visakhaPharmacityLogo from "@/assets/visakha-pharmacity.jpg.asset.json";
+const logo = logoAsset.url;
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {

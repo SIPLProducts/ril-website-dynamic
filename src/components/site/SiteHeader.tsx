@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
-import logo from "@/assets/ramky-logo-transparent.png";
+import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { IR_CATEGORIES } from "@/lib/investor-relations";
+const logo = logoAsset.url;
 
 const NAV = [
   { label: "Capabilities", href: "/#businesses" },

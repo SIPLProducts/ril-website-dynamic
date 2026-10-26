@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { BUSINESS_VERTICALS } from "@/lib/business-projects";
 import { ArrowRight, Droplets, ExternalLink, Factory, Globe2, Leaf, Pause, Play, Route, ShieldCheck, Waves, Zap } from "lucide-react";
-import irrigationRegulators from "@/assets/irrigation-regulators.jpg";
-import powerTransmission from "@/assets/power-transmission.jpg";
-import internationalInfra from "@/assets/international-infra.jpg";
+import irrigationRegulatorsAsset from "@/assets/irrigation-regulators.jpg.asset.json";
+import powerTransmissionAsset from "@/assets/power-transmission.jpg.asset.json";
+import internationalInfraAsset from "@/assets/international-infra.jpg.asset.json";
 import hero from "@/assets/hero.asset.json";
 import water from "@/assets/water.asset.json";
 import bridge from "@/assets/bridge.asset.json";
@@ -15,7 +15,7 @@ import hummingbirdPoster from "@/assets/sustainability-hummingbird-poster.jpg.as
 import urban from "@/assets/urban.asset.json";
 import irrigation from "@/assets/irrigation.asset.json";
 import industrial from "@/assets/industrial.asset.json";
-import slide3 from "@/assets/slide-3.jpg";
+import slide3Asset from "@/assets/slide-3.jpg.asset.json";
 import leachateHyd from "@/assets/leachate-hyderabad.asset.json";
 import wtpNalgonda from "@/assets/wtp-nalgonda.jpg.asset.json";
 import srinagarBanihal from "@/assets/srinagar-banihal-expressway.jpg.asset.json";
@@ -26,7 +26,7 @@ import lm2 from "@/assets/landmark-2.jpg.asset.json";
 import lm3 from "@/assets/landmark-3.jpg.asset.json";
 import lm4 from "@/assets/landmark-4.jpg.asset.json";
 import lm7 from "@/assets/landmark-7.jpg.asset.json";
-import namExpresswayCombined from "@/assets/nam-expressway-combined.jpg";
+import namExpresswayCombinedAsset from "@/assets/nam-expressway-combined.jpg.asset.json";
 import musiCombined from "@/assets/musi-two-photos.jpg.asset.json";
 import odysseyCombined from "@/assets/odyssey-combined.jpg.asset.json";
 import narelaCombined from "@/assets/narela-bawana-combined.jpg.asset.json";
@@ -34,6 +34,11 @@ import capWater from "@/assets/cap-water.png.asset.json";
 import capTransportation from "@/assets/cap-transportation.jpg.asset.json";
 import capUrban from "@/assets/cap-urban.jpg.asset.json";
 import capIrrigation from "@/assets/cap-irrigation.jpg.asset.json";
+const irrigationRegulators = irrigationRegulatorsAsset.url;
+const powerTransmission = powerTransmissionAsset.url;
+const internationalInfra = internationalInfraAsset.url;
+const slide3 = slide3Asset.url;
+const namExpresswayCombined = namExpresswayCombinedAsset.url;
 
 const HERO_SLIDES = [
   {
