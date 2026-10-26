@@ -77,7 +77,7 @@ function UsersPage() {
     <AdminShell staff={staff} active={{ kind: "users" }} crumbs={["User Management", "All users"]}>
       <div className="mb-4 flex shrink-0 flex-wrap items-end justify-between gap-4">
         <div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">Administration</p><h1 className="mt-1 font-display text-2xl font-bold md:text-3xl">User Management</h1><p className="mt-1 text-sm text-muted-foreground">Only accounts listed here can sign in to the admin portal.</p></div>
-        <Button onClick={() => setForm(blank)} className="admin-accent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Create user</Button>
+        <Button onClick={() => setForm(blank)} className="admin-accent hover:bg-transparent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Create user</Button>
       </div>
       <div className="rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
         <table className="w-full text-sm">
@@ -99,9 +99,9 @@ function UsersPage() {
                   <label className="flex items-center gap-2"><Switch checked={r.is_active} disabled={r.user_id === me} onCheckedChange={() => toggleActive(r)} aria-label="Active" /><span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${r.is_active ? "admin-badge-live" : "admin-badge-draft"}`}>{r.is_active ? "Active" : "Inactive"}</span></label>
                 </td>
                 <td className="px-5 py-3"><div className="flex justify-end gap-1">
-                  <Button size="sm" className="btn-grad-edit border-0 hover:opacity-90" onClick={() => setForm({ ...blank, userId: r.user_id, fullName: r.full_name, email: r.email, phone: r.phone, role: r.role, otpRequired: r.otp_required, isActive: r.is_active })}><Pencil className="size-4" /> Edit</Button>
+                  <Button size="sm" className="btn-grad-edit hover:bg-transparent border-0 hover:opacity-90" onClick={() => setForm({ ...blank, userId: r.user_id, fullName: r.full_name, email: r.email, phone: r.phone, role: r.role, otpRequired: r.otp_required, isActive: r.is_active })}><Pencil className="size-4" /> Edit</Button>
                   <Button size="sm" variant="ghost" onClick={() => setResetFor(r)}><KeyRound className="size-4" /> Reset password</Button>
-                  {r.user_id !== me && !(r.role === "super_admin" && superCount <= 1) && <Button size="sm" className="btn-grad-danger border-0 hover:opacity-90" onClick={() => removeUser(r)}><Trash2 className="size-4" /> Delete</Button>}
+                  {r.user_id !== me && !(r.role === "super_admin" && superCount <= 1) && <Button size="sm" className="btn-grad-danger hover:bg-transparent border-0 hover:opacity-90" onClick={() => removeUser(r)}><Trash2 className="size-4" /> Delete</Button>}
                 </div></td>
               </tr>
             ))}
@@ -144,7 +144,7 @@ function UserDialog({ initial, isSelf, onClose, onSaved }: { initial: Form; isSe
   const sel = adminSelect + " mt-1.5";
   return (
     <AdminDialog xwide icon={editing ? UserCog : UserPlus} title={editing ? "Edit user" : "Create user"} subtitle={editing ? f.email : "Give a team member access to the admin portal"} onClose={onClose}
-      footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="user-form" disabled={busy} className="admin-accent border-0 px-6 hover:opacity-90">{busy ? "Saving…" : editing ? "Save changes" : "Create user"}</Button></>}>
+      footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="user-form" disabled={busy} className="admin-accent hover:bg-transparent border-0 px-6 hover:opacity-90">{busy ? "Saving…" : editing ? "Save changes" : "Create user"}</Button></>}>
       <form id="user-form" onSubmit={save} noValidate>
         <FormSection title="Profile">
           <div className="grid gap-4 sm:grid-cols-3">
@@ -192,7 +192,7 @@ function ResetDialog({ row, onClose }: { row: Row; onClose: () => void }) {
   }
   return (
     <AdminDialog icon={KeyRound} title="Reset password" subtitle={row.full_name} onClose={onClose}
-      footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="reset-form" className="admin-accent border-0 px-6 hover:opacity-90">Reset password</Button></>}>
+      footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="reset-form" className="admin-accent hover:bg-transparent border-0 px-6 hover:opacity-90">Reset password</Button></>}>
       <form id="reset-form" onSubmit={save} className="space-y-4">
         <div><Label>New password</Label><Input type="password" value={pw} onChange={(e) => setPw(e.target.value)} className="mt-1.5 h-10" /></div>
         <div><Label>Confirm password</Label><Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} className="mt-1.5 h-10" /></div>

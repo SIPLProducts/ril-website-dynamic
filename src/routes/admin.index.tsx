@@ -183,7 +183,7 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
   return (
     <div className="flex flex-col">
       <PageHeader eyebrow={`Investors · ${meta.categoryLabel}`} title={meta.label} desc={`${docs.length} documents · ${liveCount} live · ${docs.length - liveCount} draft`}
-        action={<Button onClick={() => setEditing(blank)} className="admin-accent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Upload document</Button>} />
+        action={<Button onClick={() => setEditing(blank)} className="admin-accent hover:bg-transparent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Upload document</Button>} />
 
       <div className="flex flex-col rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
         <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-border p-3">
@@ -284,7 +284,7 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
 
   return (
     <AdminDialog wide icon={FileUp} title={d.id ? "Edit document" : "Upload document"} subtitle={sectionLabel} onClose={onClose}
-      footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="doc-form" disabled={saving} className="admin-accent border-0 px-6 hover:opacity-90">{saving ? "Saving…" : d.id ? "Save changes" : "Upload"}</Button></>}>
+      footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="doc-form" disabled={saving} className="admin-accent hover:bg-transparent border-0 px-6 hover:opacity-90">{saving ? "Saving…" : d.id ? "Save changes" : "Upload"}</Button></>}>
       <form id="doc-form" onSubmit={save} noValidate>
         <FormSection title="Details">
           <div><Label>Title <span className="text-destructive">*</span></Label><Input value={d.title} placeholder="e.g. Financial Results – Q1 FY 2026–27" onChange={(e) => set("title", e.target.value)} className="mt-1.5 h-10" aria-invalid={!!errors.title} /><FieldError msg={errors.title} /></div>
@@ -350,7 +350,7 @@ function ContactsEditor() {
   return (
     <div>
       <PageHeader eyebrow="Investors · Shareholders Information" title="Investor Contacts" desc="Contact blocks shown on the public Investors page."
-        action={<Button onClick={add} className="admin-accent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Add contact block</Button>} />
+        action={<Button onClick={add} className="admin-accent hover:bg-transparent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Add contact block</Button>} />
       {isLoading ? <p className="text-sm text-muted-foreground">Loading…</p> : (
         <div className="grid gap-5 lg:grid-cols-2">{rows.map((r) => <ContactCard key={r.id} row={r} onChange={refresh} />)}</div>
       )}
@@ -392,8 +392,8 @@ function ContactCard({ row, onChange }: { row: ContactRow; onChange: () => void 
         <Button size="sm" variant="outline" onClick={() => setLines((ls) => [...ls, { value: "" }])}><Plus className="size-4" /> Add line</Button>
       </div>
       <div className="flex justify-between border-t border-border px-5 py-3">
-        <Button onClick={remove} className="btn-grad-danger border-0 hover:opacity-90"><Trash2 className="size-4" /> Delete block</Button>
-        <Button onClick={save} className="admin-accent border-0 px-6 hover:opacity-90">Save</Button>
+        <Button onClick={remove} className="btn-grad-danger hover:bg-transparent border-0 hover:opacity-90"><Trash2 className="size-4" /> Delete block</Button>
+        <Button onClick={save} className="admin-accent hover:bg-transparent border-0 px-6 hover:opacity-90">Save</Button>
       </div>
     </div>
   );
