@@ -52,7 +52,7 @@ export const saveEmailSettings = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const admin = await assertSuper(context);
     const { password, ...rest } = data;
-    const patch: Record<string, unknown> = { ...rest, updated_at: new Date().toISOString() };
+    const patch: any = { ...rest, updated_at: new Date().toISOString() };
     if (password) patch["password"] = password;
     const { error } = await admin.from("email_settings").update(patch).eq("id", 1);
     if (error) throw new Error(error.message);

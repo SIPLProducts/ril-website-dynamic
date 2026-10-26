@@ -66,7 +66,7 @@ function EmailSettingsPage() {
     finally { setBusy(""); }
   }
   async function onTest() {
-    if (!isEmail(testTo)) return toast.error("Enter a valid email to send the test to");
+    if (!isEmail(testTo)) { toast.error("Enter a valid email to send the test to"); return; }
     setBusy("test");
     try { await test({ data: { to: testTo } }); toast.success(`Test email sent to ${testTo}`); }
     catch (e) { toast.error(e instanceof Error ? e.message : "Test failed"); }
