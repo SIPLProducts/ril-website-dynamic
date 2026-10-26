@@ -4,13 +4,14 @@ import { Eye, EyeOff, PanelRightOpen, PanelRightClose } from "lucide-react";
 import logo from "@/assets/ramky-logo-transparent.png.asset.json";
 import poster from "@/assets/ramky-group-poster.png.asset.json";
 
-/** Poster first; toggle splits into 70% poster / 30% login panel. */
+/** Poster first (whole image, never cropped); toggle splits into 60% poster / 40% login panel. */
 export function NeuShell({ children }: { children: ReactNode }) {
   const [split, setSplit] = useState(false);
   return (
     <div className="neu-bg relative flex min-h-screen flex-col overflow-hidden md:h-screen md:flex-row">
-      <div className={`relative flex items-center justify-center bg-background transition-all duration-700 ease-in-out ${split ? "h-[40vh] md:h-full md:w-[60%]" : "h-screen md:w-full"}`}>
-        <img src={poster.url} alt="Ramky Group – Towards sustainable growth" className={`h-full w-full ${split ? "object-contain" : "object-cover"}`} />
+      <div className={`relative flex items-center justify-center overflow-hidden bg-background transition-all duration-700 ease-in-out ${split ? "h-[40vh] md:h-full md:w-[60%]" : "h-screen md:w-full"}`}>
+        <img src={poster.url} alt="" aria-hidden className="pointer-events-none absolute inset-0 h-full w-full scale-110 select-none object-cover blur-2xl opacity-80" />
+        <img src={poster.url} alt="Ramky Group – Towards sustainable growth" className="relative h-full w-full object-contain" />
       </div>
       <button
         type="button"
@@ -21,7 +22,6 @@ export function NeuShell({ children }: { children: ReactNode }) {
         {split ? <PanelRightClose className="size-5" /> : <PanelRightOpen className="size-5" />}
       </button>
       <div className={`relative flex items-center justify-center overflow-hidden transition-all duration-700 ease-in-out ${split ? "flex-1 px-4 py-10 opacity-100 md:w-[40%]" : "h-0 w-0 opacity-0 md:h-full"}`}>
-        <img src={logo.url} alt="" aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 w-[85%] -translate-x-1/2 -translate-y-1/2 select-none opacity-15" />
         <div className="neu-raised relative flex aspect-square w-[min(92vw,520px)] items-center justify-center rounded-full p-8 md:w-[min(36vw,520px)]">
           <div className="w-full max-w-[300px]">
             <img src={logo.url} alt="Ramky" className="mx-auto mb-3 h-12 w-auto object-contain" />
@@ -48,7 +48,8 @@ export function NeuField({ icon, error, type, ...rest }: FieldProps) {
   const isPw = type === "password";
   return (
     <div>
-      <div className={`neu-inset flex h-12 items-center gap-3 rounded-xl px-4 ${error ? "ring-2 ring-[var(--neu-accent)]/40" : ""}`}>
+      <div className={`group neu-inset relative flex h-12 items-center gap-3 overflow-hidden rounded-xl px-4 ${error ? "ring-2 ring-[var(--neu-accent)]/40" : ""}`}>
+        <span aria-hidden className="neu-field-line pointer-events-none absolute inset-x-0 bottom-0 h-[2px] opacity-70 transition-all group-focus-within:h-[3px] group-focus-within:opacity-100" />
         <span className={error ? "neu-accent" : "opacity-60"}>{icon}</span>
         <input {...rest} type={isPw && show ? "text" : type} className="h-full w-full bg-transparent text-sm outline-none placeholder:opacity-60" />
         {isPw && (
