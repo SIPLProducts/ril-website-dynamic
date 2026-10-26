@@ -121,7 +121,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   );
 
   const horizontalNav = (
-    <nav className="hidden shrink-0 items-center gap-1 overflow-x-auto admin-nav px-4 py-1.5 thin-scroll thin-scroll-dark md:flex md:px-6">
+    <nav className="hidden shrink-0 items-center gap-1 overflow-x-auto admin-nav border-t border-primary-foreground/10 px-4 py-1.5 thin-scroll thin-scroll-dark md:flex md:px-6">
       <Link to="/admin" search={{}} className={hItem(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /> Dashboard</Link>
       <DropdownMenu>
         <DropdownMenuTrigger className={hItem(active.kind === "investors")}><INVESTORS_ICON className="size-4" /> Investors <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
@@ -162,29 +162,29 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
       <div className="admin-canvas flex h-screen w-full overflow-hidden">
         {vertical && sidebar}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className={`z-20 flex h-16 shrink-0 items-center gap-3 px-4 md:px-6 relative bg-background shadow-sm`}>
+          <header className={`z-20 flex h-16 shrink-0 items-center gap-3 px-4 md:px-6 relative admin-nav`}>
             {vertical ? (
-              <button onClick={() => setCollapsed((c) => !c)} aria-label="Toggle sidebar" className="hidden rounded-md p-2 text-muted-foreground hover:bg-surface hover:text-foreground md:inline-flex">
+              <button onClick={() => setCollapsed((c) => !c)} aria-label="Toggle sidebar" className="hidden rounded-md p-2 text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground md:inline-flex">
                 {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
               </button>
             ) : null}
-            <img src={logo.url} alt="Ramky Infrastructure" className="h-11 w-auto shrink-0" />
-            <span className="mx-1 hidden h-8 w-px bg-border md:block" />
-            <nav aria-label="Breadcrumb" className={`flex min-w-0 items-center gap-1.5 text-sm ${"text-muted-foreground"}`}>
+            <img src={logo.url} alt="Ramky Infrastructure" className="logo-glow h-12 w-auto shrink-0" />
+            <span className="mx-1 hidden h-8 w-px bg-primary-foreground/20 md:block" />
+            <nav aria-label="Breadcrumb" className={`flex min-w-0 items-center gap-1.5 text-sm ${"text-[var(--admin-nav-muted)]"}`}>
               {crumbs.map((c, i) => (
                 <span key={i} className="flex items-center gap-1.5 truncate">
                   {i > 0 && <ChevronRight className="size-3.5 shrink-0" />}
-                  <span className={i === crumbs.length - 1 ? ("font-semibold text-foreground") : ""}>{c}</span>
+                  <span className={i === crumbs.length - 1 ? ("font-semibold text-primary-foreground") : ""}>{c}</span>
                 </span>
               ))}
             </nav>
             <div className="ml-auto flex items-center gap-2">
-              <div role="group" aria-label="Menu layout" className={`hidden items-center rounded-lg p-0.5 md:flex ${"bg-surface"}`}>
+              <div role="group" aria-label="Menu layout" className={`hidden items-center rounded-lg p-0.5 md:flex ${"bg-primary-foreground/10"}`}>
                 {(["vertical", "horizontal"] as const).map((l) => (
                   <Tooltip key={l}>
                     <TooltipTrigger asChild>
                       <button onClick={() => changeLayout(l)} aria-label={`${l} menu`} aria-pressed={layout === l}
-                        className={`grid size-8 place-items-center rounded-md transition-colors ${layout === l ? "admin-accent shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>
+                        className={`grid size-8 place-items-center rounded-md transition-colors ${layout === l ? "admin-accent shadow-sm" : "text-primary-foreground/70 hover:text-primary-foreground"}`}>
                         {l === "vertical" ? <Columns2 className="size-4" /> : <Rows2 className="size-4" />}
                       </button>
                     </TooltipTrigger>
@@ -192,13 +192,13 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
                   </Tooltip>
                 ))}
               </div>
-              <a href="/investors" target="_blank" rel="noreferrer" className={`hidden items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm sm:inline-flex ${"border-border text-foreground/80 hover:bg-surface"}`}>View live site <ExternalLink className="size-3.5" /></a>
+              <a href="/investors" target="_blank" rel="noreferrer" className={`hidden items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm sm:inline-flex ${"border-primary-foreground/20 text-primary-foreground/90 hover:bg-primary-foreground/10"}`}>View live site <ExternalLink className="size-3.5" /></a>
               <DropdownMenu>
-                <DropdownMenuTrigger className={`flex items-center gap-2 rounded-full py-1 pl-1 pr-3 ${"hover:bg-surface"}`}>
+                <DropdownMenuTrigger className={`flex items-center gap-2 rounded-full py-1 pl-1 pr-3 ${"hover:bg-primary-foreground/10"}`}>
                   <span className="admin-accent grid size-8 place-items-center rounded-full text-xs font-bold">{initials}</span>
                   <span className="hidden text-left leading-tight lg:block">
-                    <span className={`block text-sm font-semibold ${"text-foreground"}`}>{staff.fullName}</span>
-                    <span className={`block text-[11px] ${"text-muted-foreground"}`}>{isSuper ? "Super Admin" : "Admin"}</span>
+                    <span className={`block text-sm font-semibold ${"text-primary-foreground"}`}>{staff.fullName}</span>
+                    <span className={`block text-[11px] ${"text-[var(--admin-nav-muted)]"}`}>{isSuper ? "Super Admin" : "Admin"}</span>
                   </span>
                   <ChevronDown className="size-4 opacity-60" />
                 </DropdownMenuTrigger>
@@ -210,9 +210,9 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            <div className="admin-accent-line absolute inset-x-0 bottom-0 h-[2px]" />
           </header>
           {!vertical && horizontalNav}
+          <div className="admin-accent-line h-[3px] shrink-0" />
           <div className="shrink-0 border-b border-border bg-background px-4 py-2 md:hidden">
             <select className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm" value={active.kind === "investors" ? active.section : active.kind} onChange={(e) => {
               const v = e.target.value;
