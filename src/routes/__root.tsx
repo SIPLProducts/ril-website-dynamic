@@ -78,23 +78,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ramky Infra" },
-      { name: "description", content: "Ramky Infrastructure Limited — engineering India's infrastructure." },
+      { title: "Ramky Infrastructure" },
+      {
+        name: "description",
+        content:
+          "Ramky Infrastructure — integrated water, transportation, irrigation, environment and urban infrastructure development.",
+      },
+      { name: "author", content: "Ramky Infrastructure Limited" },
+      { property: "og:title", content: "Ramky Infrastructure" },
+      {
+        property: "og:description",
+        content: "Towards sustainable growth — integrated infrastructure development.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap",
-      },
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Hind:wght@400;500;600&display=swap",
+      },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
   shellComponent: RootShell,
