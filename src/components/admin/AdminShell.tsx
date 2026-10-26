@@ -59,7 +59,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
     <aside className={`admin-nav hidden h-full shrink-0 flex-col transition-[width] duration-300 md:flex ${collapsed ? "w-[76px]" : "w-72"}`}>
       <div className="flex h-16 shrink-0 items-center justify-center border-b border-primary-foreground/10 px-4">
         <div className={`rounded-lg bg-primary-foreground px-3 py-1.5 shadow-sm ${collapsed ? "px-1.5" : ""}`}>
-          <img src={logo.url} alt="Ramky Infrastructure" className={collapsed ? "h-6 w-9 object-contain" : "h-8 w-auto"} />
+          <img src={logo.url} alt="Ramky Infrastructure" className={collapsed ? "h-7 w-9 object-contain" : "h-10 w-auto"} />
         </div>
       </div>
       <nav className="thin-scroll thin-scroll-dark min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-4">
