@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { createUserSchema, resetPasswordSchema, updateUserSchema } from "@/lib/admin-validation";
+import { createUserSchema, deleteUserBlocker, resetPasswordSchema, updateUserSchema } from "@/lib/admin-validation";
 
 async function assertSuper(context: { supabase: any; userId: string }) {
   const { data } = await context.supabase.rpc("is_super_admin", { _user_id: context.userId });
@@ -47,6 +47,26 @@ export const resetAdminPassword = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const admin = await assertSuper(context);
     const { error } = await admin.auth.admin.updateUserById(data.userId, { password: data.password });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => {
+    const id = (d as { userId?: unknown })?.userId;
+    if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error("Invalid user");
+    return { userId: id };
+  })
+  .handler(async ({ data, context }) => {
+    const admin = await assertSuper(context);
+    const { data: supers } = await admin.from("user_roles").select("user_id").eq("role", "super_admin");
+    const ids = (supers ?? []).map((r: { user_id: string }) => r.user_id);
+    const block = deleteUserBlocker(data.userId, context.userId, ids.includes(data.userId), ids.length);
+    if (block) throw new Error(block);
+    await admin.from("user_roles").delete().eq("user_id", data.userId);
+    await admin.from("admin_profiles").delete().eq("user_id", data.userId);
+    const { error } = await admin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

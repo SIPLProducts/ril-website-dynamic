@@ -22,3 +22,10 @@ export const createUserFormSchema = createUserSchema
 
 export const updateUserSchema = userBaseSchema.extend({ userId: z.string().uuid() });
 export const resetPasswordSchema = z.object({ userId: z.string().uuid(), password: passwordSchema });
+
+/** Returns a reason the user cannot be deleted, or null when deletion is allowed. */
+export function deleteUserBlocker(targetId: string, callerId: string, targetIsSuper: boolean, superAdminCount: number): string | null {
+  if (targetId === callerId) return "You cannot delete your own account.";
+  if (targetIsSuper && superAdminCount <= 1) return "At least one Super Admin must remain.";
+  return null;
+}
