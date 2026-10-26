@@ -1,5 +1,6 @@
 # Investors admin
 - [x] Database, file storage and sign-in for the Investors module
-- [x] Hidden /admin portal: upload/edit/publish/delete documents for all 4 tabs, edit investor contacts
+- [x] Hidden /admin portal for all 4 tabs and contacts
 - [x] Public /investors page reads live content
-- [ ] Grant admin access — waiting on the admin email address from the user
+- [x] Neumorphic login, Super Admin/Admin roles, user management, per-user OTP, Active/Inactive
+- [x] Super Admin masteradmin@sharviinfotech.com created (set-password email sent)
