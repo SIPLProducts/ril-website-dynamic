@@ -237,13 +237,13 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
   const [d, setD] = useState<Draft>(draft);
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Partial<Record<"title" | "doc_date" | "file", string>>>({});
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((p) => ({ ...p, [k]: v }));
   const blankToNull = (v: string) => (v.trim() === "" ? null : v);
 
   async function save(e: React.FormEvent) {
     e.preventDefault();
-    const errs: Record<string, string> = {};
+    const errs: Partial<Record<"title" | "doc_date" | "file", string>> = {};
     if (!d.title.trim()) errs.title = "Please enter a title";
     if (!d.doc_date) errs.doc_date = "Please choose a date";
     if (!file && !d.url.trim()) errs.file = "Upload a file or paste a link";

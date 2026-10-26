@@ -31,7 +31,7 @@ export function FormSection({ title, children }: { title: string; children: Reac
   );
 }
 
-export function FieldError({ msg }: { msg?: string }) {
+export function FieldError({ msg }: { msg?: string | undefined }) {
   return msg ? <p className="mt-1 text-xs font-medium text-destructive">{msg}</p> : null;
 }
 
