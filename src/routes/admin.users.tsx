@@ -5,12 +5,13 @@ import { AdminDialog, FieldError, FormSection, adminSelect } from "@/components/
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
-import { KeyRound, Pencil, Plus, UserPlus, UserCog } from "lucide-react";
+import { KeyRound, Pencil, Plus, Trash2, UserPlus, UserCog } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getStaff, type StaffRole } from "@/lib/admin-auth";
 import { createUserFormSchema, passwordSchema, updateUserSchema } from "@/lib/admin-validation";
-import { createAdminUser, resetAdminPassword, updateAdminUser } from "@/lib/admin-users.functions";
+import { createAdminUser, deleteAdminUser, resetAdminPassword, updateAdminUser } from "@/lib/admin-users.functions";
+import { confirmDelete } from "@/components/admin/ConfirmDelete";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +42,7 @@ function UsersPage() {
   const [form, setForm] = useState<Form | null>(null);
   const [resetFor, setResetFor] = useState<Row | null>(null);
   const update = useServerFn(updateAdminUser);
+  const del = useServerFn(deleteAdminUser);
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -64,13 +66,20 @@ function UsersPage() {
     } catch (e) { toast.error(e instanceof Error ? e.message : "Failed"); }
   }
 
+  const superCount = rows.filter((r) => r.role === "super_admin").length;
+  async function removeUser(r: Row) {
+    if (!(await confirmDelete(`Delete ${r.full_name}?`, "They will lose access to the admin portal. This cannot be undone."))) return;
+    try { await del({ data: { userId: r.user_id } }); toast.success("User deleted"); refresh(); }
+    catch (e) { toast.error(e instanceof Error ? e.message : "Delete failed"); }
+  }
+
   return (
     <AdminShell staff={staff} active={{ kind: "users" }} crumbs={["User Management", "All users"]}>
       <div className="mb-4 flex shrink-0 flex-wrap items-end justify-between gap-4">
         <div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">Administration</p><h1 className="mt-1 font-display text-2xl font-bold md:text-3xl">User Management</h1><p className="mt-1 text-sm text-muted-foreground">Only accounts listed here can sign in to the admin portal.</p></div>
         <Button onClick={() => setForm(blank)} className="admin-accent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Create user</Button>
       </div>
-      <div className="thin-scroll min-h-0 flex-1 overflow-auto rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
+      <div className="rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
         <table className="w-full text-sm">
           <thead className="sticky top-0 z-10 bg-background text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
             <tr className="border-b border-border"><th className="px-5 py-3">User</th><th className="px-4 py-3">Mobile</th><th className="px-4 py-3">Role</th><th className="px-4 py-3">OTP</th><th className="px-4 py-3">Status</th><th className="px-5 py-3 text-right">Actions</th></tr>
@@ -90,8 +99,9 @@ function UsersPage() {
                   <label className="flex items-center gap-2"><Switch checked={r.is_active} disabled={r.user_id === me} onCheckedChange={() => toggleActive(r)} aria-label="Active" /><span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${r.is_active ? "admin-badge-live" : "admin-badge-draft"}`}>{r.is_active ? "Active" : "Inactive"}</span></label>
                 </td>
                 <td className="px-5 py-3"><div className="flex justify-end gap-1">
-                  <Button size="sm" variant="ghost" onClick={() => setForm({ ...blank, userId: r.user_id, fullName: r.full_name, email: r.email, phone: r.phone, role: r.role, otpRequired: r.otp_required, isActive: r.is_active })}><Pencil className="size-4" /> Edit</Button>
+                  <Button size="sm" className="btn-grad-edit border-0 hover:opacity-90" onClick={() => setForm({ ...blank, userId: r.user_id, fullName: r.full_name, email: r.email, phone: r.phone, role: r.role, otpRequired: r.otp_required, isActive: r.is_active })}><Pencil className="size-4" /> Edit</Button>
                   <Button size="sm" variant="ghost" onClick={() => setResetFor(r)}><KeyRound className="size-4" /> Reset password</Button>
+                  {r.user_id !== me && !(r.role === "super_admin" && superCount <= 1) && <Button size="sm" className="btn-grad-danger border-0 hover:opacity-90" onClick={() => removeUser(r)}><Trash2 className="size-4" /> Delete</Button>}
                 </div></td>
               </tr>
             ))}
@@ -133,33 +143,34 @@ function UserDialog({ initial, isSelf, onClose, onSaved }: { initial: Form; isSe
 
   const sel = adminSelect + " mt-1.5";
   return (
-    <AdminDialog wide icon={editing ? UserCog : UserPlus} title={editing ? "Edit user" : "Create user"} subtitle={editing ? f.email : "Give a team member access to the admin portal"} onClose={onClose}
+    <AdminDialog xwide icon={editing ? UserCog : UserPlus} title={editing ? "Edit user" : "Create user"} subtitle={editing ? f.email : "Give a team member access to the admin portal"} onClose={onClose}
       footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="user-form" disabled={busy} className="admin-accent border-0 px-6 hover:opacity-90">{busy ? "Saving…" : editing ? "Save changes" : "Create user"}</Button></>}>
       <form id="user-form" onSubmit={save} noValidate>
         <FormSection title="Profile">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div><Label>Full name *</Label><Input value={f.fullName} onChange={(e) => set("fullName", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["fullName"]} /></div>
+            <div><Label>Email *</Label><Input type="email" disabled={editing} value={f.email} onChange={(e) => set("email", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["email"]} /></div>
             <div><Label>Mobile number *</Label><Input inputMode="tel" placeholder="98XXXXXXXX" value={f.phone} onChange={(e) => set("phone", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["phone"]} /></div>
           </div>
-          <div><Label>Email *</Label><Input type="email" disabled={editing} value={f.email} onChange={(e) => set("email", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["email"]} /></div>
         </FormSection>
         {!editing && (
           <FormSection title="Password">
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-3">
               <div><Label>Password *</Label><Input type="password" autoComplete="new-password" value={f.password} onChange={(e) => set("password", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["password"]} /></div>
               <div><Label>Confirm password *</Label><Input type="password" autoComplete="new-password" value={f.confirmPassword} onChange={(e) => set("confirmPassword", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["confirmPassword"]} /></div>
             </div>
           </FormSection>
         )}
         <FormSection title="Access">
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div><Label>Role</Label><select disabled={isSelf} value={f.role} onChange={(e) => set("role", e.target.value as StaffRole)} className={sel}><option value="admin">Admin</option><option value="super_admin">Super Admin</option></select></div>
             <div><Label>Status</Label><select disabled={isSelf} value={f.isActive ? "active" : "inactive"} onChange={(e) => set("isActive", e.target.value === "active")} className={sel}><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
-          </div>
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-4">
+          <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3 sm:mt-6">
             <Checkbox className="mt-0.5" checked={f.otpRequired} onCheckedChange={(v) => set("otpRequired", v === true)} />
             <span><span className="block text-sm font-semibold">Require OTP verification</span><span className="block text-xs text-muted-foreground">A code is emailed at each login.</span></span>
           </label>
+          </div>
+          
         </FormSection>
       </form>
     </AdminDialog>

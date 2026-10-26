@@ -4,10 +4,10 @@ import logo from "@/assets/ramky-logo-transparent.png.asset.json";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 /** Branded popup used across the admin portal: gradient header, scrollable body, sticky footer. */
-export function AdminDialog({ icon: Icon, title, subtitle, onClose, footer, children, wide }: { icon: LucideIcon; title: string; subtitle?: string; onClose: () => void; footer: ReactNode; children: ReactNode; wide?: boolean }) {
+export function AdminDialog({ icon: Icon, title, subtitle, onClose, footer, children, wide, xwide }: { icon: LucideIcon; title: string; subtitle?: string; onClose: () => void; footer: ReactNode; children: ReactNode; wide?: boolean; xwide?: boolean }) {
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className={`flex max-h-[calc(100vh-2rem)] flex-col gap-0 overflow-hidden rounded-xl border-0 p-0 shadow-2xl ${wide ? "sm:max-w-2xl" : "sm:max-w-lg"} [&>button]:hidden`}>
+      <DialogContent className={`flex max-h-[calc(100vh-2rem)] flex-col gap-0 overflow-hidden rounded-xl border-0 p-0 shadow-2xl ${xwide ? "sm:max-w-4xl" : wide ? "sm:max-w-2xl" : "sm:max-w-lg"} [&>button]:hidden`}>
         <div className="relative bg-background px-6 pb-4 pt-5">
           <div className="flex items-start gap-4">
             <span className="admin-accent grid size-11 shrink-0 place-items-center rounded-xl shadow-md"><Icon className="size-5" /></span>

@@ -19,3 +19,10 @@ describe("admin user rules", () => {
     expect(createUserFormSchema.safeParse(base).success).toBe(true);
   });
 });
+
+import { deleteUserBlocker } from "@/lib/admin-validation";
+describe("deleteUserBlocker", () => {
+  it("blocks deleting the last Super Admin", () => expect(deleteUserBlocker("a", "b", true, 1)).not.toBeNull());
+  it("allows deleting a Super Admin when another remains", () => expect(deleteUserBlocker("a", "b", true, 2)).toBeNull());
+  it("blocks self-delete", () => expect(deleteUserBlocker("a", "a", false, 2)).not.toBeNull());
+});

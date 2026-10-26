@@ -11,6 +11,7 @@ import { IR_BUCKET, IR_SECTIONS, STORAGE_PREFIX, rollingFyLabels, type IrContact
 import logo from "@/assets/ramky-logo-transparent.png.asset.json";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection, adminSelect } from "@/components/admin/AdminDialog";
+import { confirmDelete } from "@/components/admin/ConfirmDelete";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -180,11 +181,11 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
   const liveCount = docs.filter((d) => d.published).length;
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex flex-col">
       <PageHeader eyebrow={`Investors · ${meta.categoryLabel}`} title={meta.label} desc={`${docs.length} documents · ${liveCount} live · ${docs.length - liveCount} draft`}
         action={<Button onClick={() => setEditing(blank)} className="admin-accent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Upload document</Button>} />
 
-      <div className="flex min-h-[320px] flex-1 flex-col overflow-hidden rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
+      <div className="flex flex-col rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
         <div className="flex shrink-0 flex-wrap items-center gap-3 border-b border-border p-3">
           <div className="relative min-w-[220px] flex-1">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -195,7 +196,7 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
           )}
           <select className={adminSelect.replace("w-full", "w-44")} value={status} onChange={(e) => setStatus(e.target.value)}><option value="">All status</option><option value="live">Live</option><option value="draft">Draft</option></select>
         </div>
-        <div className="thin-scroll min-h-0 flex-1 overflow-auto">
+        <div>
           <table className="w-full text-sm">
             <thead className="sticky top-0 z-10 bg-background text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
               <tr className="border-b border-border"><th className="px-5 py-3 font-semibold">Document</th><th className="px-4 py-3 font-semibold">Year / Qtr</th><th className="px-4 py-3 font-semibold">Date</th><th className="px-4 py-3 font-semibold">Status</th><th className="px-4 py-3 font-semibold">Publish</th><th className="px-5 py-3 text-right font-semibold">Actions</th></tr>
@@ -221,7 +222,7 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
                     <div className="flex justify-end gap-1">
                       <IconAction label="View file" onClick={() => openDoc(d.url)}><Eye className="size-4" /></IconAction>
                       <IconAction label="Edit" onClick={() => setEditing(d)}><Pencil className="size-4" /></IconAction>
-                      <IconAction label="Delete" danger onClick={() => { if (confirm(`Delete "${d.title}"?`)) remove.mutate(d); }}><Trash2 className="size-4" /></IconAction>
+                      <IconAction label="Delete" danger onClick={async () => { if (await confirmDelete(`Delete "${d.title}"?`)) remove.mutate(d); }}><Trash2 className="size-4" /></IconAction>
                     </div>
                   </td>
                 </tr>
@@ -369,7 +370,7 @@ function ContactCard({ row, onChange }: { row: ContactRow; onChange: () => void 
     onChange();
   }
   async function remove() {
-    if (!confirm(`Delete "${row.heading}"?`)) return;
+    if (!(await confirmDelete(`Delete "${row.heading}"?`))) return;
     const { error } = await supabase.from("ir_contacts").delete().eq("id", row.id);
     if (error) { toast.error(error.message); return; }
     onChange();
@@ -385,7 +386,7 @@ function ContactCard({ row, onChange }: { row: ContactRow; onChange: () => void 
             <Input value={l.label ?? ""} onChange={(e) => upd(i, "label", e.target.value)} />
             <Input value={l.value} onChange={(e) => upd(i, "value", e.target.value)} />
             <Input value={l.href ?? ""} onChange={(e) => upd(i, "href", e.target.value)} />
-            <IconAction label="Remove line" danger onClick={() => setLines((ls) => ls.filter((_, j) => j !== i))}><Trash2 className="size-4" /></IconAction>
+            <IconAction label="Remove line" danger onClick={async () => { if (await confirmDelete("Remove this line?")) setLines((ls) => ls.filter((_, j) => j !== i)); }}><Trash2 className="size-4" /></IconAction>
           </div>
         ))}
         <Button size="sm" variant="outline" onClick={() => setLines((ls) => [...ls, { value: "" }])}><Plus className="size-4" /> Add line</Button>
