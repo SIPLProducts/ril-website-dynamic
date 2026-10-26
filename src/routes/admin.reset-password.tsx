@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { passwordSchema } from "@/lib/admin-validation";
@@ -10,6 +10,8 @@ export const Route = createFileRoute("/admin/reset-password")({
   component: ResetPassword,
 });
 
+type LinkState = "checking" | "ready" | "expired";
+
 function ResetPassword() {
   const navigate = useNavigate();
   const [pw, setPw] = useState("");
@@ -17,6 +19,22 @@ function ResetPassword() {
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [link, setLink] = useState<LinkState>("checking");
+
+  useEffect(() => {
+    const hash = new URLSearchParams(window.location.hash.slice(1));
+    const query = new URLSearchParams(window.location.search);
+    if (hash.get("error") || hash.get("error_code") || query.get("error")) {
+      setLink("expired");
+      return;
+    }
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN" || event === "INITIAL_SESSION")) setLink("ready");
+    });
+    supabase.auth.getSession().then(({ data }) => { if (data.session) setLink("ready"); });
+    const t = setTimeout(() => setLink((s) => (s === "checking" ? "expired" : s)), 4000);
+    return () => { sub.subscription.unsubscribe(); clearTimeout(t); };
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -32,18 +50,32 @@ function ResetPassword() {
     setDone(true);
   }
 
+  const toLogin = () => navigate({ to: "/admin/login", replace: true });
+
+  if (link === "expired" && !done) {
+    return (
+      <NeuShell>
+        <div className="space-y-4">
+          <NeuTitle title="Link expired" subtitle="This reset link is invalid or was already used" />
+          <p className="text-center text-xs opacity-80">Each link works only once. Use "Forgot password?" on the login page to get a new one.</p>
+          <NeuButton type="button" onClick={toLogin}>Back to login</NeuButton>
+        </div>
+      </NeuShell>
+    );
+  }
+
   return (
     <NeuShell>
       <form onSubmit={submit} noValidate className="space-y-4">
-        <NeuTitle title="New Password" subtitle={done ? "Your password has been updated" : "Choose a new password"} />
+        <NeuTitle title="New Password" subtitle={done ? "Your password has been updated" : link === "checking" ? "Checking your link…" : "Choose a new password"} />
         {done ? (
-          <NeuButton type="button" onClick={() => navigate({ to: "/admin/login", replace: true })}>Go to login</NeuButton>
+          <NeuButton type="button" onClick={toLogin}>Go to login</NeuButton>
         ) : (
           <>
             <NeuField icon={<Lock className="size-4" />} type="password" placeholder="New password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} aria-label="New password" />
             <NeuField icon={<Lock className="size-4" />} type="password" placeholder="Confirm password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} aria-label="Confirm password" />
             {error && <p role="alert" className="neu-accent text-center text-sm">{error}</p>}
-            <NeuButton type="submit" disabled={busy}>{busy ? "Saving…" : "Save password"}</NeuButton>
+            <NeuButton type="submit" disabled={busy || link !== "ready"}>{busy ? "Saving…" : "Save password"}</NeuButton>
           </>
         )}
       </form>
