@@ -285,3 +285,15 @@
 @utility admin-header-strip { background-image: linear-gradient(110deg, var(--admin-nav), color-mix(in oklab, var(--brand-blue) 70%, var(--admin-nav))); color: var(--primary-foreground); }
 @utility admin-badge-live { background-color: color-mix(in oklab, var(--admin-success) 14%, transparent); color: var(--admin-success); }
 @utility admin-badge-draft { background-color: color-mix(in oklab, var(--admin-warning) 18%, transparent); color: color-mix(in oklab, var(--admin-warning) 70%, black); }
+@utility thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--muted-foreground) 35%, transparent) transparent;
+  &::-webkit-scrollbar { width: 6px; height: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--muted-foreground) 35%, transparent); border-radius: 999px; }
+}
+@utility thin-scroll-dark {
+  scrollbar-color: color-mix(in oklab, var(--admin-nav-foreground) 25%, transparent) transparent;
+  &::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--admin-nav-foreground) 25%, transparent); }
+}
+@utility admin-accent-line { background-image: linear-gradient(90deg, var(--brand-orange), var(--brand-blue)); }

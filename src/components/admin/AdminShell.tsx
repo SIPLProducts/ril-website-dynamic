@@ -1,21 +1,31 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
-import { ChevronDown, ChevronRight, ExternalLink, LogOut, PanelLeftClose, PanelLeftOpen, UserPlus } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { ChevronDown, ChevronRight, Columns2, ExternalLink, LogOut, PanelLeftClose, PanelLeftOpen, Rows2, UserPlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Staff } from "@/lib/admin-auth";
 import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGroups } from "@/lib/admin-modules";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import logo from "@/assets/ramky-logo-transparent.png.asset.json";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub,
+  DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" };
+type Layout = "vertical" | "horizontal";
+const LAYOUT_KEY = "ril-admin-layout";
 
 const itemCls = (on: boolean) =>
-  `flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors ${on ? "admin-accent font-semibold shadow-sm" : "hover:bg-primary-foreground/10 hover:text-primary-foreground"}`;
+  `relative flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all duration-200 ${on ? "bg-primary-foreground/10 font-semibold text-primary-foreground before:absolute before:inset-y-1.5 before:left-0 before:w-[3px] before:rounded-full before:bg-brand-orange" : "hover:bg-primary-foreground/[0.06] hover:text-primary-foreground"}`;
 const subCls = (on: boolean) =>
-  `block w-full truncate rounded-md px-3 py-1.5 text-left text-[13px] transition-colors ${on ? "bg-primary-foreground/10 font-semibold text-brand-orange" : "text-[var(--admin-nav-foreground)]/80 hover:bg-primary-foreground/5 hover:text-primary-foreground"}`;
+  `block w-full truncate rounded-md px-3 py-1.5 text-left text-[13px] transition-colors ${on ? "bg-brand-orange/15 font-semibold text-brand-orange" : "text-[var(--admin-nav-foreground)]/80 hover:bg-primary-foreground/5 hover:text-primary-foreground"}`;
+const iconWrap = (on: boolean) => `grid size-7 shrink-0 place-items-center rounded-md ${on ? "admin-accent" : "bg-primary-foreground/[0.06]"}`;
+const hItem = (on: boolean) =>
+  `inline-flex h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors ${on ? "bg-brand-orange/10 text-brand-orange" : "text-foreground/75 hover:bg-surface hover:text-foreground"}`;
 
 export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; active: Active; crumbs: string[]; children: ReactNode }) {
+  const [layout, setLayout] = useState<Layout>("vertical");
   const [collapsed, setCollapsed] = useState(false);
   const [invOpen, setInvOpen] = useState(active.kind === "investors");
   const [usersOpen, setUsersOpen] = useState(active.kind === "users");
@@ -27,6 +37,12 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const isSuper = staff.role === "super_admin";
   const initials = staff.fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase() || "A";
 
+  useEffect(() => {
+    const v = localStorage.getItem(LAYOUT_KEY);
+    if (v === "horizontal" || v === "vertical") setLayout(v);
+  }, []);
+  const changeLayout = (l: Layout) => { setLayout(l); localStorage.setItem(LAYOUT_KEY, l); };
+
   async function signOut() {
     await qc.cancelQueries();
     qc.clear();
@@ -35,117 +51,159 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   }
 
   const Tip = ({ label, children: c }: { label: string; children: ReactNode }) =>
-    collapsed ? (
-      <Tooltip><TooltipTrigger asChild>{c}</TooltipTrigger><TooltipContent side="right">{label}</TooltipContent></Tooltip>
-    ) : (<>{c}</>);
+    collapsed ? (<Tooltip><TooltipTrigger asChild>{c}</TooltipTrigger><TooltipContent side="right">{label}</TooltipContent></Tooltip>) : (<>{c}</>);
+
+  const vertical = layout === "vertical";
+
+  const sidebar = (
+    <aside className={`admin-nav hidden h-full shrink-0 flex-col transition-[width] duration-300 md:flex ${collapsed ? "w-[76px]" : "w-72"}`}>
+      <div className="flex h-16 shrink-0 items-center justify-center border-b border-primary-foreground/10 px-4">
+        <div className={`rounded-lg bg-primary-foreground px-3 py-1.5 shadow-sm ${collapsed ? "px-1.5" : ""}`}>
+          <img src={logo.url} alt="Ramky Infrastructure" className={collapsed ? "h-7 w-9 object-contain" : "h-10 w-auto"} />
+        </div>
+      </div>
+      <nav className="thin-scroll thin-scroll-dark min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <Tip label="Dashboard">
+          <Link to="/admin" search={{}} className={itemCls(active.kind === "dashboard")}><span className={iconWrap(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /></span>{!collapsed && "Dashboard"}</Link>
+        </Tip>
+        {!collapsed && <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-nav-muted)]">Website modules</p>}
+        {ADMIN_MODULES.map((m) => (
+          <Tip key={m.key} label={`${m.label} — coming soon`}>
+            <div className={`${itemCls(false)} cursor-not-allowed opacity-55`} aria-disabled>
+              <span className={iconWrap(false)}><m.icon className="size-4" /></span>
+              {!collapsed && <><span className="flex-1">{m.label}</span><span className="rounded-full border border-primary-foreground/15 px-2 py-0.5 text-[9px] uppercase tracking-wider">Soon</span></>}
+            </div>
+          </Tip>
+        ))}
+        <Tip label="Investors">
+          <button onClick={() => { if (collapsed) { setCollapsed(false); setInvOpen(true); } else setInvOpen((o) => !o); }} className={itemCls(active.kind === "investors")}>
+            <span className={iconWrap(active.kind === "investors")}><INVESTORS_ICON className="size-4" /></span>
+            {!collapsed && <><span className="flex-1 text-left">Investors</span><ChevronDown className={`size-4 transition-transform duration-200 ${invOpen ? "" : "-rotate-90"}`} /></>}
+          </button>
+        </Tip>
+        {!collapsed && invOpen && (
+          <div className="ml-5 space-y-1 border-l border-primary-foreground/10 pl-2 animate-in fade-in slide-in-from-top-1">
+            {groups.map((g) => {
+              const open = openGroups[g.label] ?? false;
+              return (
+                <div key={g.label}>
+                  <button onClick={() => setOpenGroups((s) => ({ ...s, [g.label]: !open }))} className="flex w-full items-center justify-between rounded-md px-3 py-1.5 text-[13px] font-medium text-primary-foreground/90 hover:bg-primary-foreground/5">
+                    {g.label}<ChevronRight className={`size-3.5 transition-transform duration-200 ${open ? "rotate-90" : ""}`} />
+                  </button>
+                  {open && (
+                    <div className="ml-2 space-y-0.5 py-1">
+                      {g.items.map((i) => <Link key={i.key} to="/admin" search={{ section: i.key }} className={subCls(active.kind === "investors" && active.section === i.key)}>{i.label}</Link>)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+        {isSuper && (
+          <>
+            {!collapsed && <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-nav-muted)]">Administration</p>}
+            <Tip label="User Management">
+              <button onClick={() => { if (collapsed) { setCollapsed(false); setUsersOpen(true); } else setUsersOpen((o) => !o); }} className={itemCls(active.kind === "users")}>
+                <span className={iconWrap(active.kind === "users")}><USERS_ICON className="size-4" /></span>
+                {!collapsed && <><span className="flex-1 text-left">User Management</span><ChevronDown className={`size-4 transition-transform duration-200 ${usersOpen ? "" : "-rotate-90"}`} /></>}
+              </button>
+            </Tip>
+            {!collapsed && usersOpen && (
+              <div className="ml-5 space-y-0.5 border-l border-primary-foreground/10 py-1 pl-2">
+                <Link to="/admin/users" search={{}} className={subCls(active.kind === "users")}>All users</Link>
+                <Link to="/admin/users" search={{ new: true }} className={subCls(false)}><span className="inline-flex items-center gap-1.5"><UserPlus className="size-3.5" /> Create user</span></Link>
+              </div>
+            )}
+          </>
+        )}
+      </nav>
+      <div className="shrink-0 border-t border-primary-foreground/10 p-3">
+        <Tip label="Sign out"><button onClick={signOut} className={itemCls(false)}><span className={iconWrap(false)}><LogOut className="size-4" /></span>{!collapsed && "Sign out"}</button></Tip>
+      </div>
+    </aside>
+  );
+
+  const horizontalNav = (
+    <nav className="hidden shrink-0 items-center gap-1 overflow-x-auto border-b border-border bg-background px-4 py-1.5 thin-scroll md:flex md:px-6">
+      <Link to="/admin" search={{}} className={hItem(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /> Dashboard</Link>
+      <DropdownMenu>
+        <DropdownMenuTrigger className={hItem(active.kind === "investors")}><INVESTORS_ICON className="size-4" /> Investors <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-64">
+          {groups.map((g) => (
+            <DropdownMenuSub key={g.label}>
+              <DropdownMenuSubTrigger>{g.label}</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="thin-scroll max-h-[70vh] w-64 overflow-y-auto">
+                {g.items.map((i) => (
+                  <DropdownMenuItem key={i.key} onClick={() => navigate({ to: "/admin", search: { section: i.key } })} className={active.kind === "investors" && active.section === i.key ? "font-semibold text-brand-orange" : ""}>{i.label}</DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <DropdownMenu>
+        <DropdownMenuTrigger className={hItem(false)}>Website modules <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-56">
+          {ADMIN_MODULES.map((m) => <DropdownMenuItem key={m.key} disabled><m.icon className="size-4" /> {m.label}<span className="ml-auto text-[10px] uppercase">Soon</span></DropdownMenuItem>)}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {isSuper && (
+        <DropdownMenu>
+          <DropdownMenuTrigger className={hItem(active.kind === "users")}><USERS_ICON className="size-4" /> User Management <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
+            <DropdownMenuItem onClick={() => navigate({ to: "/admin/users", search: {} })}>All users</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate({ to: "/admin/users", search: { new: true } })}><UserPlus className="size-4" /> Create user</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+    </nav>
+  );
 
   return (
     <TooltipProvider delayDuration={150}>
-      <div className="admin-canvas flex min-h-screen w-full">
-        <aside className={`admin-nav sticky top-0 hidden h-screen shrink-0 flex-col transition-[width] duration-200 md:flex ${collapsed ? "w-[72px]" : "w-72"}`}>
-          <div className="flex h-16 items-center gap-3 border-b border-primary-foreground/10 px-4">
-            <span className="admin-accent grid size-9 shrink-0 place-items-center rounded-lg font-display text-sm font-bold">RI</span>
-            {!collapsed && (
-              <div className="leading-tight">
-                <p className="font-display text-sm font-bold tracking-wide text-primary-foreground">RAMKY INFRA</p>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--admin-nav-muted)]">Admin Portal</p>
-              </div>
-            )}
-          </div>
-
-          <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-            <Tip label="Dashboard">
-              <Link to="/admin" search={{}} className={itemCls(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4 shrink-0" />{!collapsed && "Dashboard"}</Link>
-            </Tip>
-
-            {!collapsed && <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--admin-nav-muted)]">Website modules</p>}
-
-            {ADMIN_MODULES.map((m) => (
-              <Tip key={m.key} label={`${m.label} — coming soon`}>
-                <div className={`${itemCls(false)} cursor-not-allowed opacity-60`} aria-disabled>
-                  <m.icon className="size-4 shrink-0" />
-                  {!collapsed && <><span className="flex-1">{m.label}</span><span className="rounded-full bg-primary-foreground/10 px-2 py-0.5 text-[10px] uppercase tracking-wider">Soon</span></>}
-                </div>
-              </Tip>
-            ))}
-
-            <Tip label="Investors">
-              <button onClick={() => { if (collapsed) setCollapsed(false); setInvOpen((o) => !o || collapsed); }} className={itemCls(false) + (active.kind === "investors" ? " text-primary-foreground" : "")}>
-                <INVESTORS_ICON className="size-4 shrink-0" />
-                {!collapsed && <><span className="flex-1 text-left">Investors</span>{invOpen ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}</>}
-              </button>
-            </Tip>
-            {!collapsed && invOpen && (
-              <div className="ml-4 space-y-1 border-l border-primary-foreground/10 pl-2">
-                {groups.map((g) => {
-                  const open = openGroups[g.label] ?? false;
-                  return (
-                    <div key={g.label}>
-                      <button onClick={() => setOpenGroups((s) => ({ ...s, [g.label]: !open }))} className="flex w-full items-center justify-between rounded-md px-3 py-1.5 text-[13px] font-medium text-primary-foreground/90 hover:bg-primary-foreground/5">
-                        {g.label}{open ? <ChevronDown className="size-3.5" /> : <ChevronRight className="size-3.5" />}
-                      </button>
-                      {open && (
-                        <div className="ml-2 space-y-0.5 py-1">
-                          {g.items.map((i) => (
-                            <Link key={i.key} to="/admin" search={{ section: i.key }} className={subCls(active.kind === "investors" && active.section === i.key)}>{i.label}</Link>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {isSuper && (
-              <>
-                {!collapsed && <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--admin-nav-muted)]">Administration</p>}
-                <Tip label="User Management">
-                  <button onClick={() => { if (collapsed) setCollapsed(false); setUsersOpen((o) => !o || collapsed); }} className={itemCls(false) + (active.kind === "users" ? " text-primary-foreground" : "")}>
-                    <USERS_ICON className="size-4 shrink-0" />
-                    {!collapsed && <><span className="flex-1 text-left">User Management</span>{usersOpen ? <ChevronDown className="size-4" /> : <ChevronRight className="size-4" />}</>}
-                  </button>
-                </Tip>
-                {!collapsed && usersOpen && (
-                  <div className="ml-4 space-y-0.5 border-l border-primary-foreground/10 py-1 pl-2">
-                    <Link to="/admin/users" search={{}} className={subCls(active.kind === "users")}>All users</Link>
-                    <Link to="/admin/users" search={{ new: true }} className={subCls(false)}><span className="inline-flex items-center gap-1.5"><UserPlus className="size-3.5" /> Create user</span></Link>
-                  </div>
-                )}
-              </>
-            )}
-          </nav>
-
-          <div className="border-t border-primary-foreground/10 p-3">
-            <Tip label="Sign out">
-              <button onClick={signOut} className={itemCls(false)}><LogOut className="size-4 shrink-0" />{!collapsed && "Sign out"}</button>
-            </Tip>
-          </div>
-        </aside>
-
+      <div className="admin-canvas flex h-screen w-full overflow-hidden">
+        {vertical && sidebar}
         <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-background/90 px-4 backdrop-blur md:px-6">
-            <button onClick={() => setCollapsed((c) => !c)} aria-label="Toggle sidebar" className="hidden rounded-md p-2 text-muted-foreground hover:bg-surface hover:text-foreground md:inline-flex">
-              {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
-            </button>
-            <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
+          <header className={`z-20 flex h-16 shrink-0 items-center gap-3 px-4 md:px-6 ${vertical ? "border-b border-border bg-background" : "admin-nav"}`}>
+            {vertical ? (
+              <button onClick={() => setCollapsed((c) => !c)} aria-label="Toggle sidebar" className="hidden rounded-md p-2 text-muted-foreground hover:bg-surface hover:text-foreground md:inline-flex">
+                {collapsed ? <PanelLeftOpen className="size-5" /> : <PanelLeftClose className="size-5" />}
+              </button>
+            ) : (
+              <div className="rounded-lg bg-primary-foreground px-3 py-1.5"><img src={logo.url} alt="Ramky Infrastructure" className="h-7 w-auto" /></div>
+            )}
+            <nav aria-label="Breadcrumb" className={`flex min-w-0 items-center gap-1.5 text-sm ${vertical ? "text-muted-foreground" : "text-[var(--admin-nav-muted)]"}`}>
               {crumbs.map((c, i) => (
                 <span key={i} className="flex items-center gap-1.5 truncate">
                   {i > 0 && <ChevronRight className="size-3.5 shrink-0" />}
-                  <span className={i === crumbs.length - 1 ? "font-semibold text-foreground" : ""}>{c}</span>
+                  <span className={i === crumbs.length - 1 ? (vertical ? "font-semibold text-foreground" : "font-semibold text-primary-foreground") : ""}>{c}</span>
                 </span>
               ))}
             </nav>
             <div className="ml-auto flex items-center gap-2">
-              <a href="/investors" target="_blank" rel="noreferrer" className="hidden items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm text-foreground/80 hover:bg-surface sm:inline-flex">View live site <ExternalLink className="size-3.5" /></a>
+              <div role="group" aria-label="Menu layout" className={`hidden items-center rounded-lg p-0.5 md:flex ${vertical ? "bg-surface" : "bg-primary-foreground/10"}`}>
+                {(["vertical", "horizontal"] as const).map((l) => (
+                  <Tooltip key={l}>
+                    <TooltipTrigger asChild>
+                      <button onClick={() => changeLayout(l)} aria-label={`${l} menu`} aria-pressed={layout === l}
+                        className={`grid size-8 place-items-center rounded-md transition-colors ${layout === l ? "admin-accent shadow-sm" : vertical ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"}`}>
+                        {l === "vertical" ? <Columns2 className="size-4" /> : <Rows2 className="size-4" />}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>{l === "vertical" ? "Vertical menu" : "Horizontal menu"}</TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+              <a href="/investors" target="_blank" rel="noreferrer" className={`hidden items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm sm:inline-flex ${vertical ? "border-border text-foreground/80 hover:bg-surface" : "border-primary-foreground/20 text-primary-foreground/90 hover:bg-primary-foreground/10"}`}>View live site <ExternalLink className="size-3.5" /></a>
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 hover:bg-surface">
+                <DropdownMenuTrigger className={`flex items-center gap-2 rounded-full py-1 pl-1 pr-3 ${vertical ? "hover:bg-surface" : "hover:bg-primary-foreground/10"}`}>
                   <span className="admin-accent grid size-8 place-items-center rounded-full text-xs font-bold">{initials}</span>
                   <span className="hidden text-left leading-tight lg:block">
-                    <span className="block text-sm font-semibold text-foreground">{staff.fullName}</span>
-                    <span className="block text-[11px] text-muted-foreground">{isSuper ? "Super Admin" : "Admin"}</span>
+                    <span className={`block text-sm font-semibold ${vertical ? "text-foreground" : "text-primary-foreground"}`}>{staff.fullName}</span>
+                    <span className={`block text-[11px] ${vertical ? "text-muted-foreground" : "text-[var(--admin-nav-muted)]"}`}>{isSuper ? "Super Admin" : "Admin"}</span>
                   </span>
-                  <ChevronDown className="size-4 text-muted-foreground" />
+                  <ChevronDown className="size-4 opacity-60" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel><p className="font-semibold">{staff.fullName}</p><p className="truncate text-xs font-normal text-muted-foreground">{staff.email}</p></DropdownMenuLabel>
@@ -156,8 +214,8 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
               </DropdownMenu>
             </div>
           </header>
-          {/* Mobile module picker */}
-          <div className="border-b border-border bg-background px-4 py-2 md:hidden">
+          {!vertical && horizontalNav}
+          <div className="shrink-0 border-b border-border bg-background px-4 py-2 md:hidden">
             <select className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm" value={active.kind === "investors" ? active.section : active.kind} onChange={(e) => {
               const v = e.target.value;
               if (v === "dashboard") navigate({ to: "/admin", search: {} });
@@ -169,7 +227,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
               {isSuper && <option value="users">User Management</option>}
             </select>
           </div>
-          <main className="flex-1 p-4 md:p-8">{children}</main>
+          <main className="thin-scroll flex min-h-0 flex-1 flex-col overflow-y-auto p-4 md:px-7 md:py-5">{children}</main>
         </div>
       </div>
     </TooltipProvider>

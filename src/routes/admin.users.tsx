@@ -66,13 +66,13 @@ function UsersPage() {
 
   return (
     <AdminShell staff={staff} active={{ kind: "users" }} crumbs={["User Management", "All users"]}>
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+      <div className="mb-4 flex shrink-0 flex-wrap items-end justify-between gap-4">
         <div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-brand-orange">Administration</p><h1 className="mt-1 font-display text-2xl font-bold md:text-3xl">User Management</h1><p className="mt-1 text-sm text-muted-foreground">Only accounts listed here can sign in to the admin portal.</p></div>
         <Button onClick={() => setForm(blank)} className="admin-accent h-10 border-0 px-5 shadow-md hover:opacity-90"><Plus className="size-4" /> Create user</Button>
       </div>
-      <div className="overflow-x-auto rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
+      <div className="thin-scroll min-h-0 flex-1 overflow-auto rounded-xl border border-border bg-background shadow-[var(--shadow-card)]">
         <table className="w-full text-sm">
-          <thead className="text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+          <thead className="sticky top-0 z-10 bg-background text-left text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
             <tr className="border-b border-border"><th className="px-5 py-3">User</th><th className="px-4 py-3">Mobile</th><th className="px-4 py-3">Role</th><th className="px-4 py-3">OTP</th><th className="px-4 py-3">Status</th><th className="px-5 py-3 text-right">Actions</th></tr>
           </thead>
           <tbody className="divide-y divide-border">
