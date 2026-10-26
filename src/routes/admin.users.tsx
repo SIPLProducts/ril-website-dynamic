@@ -138,16 +138,16 @@ function UserDialog({ initial, isSelf, onClose, onSaved }: { initial: Form; isSe
       <form id="user-form" onSubmit={save} noValidate>
         <FormSection title="Profile">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div><Label>Full name *</Label><Input value={f.fullName} onChange={(e) => set("fullName", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors.fullName} /></div>
-            <div><Label>Mobile number *</Label><Input inputMode="tel" placeholder="98XXXXXXXX" value={f.phone} onChange={(e) => set("phone", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors.phone} /></div>
+            <div><Label>Full name *</Label><Input value={f.fullName} onChange={(e) => set("fullName", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["fullName"]} /></div>
+            <div><Label>Mobile number *</Label><Input inputMode="tel" placeholder="98XXXXXXXX" value={f.phone} onChange={(e) => set("phone", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["phone"]} /></div>
           </div>
-          <div><Label>Email *</Label><Input type="email" disabled={editing} value={f.email} onChange={(e) => set("email", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors.email} /></div>
+          <div><Label>Email *</Label><Input type="email" disabled={editing} value={f.email} onChange={(e) => set("email", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["email"]} /></div>
         </FormSection>
         {!editing && (
           <FormSection title="Password">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div><Label>Password *</Label><Input type="password" autoComplete="new-password" value={f.password} onChange={(e) => set("password", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors.password} /></div>
-              <div><Label>Confirm password *</Label><Input type="password" autoComplete="new-password" value={f.confirmPassword} onChange={(e) => set("confirmPassword", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors.confirmPassword} /></div>
+              <div><Label>Password *</Label><Input type="password" autoComplete="new-password" value={f.password} onChange={(e) => set("password", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["password"]} /></div>
+              <div><Label>Confirm password *</Label><Input type="password" autoComplete="new-password" value={f.confirmPassword} onChange={(e) => set("confirmPassword", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors["confirmPassword"]} /></div>
             </div>
           </FormSection>
         )}
