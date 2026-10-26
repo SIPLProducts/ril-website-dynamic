@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_profiles: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          is_active: boolean
+          otp_required: boolean
+          phone: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          is_active?: boolean
+          otp_required?: boolean
+          phone?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          is_active?: boolean
+          otp_required?: boolean
+          phone?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ir_contacts: {
         Row: {
           heading: string
@@ -122,9 +155,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin"
+      app_role: "admin" | "super_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -252,7 +287,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin"],
+      app_role: ["admin", "super_admin"],
     },
   },
 } as const
