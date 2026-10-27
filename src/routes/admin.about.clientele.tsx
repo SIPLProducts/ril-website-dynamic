@@ -53,7 +53,7 @@ function usePreview(url: string | null) {
 function Page() {
   const { staff } = Route.useRouteContext();
   return (
-    <AdminShell staff={staff} active={{ kind: "about", section: SLUG }} crumbs={["About Us", "Clientele"]}>
+    <AdminShell staff={staff} active={{ kind: "about", section: SLUG }} crumbs={["About Ramky", "Clientele"]}>
       <div className="space-y-6">
         <ContentEditor />
         <ClientList />
