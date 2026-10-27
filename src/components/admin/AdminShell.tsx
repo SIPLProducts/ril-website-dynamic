@@ -62,29 +62,34 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
         <Tip label="Dashboard">
           <Link to="/admin" search={{}} className={itemCls(active.kind === "dashboard")}><span className={iconWrap(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /></span>{!collapsed && "Dashboard"}</Link>
         </Tip>
-        {!collapsed && <p className="px-3 pb-1 pt-4 text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--admin-nav-muted)]">Website modules</p>}
-        {ADMIN_MODULES.map((m) => m.key === "about" ? (
-          <div key={m.key}>
-            <Tip label="About Us">
-              <button onClick={() => { if (collapsed) { setCollapsed(false); setAboutOpen(true); } else setAboutOpen((o) => !o); }} className={itemCls(active.kind === "about")}>
-                <span className={iconWrap(active.kind === "about")}><m.icon className="size-4" /></span>
-                {!collapsed && <><span className="flex-1 text-left">{m.label}</span><ChevronDown className={`size-4 transition-transform duration-200 ${aboutOpen ? "" : "-rotate-90"}`} /></>}
-              </button>
-            </Tip>
-            {!collapsed && aboutOpen && (
-              <div className="ml-5 space-y-0.5 border-l border-primary-foreground/10 py-1 pl-2">
-                <Link to="/admin/about/clientele" className={subCls(active.kind === "about" && active.section === "clientele")}>Clientele</Link>
+        {ADMIN_MODULES.map((m) => {
+          const ready = isReady(m);
+          const on = activeModule === m.key;
+          const open = modOpen[m.key] ?? on;
+          if (!ready) return (
+            <Tip key={m.key} label={`${m.label} — coming soon`}>
+              <div className={`${itemCls(false)} cursor-not-allowed opacity-55`} aria-disabled>
+                <span className={iconWrap(false)}><m.icon className="size-4" /></span>
+                {!collapsed && <><span className="flex-1">{m.label}</span><Soon /></>}
               </div>
-            )}
-          </div>
-        ) : (
-          <Tip key={m.key} label={`${m.label} — coming soon`}>
-            <div className={`${itemCls(false)} cursor-not-allowed opacity-55`} aria-disabled>
-              <span className={iconWrap(false)}><m.icon className="size-4" /></span>
-              {!collapsed && <><span className="flex-1">{m.label}</span><span className="rounded-full border border-primary-foreground/15 px-2 py-0.5 text-[9px] uppercase tracking-wider">Soon</span></>}
+            </Tip>
+          );
+          return (
+            <div key={m.key}>
+              <Tip label={m.label}>
+                <button onClick={() => { if (collapsed) { setCollapsed(false); setModOpen((s) => ({ ...s, [m.key]: true })); } else setModOpen((s) => ({ ...s, [m.key]: !open })); }} className={itemCls(on)}>
+                  <span className={iconWrap(on)}><m.icon className="size-4" /></span>
+                  {!collapsed && <><span className="flex-1 text-left">{m.label}</span><ChevronDown className={`size-4 transition-transform duration-200 ${open ? "" : "-rotate-90"}`} /></>}
+                </button>
+              </Tip>
+              {!collapsed && open && (
+                <div className="ml-5 space-y-0.5 border-l border-primary-foreground/10 py-1 pl-2">
+                  {(m.children ?? []).map((p) => <SidePage key={p.key} p={p} depth={0} />)}
+                </div>
+              )}
             </div>
-          </Tip>
-        ))}
+          );
+        })}
         <Tip label="Investors">
           <button onClick={() => { if (collapsed) { setCollapsed(false); setInvOpen(true); } else setInvOpen((o) => !o); }} className={itemCls(active.kind === "investors")}>
             <span className={iconWrap(active.kind === "investors")}><INVESTORS_ICON className="size-4" /></span>
@@ -138,8 +143,21 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const horizontalNav = (
     <nav className="hidden shrink-0 items-center gap-1 overflow-x-auto admin-nav border-t border-primary-foreground/10 px-4 py-1.5 thin-scroll thin-scroll-dark md:flex md:px-6">
       <Link to="/admin" search={{}} className={hItem(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /> Dashboard</Link>
+      {ADMIN_MODULES.map((m) => {
+        if (!isReady(m)) return (
+          <span key={m.key} title={`${m.label} — coming soon`} className={`${hItem(false)} cursor-not-allowed opacity-55`} aria-disabled>{m.label}<Soon /></span>
+        );
+        return (
+          <DropdownMenu key={m.key}>
+            <DropdownMenuTrigger className={hItem(activeModule === m.key)}>{m.label} <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-64">
+              {(m.children ?? []).map((p) => <DropPage key={p.key} p={p} />)}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      })}
       <DropdownMenu>
-        <DropdownMenuTrigger className={hItem(active.kind === "investors")}><INVESTORS_ICON className="size-4" /> Investors <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
+        <DropdownMenuTrigger className={hItem(active.kind === "investors")}>Investors <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-64">
           {groups.map((g) => (
             <DropdownMenuSub key={g.label}>
@@ -151,19 +169,6 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
               </DropdownMenuSubContent>
             </DropdownMenuSub>
           ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <DropdownMenu>
-        <DropdownMenuTrigger className={hItem(active.kind === "about")}>Website modules <ChevronDown className="size-3.5" /></DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-56">
-          {ADMIN_MODULES.map((m) => m.key === "about" ? (
-            <DropdownMenuSub key={m.key}>
-              <DropdownMenuSubTrigger><m.icon className="size-4" /> {m.label}</DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="w-48">
-                <DropdownMenuItem onClick={() => navigate({ to: "/admin/about/clientele" })} className={active.kind === "about" ? "font-semibold text-brand-orange" : ""}>Clientele</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          ) : <DropdownMenuItem key={m.key} disabled><m.icon className="size-4" /> {m.label}<span className="ml-auto text-[10px] uppercase">Soon</span></DropdownMenuItem>)}
         </DropdownMenuContent>
       </DropdownMenu>
       {isSuper && (
