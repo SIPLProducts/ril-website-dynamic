@@ -21,7 +21,7 @@ export const ADMIN_MODULES: AdminModule[] = [
   },
   { key: "management", label: "Management", icon: UsersRound, children: [page("management", "board", "Board Of Directors"), page("management", "senior", "Senior Management")] },
   { key: "capabilities", label: "Capabilities", icon: Wrench },
-  { key: "accolades", label: "Accolades", icon: Award },
+  { key: "accolades", label: "Accolades", icon: Award, children: [{ key: "awards", label: "Awards", to: "/admin/accolades" }] },
   { key: "sustainability", label: "Sustainability", icon: Leaf, children: ESG_SECTIONS.map((s) => page("esg", s.slug, s.title)) },
   { key: "careers", label: "Careers", icon: Briefcase, children: [page("careers", "life", "Life at Ramky"), page("careers", "positions", "Current Positions")] },
 ];
