@@ -26,7 +26,7 @@ export const ADMIN_MODULES: AdminModule[] = [
   { key: "careers", label: "Careers", icon: Briefcase, children: [page("careers", "life", "Life at Ramky"), page("careers", "positions", "Current Positions")] },
 ];
 
-export const isReady = (n: { to?: string; children?: AdminPage[] }): boolean => !!n.to || (n.children ?? []).some(isReady);
+export const isReady = (n: AdminPage | AdminModule): boolean => !!n.to || (n.children ?? []).some(isReady);
 
 export const CONTACTS_SECTION = "contacts";
 export const DASHBOARD_ICON = LayoutDashboard;
