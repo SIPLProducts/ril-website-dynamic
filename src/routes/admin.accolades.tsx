@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getStaff } from "@/lib/admin-auth";
 import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import { imageFileError } from "@/lib/admin-validation";
-import { adminFyYears, fyFromEnd, fyOf } from "@/lib/fiscal-year";
+import { adminFyYears, fyDateBounds, fyFromEnd, fyOf, isFutureDate, pastFyStarts } from "@/lib/fiscal-year";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection } from "@/components/admin/AdminDialog";
 import { confirmDelete } from "@/components/admin/ConfirmDelete";
@@ -76,7 +76,7 @@ function Page() {
   const years = adminFyYears(rows.map((r) => r.award_date));
   const [open, setOpen] = useState<Set<number>>(new Set());
   useEffect(() => { if (years[0] && !open.size) setOpen(new Set([years[0]])); }, [years[0]]); // eslint-disable-line react-hooks/exhaustive-deps
-  const [editing, setEditing] = useState<{ row: Row | null; fy: number } | null>(null);
+  const [editing, setEditing] = useState<{ row: Row | null; fy: number; pick?: boolean } | null>(null);
   const refresh = () => { qc.invalidateQueries({ queryKey: ["admin-accolades"] }); qc.invalidateQueries({ queryKey: ["accolades-public"] }); };
 
   async function toggleLive(r: Row) {
@@ -103,9 +103,12 @@ function Page() {
 
   return (
     <AdminShell staff={staff} active={{ kind: "module", module: "accolades", section: "awards" }} crumbs={["Accolades", "Awards"]}>
-      <div className="mb-5">
-        <h1 className="font-display text-2xl font-bold">Accolades</h1>
-        <p className="text-sm text-muted-foreground">One card per financial year (1 April – 31 March). A new year's card appears automatically after 31 March.</p>
+      <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold">Accolades</h1>
+          <p className="text-sm text-muted-foreground">One card per financial year (1 April – 31 March). A new year's card appears automatically after 31 March.</p>
+        </div>
+        <Button size="sm" variant="outline" onClick={() => setEditing({ row: null, fy: (pastFyStarts()[0] ?? 2000) + 1, pick: true })}><Plus className="size-4" /> Add past year</Button>
       </div>
       <div className="space-y-4">
         {years.map((y) => {
@@ -117,14 +120,12 @@ function Page() {
               <div className="flex items-center justify-between gap-3 p-4">
                 <button type="button" aria-expanded={isOpen} onClick={() => setOpen((p) => { const n = new Set(p); if (n.has(y)) n.delete(y); else n.add(y); return n; })} className="flex flex-1 items-center gap-3 text-left">
                   <ChevronDown className={`size-5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                  <span className="flex flex-col">
-                    <span className="font-display text-lg font-bold uppercase tracking-[0.12em]">Awards</span>
-                    <span className="text-xs text-muted-foreground">{fy.range} · {list.length} award{list.length === 1 ? "" : "s"}</span>
-                  </span>
-                  <span className="ml-auto pr-2 font-display text-lg font-bold">{fy.label}</span>
+                  <span className="font-display text-lg font-bold">FY {fy.label}</span>
+                  <span className="text-xs text-muted-foreground">{list.length} award{list.length === 1 ? "" : "s"}</span>
                 </button>
                 <Button onClick={() => setEditing({ row: null, fy: y })} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add award</Button>
               </div>
+              {isOpen && <div className="border-t border-border bg-surface/50 px-4 py-2 text-xs text-muted-foreground">From {fy.range}</div>}
               {isOpen && (
                 <table className="w-full border-t border-border text-sm">
                   <thead className="bg-surface text-left text-xs uppercase tracking-wider text-muted-foreground">
@@ -151,7 +152,7 @@ function Page() {
                         </td>
                       </tr>
                     ))}
-                    {!list.length && <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No awards in {fy.label} yet. Click "Add award" to add the first one.</td></tr>}
+                    {!list.length && <tr><td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">No awards in FY {fy.label} yet. Click "Add award" to add the first one.</td></tr>}
                   </tbody>
                 </table>
               )}
@@ -160,15 +161,17 @@ function Page() {
         })}
       </div>
       {editing && (
-        <AwardDialog row={editing.row} defaultDate={dateInFy(editing.fy)}
+        <AwardDialog row={editing.row} defaultDate={dateInFy(editing.fy)} fyEnd={editing.row ? undefined : editing.fy} pickYear={editing.pick}
           nextOrder={Math.max(0, ...rows.filter((r) => fyOf(r.award_date).endYear === editing.fy).map((r) => r.sort_order)) + 1}
-          onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh(); }} />
+          onClose={() => setEditing(null)} onSaved={(d) => { setEditing(null); setOpen((p) => new Set(p).add(fyOf(d).endYear)); refresh(); }} />
       )}
     </AdminShell>
   );
 }
 
-function AwardDialog({ row, defaultDate, nextOrder, onClose, onSaved }: { row: Row | null; defaultDate: string; nextOrder: number; onClose: () => void; onSaved: () => void }) {
+function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, onSaved }: { row: Row | null; defaultDate: string; fyEnd?: number | undefined; pickYear?: boolean | undefined; nextOrder: number; onClose: () => void; onSaved: (date: string) => void }) {
+  const [yearEnd, setYearEnd] = useState(fyEnd);
+  const bounds = yearEnd ? fyDateBounds(yearEnd) : { min: undefined, max: new Date().toISOString().slice(0, 10) };
   const [f, setF] = useState({
     award_date: row?.award_date ?? defaultDate, title: row?.title ?? "", category: row?.category ?? "", organisation: row?.organisation ?? "",
     project: row?.project ?? "", description: row?.description ?? "", alt_text: row?.alt_text ?? "", published: row?.published ?? true,
@@ -182,6 +185,8 @@ function AwardDialog({ row, defaultDate, nextOrder, onClose, onSaved }: { row: R
   async function save() {
     const e: { award_date?: string; title?: string; organisation?: string; image?: string } = {};
     if (!f.award_date) e.award_date = "Award date is required";
+    else if (isFutureDate(f.award_date)) e.award_date = "Award date can't be in the future";
+    else if (yearEnd && fyOf(f.award_date).endYear !== yearEnd) e.award_date = `Date must be within FY ${yearEnd - 1} (${fyFromEnd(yearEnd).range})`;
     if (!f.title.trim()) e.title = "Award title is required";
     if (!f.organisation.trim()) e.organisation = "Awarding organisation is required";
     const imgErr = imageFileError(file, false);
@@ -201,18 +206,26 @@ function AwardDialog({ row, defaultDate, nextOrder, onClose, onSaved }: { row: R
         : await supabase.from("accolades").insert({ ...payload, sort_order: nextOrder });
       if (error) throw new Error(error.message);
       if (row?.image_url && row.image_url !== image_url) await removeStored(row.image_url);
-      toast.success(f.published ? `Saved in ${fyOf(f.award_date).label} — now live on the website` : "Saved as draft");
-      onSaved();
+      toast.success(f.published ? `Saved in FY ${fyOf(f.award_date).label} — now live on the website` : "Saved as draft");
+      onSaved(f.award_date);
     } catch (x) { toast.error(x instanceof Error ? x.message : "Save failed"); } finally { setSaving(false); }
   }
 
   const fy = f.award_date ? fyOf(f.award_date) : null;
   return (
-    <AdminDialog icon={Award} title={row ? "Edit award" : "Add award"} subtitle={fy ? `${fy.label} (${fy.range})` : "Shown on the Accolades page"} onClose={onClose} xwide
+    <AdminDialog icon={Award} title={row ? "Edit award" : "Add award"} subtitle={fy ? `FY ${fy.label} (${fy.range})` : "Shown on the Accolades page"} onClose={onClose} xwide
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add award"}</Button></>}>
       <FormSection title="Award details">
+        {pickYear && (
+          <div className="max-w-xs"><Label>Financial year *</Label>
+            <select className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={yearEnd}
+              onChange={(e) => { const y = Number(e.target.value); setYearEnd(y); setF({ ...f, award_date: `${y}-03-31` }); }}>
+              {pastFyStarts().map((s) => <option key={s} value={s + 1}>FY {s} ({fyFromEnd(s + 1).range})</option>)}
+            </select>
+          </div>
+        )}
         <div className="grid gap-4 sm:grid-cols-3">
-          <div><Label>Award date *</Label><Input type="date" value={f.award_date} onChange={(e) => setF({ ...f, award_date: e.target.value })} /><FieldError msg={errs.award_date} /></div>
+          <div><Label>Award date *</Label><Input type="date" min={bounds.min} max={bounds.max} value={f.award_date} onChange={(e) => setF({ ...f, award_date: e.target.value })} /><FieldError msg={errs.award_date} /></div>
           <div><Label>Award title *</Label><Input maxLength={200} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /><FieldError msg={errs.title} /></div>
           <div><Label>Category</Label><Input maxLength={120} value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} /></div>
           <div><Label>Awarding organisation *</Label><Input maxLength={200} value={f.organisation} onChange={(e) => setF({ ...f, organisation: e.target.value })} /><FieldError msg={errs.organisation} /></div>
