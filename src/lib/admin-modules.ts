@@ -5,7 +5,7 @@ import { IR_SECTIONS } from "@/lib/investor-relations";
 export type AdminModule = { key: string; label: string; icon: LucideIcon; ready: boolean };
 
 export const ADMIN_MODULES: AdminModule[] = [
-  { key: "about", label: "About Us", icon: Building2, ready: false },
+  { key: "about", label: "About Us", icon: Building2, ready: true },
   { key: "management", label: "Management", icon: UsersRound, ready: false },
   { key: "capabilities", label: "Capabilities", icon: Wrench, ready: false },
   { key: "accolades", label: "Accolades", icon: Award, ready: false },

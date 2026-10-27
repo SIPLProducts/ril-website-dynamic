@@ -29,3 +29,19 @@ export function deleteUserBlocker(targetId: string, callerId: string, targetIsSu
   if (targetIsSuper && superAdminCount <= 1) return "At least one Super Admin must remain.";
   return null;
 }
+
+export const IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp", "image/svg+xml"];
+export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+/** Returns an error for an invalid image file, or null when acceptable. */
+export function imageFileError(file: { type: string; size: number } | null, required: boolean): string | null {
+  if (!file) return required ? "Image is required" : null;
+  if (!IMAGE_TYPES.includes(file.type)) return "Use a PNG, JPG, WebP or SVG image";
+  if (file.size > MAX_IMAGE_BYTES) return "Image must be 5 MB or smaller";
+  return null;
+}
+
+/** A client entry must keep an image: either an existing one or a newly chosen file. */
+export function clientImageError(file: { type: string; size: number } | null, existingImage: string | null): string | null {
+  return imageFileError(file, !existingImage);
+}
