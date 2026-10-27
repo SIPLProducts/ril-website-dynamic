@@ -4,9 +4,9 @@ import { ABOUT_SECTIONS } from "@/lib/about-sections";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 
 /** A website page in the admin menu. It is editable ("ready") when it has a `to` admin path. */
-export type AdminPage = { key: string; label: string; to?: string; children?: AdminPage[] };
+export type AdminPage = { key: string; label: string; to?: string | undefined; children?: AdminPage[] | undefined };
 /** A website module, in the same order as the public site header. */
-export type AdminModule = { key: string; label: string; icon: LucideIcon; to?: string; children?: AdminPage[] };
+export type AdminModule = { key: string; label: string; icon: LucideIcon; to?: string | undefined; children?: AdminPage[] | undefined };
 
 const ADMIN_PATHS: Record<string, string> = { "about/clientele": "/admin/about/clientele" };
 const page = (mod: string, key: string, label: string, children?: AdminPage[]): AdminPage => ({ key, label, to: ADMIN_PATHS[`${mod}/${key}`], children });
