@@ -26,3 +26,11 @@ describe("deleteUserBlocker", () => {
   it("allows deleting a Super Admin when another remains", () => expect(deleteUserBlocker("a", "b", true, 2)).toBeNull());
   it("blocks self-delete", () => expect(deleteUserBlocker("a", "a", false, 2)).not.toBeNull());
 });
+
+import { clientImageError, imageFileError } from "@/lib/admin-validation";
+describe("client images", () => {
+  it("requires an image for a new client", () => expect(clientImageError(null, null)).toBe("Image is required"));
+  it("allows editing without a new file when an image exists", () => expect(clientImageError(null, "storage:a.png")).toBeNull());
+  it("rejects images over 5 MB", () => expect(imageFileError({ type: "image/png", size: 6 * 1024 * 1024 }, true)).toBe("Image must be 5 MB or smaller"));
+  it("rejects non-image files", () => expect(imageFileError({ type: "application/pdf", size: 10 }, true)).toBe("Use a PNG, JPG, WebP or SVG image"));
+});
