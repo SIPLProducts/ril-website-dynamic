@@ -2,7 +2,8 @@
 
 ## What you get
 - **Admin: About menu → Accolades** becomes clickable (no longer "Soon").
-- Admin screen lists all awards grouped by Financial Year, with Add / Edit / Delete (styled confirm), Live/Draft switch and display order.
+- Admin screen shows one collapsible card per Financial Year, newest first and open by default. Each card has its own "Add award" button plus Edit / Delete (styled confirm), Live/Draft switch and display order.
+- **New year cards appear automatically:** after 31-03-2027 the admin screen shows an empty "FY 2027-28" card at the top on its own, ready for the admin to add certificates/photos and descriptions. The year with the most recent Live award opens on the website, so a new card stays hidden there until it has at least one Live award.
 - Add/Edit award popup (3 fields per row): Award date (required), Award title (required), Category, Awarding organisation (required), Project / initiative, Description, Award photo (optional upload), Live toggle.
 - **Financial Year is worked out automatically from the award date** (1 April to 31 March). Example: an award dated 15-01-2027 falls in FY 2026-27, which ends 31-03-2027. No need to create years by hand — the first award in a new FY creates that FY row on the website.
 - Page settings (editable): row heading ("AWARDS"), "PAST AWARDS" label, and how many recent FYs get their own row (default 3); older ones go under Past Awards.
