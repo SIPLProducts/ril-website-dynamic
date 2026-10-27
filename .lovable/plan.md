@@ -1,7 +1,11 @@
 # Make the Clientele page editable from the admin panel
 
 ## What the admin will get
-A new **About Us > Clientele** item in the admin menu (the "Soon" tag is removed for About Us). The page has two parts:
+A new **About Us > Clientele** item in the admin menu (the "Soon" tag is removed for About Us). The page has three parts:
+
+**0. Top banner**
+- Small heading (e.g. "Relationships That Endure"), Title (e.g. "Clientele"), and Subtitle (e.g. "Trusted relationships shaped by commitment...") — all pre-filled.
+- Optional background image upload (PNG/JPG/WebP, up to 5 MB) with preview, Replace and Remove. A dark overlay keeps the text readable; without an image the current dark banner stays.
 
 **1. About Ramky block**
 - Description text box (pre-filled with the current text).
