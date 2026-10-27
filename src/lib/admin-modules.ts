@@ -1,18 +1,32 @@
-import { Award, Briefcase, Building2, FileText, Film, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
+import { Award, Briefcase, Building2, FileText, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
 import { IR_SECTIONS } from "@/lib/investor-relations";
+import { ABOUT_SECTIONS } from "@/lib/about-sections";
+import { ESG_SECTIONS } from "@/lib/esg-sections";
 
-/** Website modules shown in the admin sidebar, in public-menu order. Set `ready` when a module becomes editable. */
-export type AdminModule = { key: string; label: string; icon: LucideIcon; ready: boolean };
+/** A website page in the admin menu. It is editable ("ready") when it has a `to` admin path. */
+export type AdminPage = { key: string; label: string; to?: string | undefined; children?: AdminPage[] | undefined };
+/** A website module, in the same order as the public site header. */
+export type AdminModule = { key: string; label: string; icon: LucideIcon; to?: string | undefined; children?: AdminPage[] | undefined };
+
+const ADMIN_PATHS: Record<string, string> = { "about/clientele": "/admin/about/clientele" };
+const page = (mod: string, key: string, label: string, children?: AdminPage[]): AdminPage => ({ key, label, to: ADMIN_PATHS[`${mod}/${key}`], children });
 
 export const ADMIN_MODULES: AdminModule[] = [
-  { key: "about", label: "About Us", icon: Building2, ready: true },
-  { key: "management", label: "Management", icon: UsersRound, ready: false },
-  { key: "capabilities", label: "Capabilities", icon: Wrench, ready: false },
-  { key: "accolades", label: "Accolades", icon: Award, ready: false },
-  { key: "sustainability", label: "Sustainability", icon: Leaf, ready: false },
-  { key: "careers", label: "Careers", icon: Briefcase, ready: false },
-  { key: "media", label: "Media", icon: Film, ready: false },
+  {
+    key: "about", label: "About Ramky", icon: Building2,
+    children: [
+      page("about", "history-milestones", "History & Milestones"),
+      ...ABOUT_SECTIONS.map((s) => page("about", s.slug, s.title, s.slug === "partners" ? [page("about", "subsidiaries", "Subsidiaries")] : undefined)),
+    ],
+  },
+  { key: "management", label: "Management", icon: UsersRound, children: [page("management", "board", "Board Of Directors"), page("management", "senior", "Senior Management")] },
+  { key: "capabilities", label: "Capabilities", icon: Wrench },
+  { key: "accolades", label: "Accolades", icon: Award },
+  { key: "sustainability", label: "Sustainability", icon: Leaf, children: ESG_SECTIONS.map((s) => page("esg", s.slug, s.title)) },
+  { key: "careers", label: "Careers", icon: Briefcase, children: [page("careers", "life", "Life at Ramky"), page("careers", "positions", "Current Positions")] },
 ];
+
+export const isReady = (n: AdminPage | AdminModule): boolean => !!n.to || (n.children ?? []).some(isReady);
 
 export const CONTACTS_SECTION = "contacts";
 export const DASHBOARD_ICON = LayoutDashboard;
