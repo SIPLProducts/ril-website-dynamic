@@ -92,7 +92,7 @@ function AccoladesPage() {
           <div className="mt-12">
             {rowYears.map((y) => {
               const fy = fyFromEnd(y);
-              return <Row key={y} id={`fy-${y}`} title={`Awards — ${fy.label}`} right={`FY ends ${fy.endsOn}`} awards={byFy.get(y)!} open={open.has(`fy-${y}`)} onToggle={() => toggle(`fy-${y}`)} />;
+              return <Row key={y} id={`fy-${y}`} title="Awards" right={fy.label} awards={byFy.get(y)!} open={open.has(`fy-${y}`)} onToggle={() => toggle(`fy-${y}`)} />;
             })}
             {past.length > 0 && <Row id="past" title="Past Awards" awards={past} open={open.has("past")} onToggle={() => toggle("past")} />}
             {!years.length && <p className="text-muted-foreground">Awards will be listed here soon.</p>}

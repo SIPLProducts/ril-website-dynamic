@@ -5,8 +5,11 @@ describe("financial year", () => {
   it("15-01-2027 falls in the FY ending 31-03-2027", () => {
     expect(fyOf("2027-01-15").endsOn).toBe("31-03-2027");
   });
-  it("31-03-2027 is still FY 2026-27", () => {
-    expect(fyOf("2027-03-31").label).toBe("FY 2026-27");
+  it("31-03-2027 is still under 2026", () => {
+    expect(fyOf("2027-03-31").label).toBe("2026");
+  });
+  it("01-04-2027 is under 2027", () => {
+    expect(fyOf("2027-04-01").label).toBe("2027");
   });
   it("10-04-2027 starts the FY ending 31-03-2028", () => {
     expect(fyOf("2027-04-10").endYear).toBe(2028);
