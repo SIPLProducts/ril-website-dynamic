@@ -4,7 +4,9 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown, ChevronRight, Columns2, ExternalLink, LogOut, PanelLeftClose, PanelLeftOpen, Rows2, UserPlus, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Staff } from "@/lib/admin-auth";
-import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGroups } from "@/lib/admin-modules";
+import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGroups, isReady, type AdminPage } from "@/lib/admin-modules";
+
+const Soon = () => <span className="ml-2 rounded-full border border-primary-foreground/15 px-2 py-0.5 text-[9px] uppercase tracking-wider">Soon</span>;
 import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub,
@@ -29,7 +31,33 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const [collapsed, setCollapsed] = useState(false);
   const [invOpen, setInvOpen] = useState(active.kind === "investors");
   const [usersOpen, setUsersOpen] = useState(active.kind === "users" || active.kind === "email");
-  const [aboutOpen, setAboutOpen] = useState(active.kind === "about");
+  const activeModule = active.kind === "about" ? "about" : undefined;
+  const activePage = active.kind === "about" ? active.section : undefined;
+  const [modOpen, setModOpen] = useState<Record<string, boolean>>({});
+  const SidePage = ({ p, depth }: { p: AdminPage; depth: number }): ReactNode => (
+    <>
+      {p.to ? (
+        <Link to={p.to} className={`${subCls(activeModule !== undefined && activePage === p.key)} ${depth ? "pl-6" : ""}`}>{p.label}</Link>
+      ) : (
+        <div className={`flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-1.5 text-[13px] text-[var(--admin-nav-foreground)]/50 ${depth ? "pl-6" : ""}`} aria-disabled>
+          <span className="flex-1 truncate">{depth ? "└ " : ""}{p.label}</span><Soon />
+        </div>
+      )}
+      {(p.children ?? []).map((c) => <SidePage key={c.key} p={c} depth={depth + 1} />)}
+    </>
+  );
+  const DropPage = ({ p }: { p: AdminPage }): ReactNode => (
+    <>
+      {p.to ? (
+        <DropdownMenuItem onClick={() => navigate({ to: p.to! })} className={activePage === p.key ? "font-semibold text-brand-orange" : ""}>{p.label}</DropdownMenuItem>
+      ) : (
+        <DropdownMenuItem disabled>{p.label}<span className="ml-auto text-[10px] uppercase">Soon</span></DropdownMenuItem>
+      )}
+      {(p.children ?? []).map((c) => (
+        <DropdownMenuItem key={c.key} disabled={!c.to} onClick={() => c.to && navigate({ to: c.to })} className="pl-6">└ {c.label}{!c.to && <span className="ml-auto text-[10px] uppercase">Soon</span>}</DropdownMenuItem>
+      ))}
+    </>
+  );
   const groups = investorGroups();
   const activeGroup = active.kind === "investors" ? groups.find((g) => g.items.some((i) => i.key === active.section))?.label : undefined;
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(activeGroup ? { [activeGroup]: true } : {});
