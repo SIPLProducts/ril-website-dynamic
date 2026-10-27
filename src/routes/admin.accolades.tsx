@@ -125,7 +125,7 @@ function Page() {
                 </button>
                 <Button onClick={() => setEditing({ row: null, fy: y })} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add award</Button>
               </div>
-              {isOpen && <div className="border-t border-border bg-surface/50 px-4 py-2 text-xs text-muted-foreground">From {fy.range.replace(" to ", " to ")}</div>}
+              {isOpen && <div className="border-t border-border bg-surface/50 px-4 py-2 text-xs text-muted-foreground">From {fy.range}</div>}
               {isOpen && (
                 <table className="w-full border-t border-border text-sm">
                   <thead className="bg-surface text-left text-xs uppercase tracking-wider text-muted-foreground">
