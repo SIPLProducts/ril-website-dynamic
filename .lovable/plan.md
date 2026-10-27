@@ -3,7 +3,7 @@
 ## What changes
 - A financial year is named by its **starting year**. Awards dated 1 April 2026 to 31 March 2027 show under **2026**. Awards from 1 April 2027 go under **2027**.
 - **Website:** each row reads **AWARDS** on the left and the year (for example **2026**) on the right, like your screenshot. The "FY 2025-26 / FY ends …" wording goes away.
-- **Admin:** each card heading becomes **2026**, with a small grey note "1-04-2026 to 31-03-2027 · 4 awards", so admins still see the exact dates. The Add/Edit popup and the save message use the same "2026" name.
+- **Admin:** each card looks like the website row: **AWARDS** on the left and the year (**2026**) on the right, next to the **Add award** button. A small grey note under it, "01-04-2026 to 31-03-2027 · 4 awards", shows the exact dates. The Add/Edit popup and the save message use the same "2026" name.
 - The newest year opens by default in both places. The empty current-year card still appears in admin automatically.
 - Existing awards stay where they are. FY 2025-26 just shows as "2025".
 
