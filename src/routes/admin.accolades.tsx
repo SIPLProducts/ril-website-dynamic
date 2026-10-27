@@ -108,7 +108,7 @@ function Page() {
           <h1 className="font-display text-2xl font-bold">Accolades</h1>
           <p className="text-sm text-muted-foreground">One card per financial year (1 April – 31 March). A new year's card appears automatically after 31 March.</p>
         </div>
-        <Button size="sm" variant="outline" onClick={() => setEditing({ row: null, fy: pastFyStarts()[0] + 1, pick: true })}><Plus className="size-4" /> Add past year</Button>
+        <Button size="sm" variant="outline" onClick={() => setEditing({ row: null, fy: (pastFyStarts()[0] ?? 2000) + 1, pick: true })}><Plus className="size-4" /> Add past year</Button>
       </div>
       <div className="space-y-4">
         {years.map((y) => {
@@ -169,7 +169,7 @@ function Page() {
   );
 }
 
-function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, onSaved }: { row: Row | null; defaultDate: string; fyEnd?: number; pickYear?: boolean; nextOrder: number; onClose: () => void; onSaved: (date: string) => void }) {
+function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, onSaved }: { row: Row | null; defaultDate: string; fyEnd?: number | undefined; pickYear?: boolean | undefined; nextOrder: number; onClose: () => void; onSaved: (date: string) => void }) {
   const [yearEnd, setYearEnd] = useState(fyEnd);
   const bounds = yearEnd ? fyDateBounds(yearEnd) : { min: undefined, max: new Date().toISOString().slice(0, 10) };
   const [f, setF] = useState({
