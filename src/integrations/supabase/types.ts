@@ -47,6 +47,54 @@ export type Database = {
         }
         Relationships: []
       }
+      accolades: {
+        Row: {
+          alt_text: string | null
+          award_date: string
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          organisation: string
+          project: string | null
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          alt_text?: string | null
+          award_date?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          organisation?: string
+          project?: string | null
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          alt_text?: string | null
+          award_date?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          organisation?: string
+          project?: string | null
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_profiles: {
         Row: {
           created_at: string
