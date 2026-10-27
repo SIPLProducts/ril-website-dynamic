@@ -18,3 +18,21 @@ describe("financial year", () => {
     expect(adminFyYears(["2027-01-15"], new Date("2027-04-01T06:00:00Z"))).toEqual([2028, 2027]);
   });
 });
+
+import { fyDateBounds, isFutureDate, pastFyStarts } from "@/lib/fiscal-year";
+describe("past FY picker", () => {
+  const now = new Date("2026-10-27T06:00:00Z");
+  it("lists only years before the current FY", () => {
+    const p = pastFyStarts(now);
+    expect(p[0]).toBe(2025);
+    expect(p).not.toContain(2026);
+    expect(p).not.toContain(2027);
+  });
+  it("caps the current FY at today", () => {
+    expect(fyDateBounds(2027, now)).toEqual({ min: "2026-04-01", max: "2026-10-27" });
+  });
+  it("rejects future dates", () => {
+    expect(isFutureDate("2026-10-28", now)).toBe(true);
+    expect(isFutureDate("2026-10-27", now)).toBe(false);
+  });
+});

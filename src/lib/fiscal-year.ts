@@ -19,3 +19,21 @@ export function adminFyYears(dates: string[], now: Date = new Date()): number[] 
   set.add(fyOf(now).endYear);
   return [...set].sort((a, b) => b - a);
 }
+
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+
+/** FY start years before the current FY, newest first (e.g. on 27-10-2026: 2025, 2024, … from). */
+export function pastFyStarts(now: Date = new Date(), from = 2000): number[] {
+  const cur = fyOf(now).endYear - 1;
+  const out: number[] = [];
+  for (let y = cur - 1; y >= from; y--) out.push(y);
+  return out;
+}
+
+/** Allowed award-date range inside an FY, never later than today. */
+export function fyDateBounds(endYear: number, now: Date = new Date()): { min: string; max: string } {
+  const end = `${endYear}-03-31`, t = iso(now);
+  return { min: `${endYear - 1}-04-01`, max: end < t ? end : t };
+}
+
+export const isFutureDate = (date: string, now: Date = new Date()) => date.slice(0, 10) > iso(now);
