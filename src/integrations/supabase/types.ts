@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      about_content: {
+        Row: {
+          banner_image_url: string | null
+          eyebrow: string
+          image_url: string | null
+          slug: string
+          statement: string
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          banner_image_url?: string | null
+          eyebrow?: string
+          image_url?: string | null
+          slug: string
+          statement?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          banner_image_url?: string | null
+          eyebrow?: string
+          image_url?: string | null
+          slug?: string
+          statement?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       admin_profiles: {
         Row: {
           created_at: string
@@ -44,6 +77,36 @@ export type Database = {
           phone?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      clientele: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          image_url: string | null
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
