@@ -29,6 +29,13 @@
       "when": 1793067578184,
       "tag": "0003_about_clientele_content",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793069405526,
+      "tag": "0004_accolades",
+      "breakpoints": true
     }
   ]
 }

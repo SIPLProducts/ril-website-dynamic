@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" } | { kind: "email" } | { kind: "about"; section: string };
+type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" } | { kind: "email" } | { kind: "about"; section: string } | { kind: "module"; module: string; section: string };
 type Layout = "vertical" | "horizontal";
 const LAYOUT_KEY = "ril-admin-layout";
 
@@ -31,8 +31,8 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const [collapsed, setCollapsed] = useState(false);
   const [invOpen, setInvOpen] = useState(active.kind === "investors");
   const [usersOpen, setUsersOpen] = useState(active.kind === "users" || active.kind === "email");
-  const activeModule = active.kind === "about" ? "about" : undefined;
-  const activePage = active.kind === "about" ? active.section : undefined;
+  const activeModule = active.kind === "about" ? "about" : active.kind === "module" ? active.module : undefined;
+  const activePage = active.kind === "about" || active.kind === "module" ? active.section : undefined;
   const [modOpen, setModOpen] = useState<Record<string, boolean>>({});
   const SidePage = ({ p, depth }: { p: AdminPage; depth: number }): ReactNode => (
     <>
