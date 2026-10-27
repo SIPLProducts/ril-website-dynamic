@@ -172,12 +172,12 @@ function AwardDialog({ row, defaultDate, nextOrder, onClose, onSaved }: { row: R
     image_url: row?.image_url ?? null,
   });
   const [file, setFile] = useState<File | null>(null);
-  const [errs, setErrs] = useState<Record<string, string>>({});
+  const [errs, setErrs] = useState<{ award_date?: string; title?: string; organisation?: string; image?: string }>({});
   const [saving, setSaving] = useState(false);
   const preview = usePreview(f.image_url);
 
   async function save() {
-    const e: Record<string, string> = {};
+    const e: { award_date?: string; title?: string; organisation?: string; image?: string } = {};
     if (!f.award_date) e.award_date = "Award date is required";
     if (!f.title.trim()) e.title = "Award title is required";
     if (!f.organisation.trim()) e.organisation = "Awarding organisation is required";
