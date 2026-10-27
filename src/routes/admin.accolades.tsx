@@ -117,8 +117,11 @@ function Page() {
               <div className="flex items-center justify-between gap-3 p-4">
                 <button type="button" aria-expanded={isOpen} onClick={() => setOpen((p) => { const n = new Set(p); if (n.has(y)) n.delete(y); else n.add(y); return n; })} className="flex flex-1 items-center gap-3 text-left">
                   <ChevronDown className={`size-5 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-                  <span className="font-display text-lg font-bold">{fy.label}</span>
-                  <span className="text-xs text-muted-foreground">ends {fy.endsOn} · {list.length} award{list.length === 1 ? "" : "s"}</span>
+                  <span className="flex flex-col">
+                    <span className="font-display text-lg font-bold uppercase tracking-[0.12em]">Awards</span>
+                    <span className="text-xs text-muted-foreground">{fy.range} · {list.length} award{list.length === 1 ? "" : "s"}</span>
+                  </span>
+                  <span className="ml-auto pr-2 font-display text-lg font-bold">{fy.label}</span>
                 </button>
                 <Button onClick={() => setEditing({ row: null, fy: y })} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add award</Button>
               </div>
@@ -205,7 +208,7 @@ function AwardDialog({ row, defaultDate, nextOrder, onClose, onSaved }: { row: R
 
   const fy = f.award_date ? fyOf(f.award_date) : null;
   return (
-    <AdminDialog icon={Award} title={row ? "Edit award" : "Add award"} subtitle={fy ? `${fy.label} (ends ${fy.endsOn})` : "Shown on the Accolades page"} onClose={onClose} xwide
+    <AdminDialog icon={Award} title={row ? "Edit award" : "Add award"} subtitle={fy ? `${fy.label} (${fy.range})` : "Shown on the Accolades page"} onClose={onClose} xwide
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add award"}</Button></>}>
       <FormSection title="Award details">
         <div className="grid gap-4 sm:grid-cols-3">
