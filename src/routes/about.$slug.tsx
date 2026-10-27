@@ -4,15 +4,17 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ABOUT_SECTIONS, getAboutSection } from "@/lib/about-sections";
 import { ManagementSystems } from "@/components/site/ManagementSystems";
-import { OrgList } from "@/components/site/OrgList";
-import { CLIENTELE } from "@/lib/organisations";
+import { aboutDataQuery, type ClientItem } from "@/lib/about-data.functions";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/about/$slug")({
-  loader: ({ params }) => {
+  loader: async ({ params, context }) => {
     const section = getAboutSection(params.slug);
     if (!section) throw notFound();
+    if (section.slug === "clientele") await context.queryClient.ensureQueryData(aboutDataQuery(section.slug)).catch(() => null);
     return section;
   },
+  errorComponent: ({ error }) => <div role="alert" className="p-10">{error instanceof Error ? error.message : String(error)}</div>,
   head: ({ loaderData }) => {
     const title = loaderData
       ? `${loaderData.title} | Ramky Infrastructure`
@@ -45,21 +47,31 @@ const ICONS = {
 function AboutSectionPage() {
   const section = Route.useLoaderData();
   const Icon = ICONS[section.slug];
+  const isClientele = section.slug === "clientele";
+  const { data: live } = useQuery({ ...aboutDataQuery(section.slug), enabled: isClientele });
+  const c = isClientele ? live?.content : null;
+  const eyebrow = c?.eyebrow || section.eyebrow;
+  const title = c?.title || section.title;
+  const subtitle = c?.subtitle || section.description;
+  const statement = c?.statement || section.statement;
+  const banner = c?.bannerImage ?? null;
+  const sideImage = c?.image ?? null;
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
       <main>
         <section className="ink-panel relative overflow-hidden pb-20 pt-36 lg:pb-28 lg:pt-44">
+          {banner && (<><img src={banner} alt="" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-ink/75" aria-hidden="true" /></>)}
           <div className="absolute inset-y-0 right-0 w-1/3 border-l border-ink-foreground/10" aria-hidden="true" />
           <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_18rem] lg:items-end lg:px-10">
             <div className="max-w-4xl">
-              <p className="eyebrow">{section.eyebrow}</p>
+              <p className="eyebrow">{eyebrow}</p>
               <h1 className="mt-5 text-4xl font-bold leading-tight text-ink-foreground sm:text-5xl lg:text-7xl">
-                {section.title}
+                {title}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-ink-foreground/70 sm:text-xl">
-                {section.description}
+                {subtitle}
               </p>
             </div>
             <div className="flex justify-start lg:justify-end">
@@ -73,8 +85,9 @@ function AboutSectionPage() {
             <div>
               <p className="eyebrow">About Ramky</p>
               <p className="mt-5 max-w-3xl font-display text-2xl font-semibold leading-relaxed text-foreground sm:text-3xl">
-                {section.statement}
+                {statement}
               </p>
+              {sideImage && <img src={sideImage} alt={title} className="mt-8 w-full max-w-3xl rounded-lg object-cover" />}
               <a
                 href="/#about"
                 className="mt-9 inline-flex items-center gap-2 font-display text-sm font-semibold uppercase text-brand-blue transition-colors hover:text-brand-orange"
@@ -108,12 +121,26 @@ function AboutSectionPage() {
         {section.slug === "clientele" && (
           <section className="mx-auto max-w-[1400px] px-5 pb-16 lg:px-10 lg:pb-24">
             <h2 className="mb-8 text-3xl font-bold">Our Clientele</h2>
-            <OrgList items={CLIENTELE} />
+            <ClientGrid items={live?.clients ?? []} />
           </section>
         )}
       </main>
       <SiteFooter />
     </div>
+  );
+}
+
+function ClientGrid({ items }: { items: ClientItem[] }) {
+  if (!items.length) return <p className="text-muted-foreground">Client list coming soon.</p>;
+  return (
+    <ul className="grid grid-cols-1 border-t border-border sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3">
+      {items.map((o) => (
+        <li key={o.id} className="flex items-center gap-4 break-words border-b border-border py-4 font-display text-[0.95rem] font-medium leading-snug text-foreground">
+          {o.image ? <img src={o.image} alt={o.description || "Client logo"} loading="lazy" className="h-14 w-24 shrink-0 object-contain" /> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
+          {o.description && <span className="min-w-0">{o.description}</span>}
+        </li>
+      ))}
+    </ul>
   );
 }
 
