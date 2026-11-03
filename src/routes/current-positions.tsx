@@ -37,7 +37,7 @@ function CurrentPositionsPage() {
         <h2 className="text-xl font-semibold">{flyer.title}</h2>
         {flyer.imageUrl && <img src={flyer.imageUrl} alt={flyer.title} className="mt-4 h-auto w-full object-contain" loading="lazy" />}
         {flyer.url && <Button asChild variant="outline" className="mt-4"><a href={flyer.url} target="_blank" rel="noopener noreferrer">View full flyer<ArrowRight /></a></Button>}
-        <ul className="mt-4 space-y-3">{flyer.roles.map((role) => <li key={role} className="flex flex-wrap items-center justify-between gap-3"><span>{role}</span><Button onClick={() => setApplication({ title: role, id: flyer.id })}>Apply Now</Button></li>)}</ul>
+        <ul className="mt-4 space-y-3">{flyer.roles.map((role) => <li key={role} className="flex flex-wrap items-center justify-between gap-3"><span>{role}</span><Button onClick={() => setApplication({ title: role, id: "" })}>Apply Now</Button></li>)}</ul>
       </article>)}
     </div>
     {vacancies.length === 0 && flyers.length === 0 && <p className="mt-10 border-t border-border py-8 text-muted-foreground">There are currently no open positions. Please check back for future opportunities.</p>}
