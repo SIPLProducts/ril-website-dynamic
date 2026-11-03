@@ -33,6 +33,10 @@ import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
 import { Route as ExecutiveLeadershipSlugRouteImport } from './routes/executive-leadership.$slug'
 import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.partners.subsidiaries'
 import { Route as AdminAboutClienteleRouteImport } from './routes/admin.about.clientele'
+import { Route as AdminCareersLifeRouteImport } from './routes/admin.careers.life'
+import { Route as AdminCareersPositionsRouteImport } from './routes/admin.careers.positions'
+import { Route as AdminCompanyCsrRouteImport } from './routes/admin.company.csr'
+import { Route as AdminCompanyMediaRouteImport } from './routes/admin.company.media'
 import { Route as AdminManagementGroupRouteImport } from './routes/admin.management.$group'
 import { Route as AdminSustainabilitySlugRouteImport } from './routes/admin.sustainability.$slug'
 import { Route as AdminSustainabilityCsrRouteImport } from './routes/admin.sustainability.csr'
@@ -158,6 +162,26 @@ const AdminAboutClienteleRoute = AdminAboutClienteleRouteImport.update({
   path: '/about/clientele',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCareersLifeRoute = AdminCareersLifeRouteImport.update({
+  id: '/careers/life',
+  path: '/careers/life',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCareersPositionsRoute = AdminCareersPositionsRouteImport.update({
+  id: '/careers/positions',
+  path: '/careers/positions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCompanyCsrRoute = AdminCompanyCsrRouteImport.update({
+  id: '/company/csr',
+  path: '/company/csr',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCompanyMediaRoute = AdminCompanyMediaRouteImport.update({
+  id: '/company/media',
+  path: '/company/media',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminManagementGroupRoute = AdminManagementGroupRouteImport.update({
   id: '/management/$group',
   path: '/management/$group',
@@ -199,6 +223,10 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/careers/life': typeof AdminCareersLifeRoute
+  '/admin/careers/positions': typeof AdminCareersPositionsRoute
+  '/admin/company/csr': typeof AdminCompanyCsrRoute
+  '/admin/company/media': typeof AdminCompanyMediaRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -227,6 +255,10 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/careers/life': typeof AdminCareersLifeRoute
+  '/admin/careers/positions': typeof AdminCareersPositionsRoute
+  '/admin/company/csr': typeof AdminCompanyCsrRoute
+  '/admin/company/media': typeof AdminCompanyMediaRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -257,6 +289,10 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/careers/life': typeof AdminCareersLifeRoute
+  '/admin/careers/positions': typeof AdminCareersPositionsRoute
+  '/admin/company/csr': typeof AdminCompanyCsrRoute
+  '/admin/company/media': typeof AdminCompanyMediaRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -288,6 +324,10 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/careers/life'
+    | '/admin/careers/positions'
+    | '/admin/company/csr'
+    | '/admin/company/media'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -316,6 +356,10 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/careers/life'
+    | '/admin/careers/positions'
+    | '/admin/company/csr'
+    | '/admin/company/media'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -345,6 +389,10 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/careers/life'
+    | '/admin/careers/positions'
+    | '/admin/company/csr'
+    | '/admin/company/media'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -539,6 +587,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAboutClienteleRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/careers/life': {
+      id: '/admin/careers/life'
+      path: '/careers/life'
+      fullPath: '/admin/careers/life'
+      preLoaderRoute: typeof AdminCareersLifeRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/careers/positions': {
+      id: '/admin/careers/positions'
+      path: '/careers/positions'
+      fullPath: '/admin/careers/positions'
+      preLoaderRoute: typeof AdminCareersPositionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/company/csr': {
+      id: '/admin/company/csr'
+      path: '/company/csr'
+      fullPath: '/admin/company/csr'
+      preLoaderRoute: typeof AdminCompanyCsrRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/company/media': {
+      id: '/admin/company/media'
+      path: '/company/media'
+      fullPath: '/admin/company/media'
+      preLoaderRoute: typeof AdminCompanyMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/management/$group': {
       id: '/admin/management/$group'
       path: '/management/$group'
@@ -572,6 +648,10 @@ interface AdminRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAboutClienteleRoute: typeof AdminAboutClienteleRoute
+  AdminCareersLifeRoute: typeof AdminCareersLifeRoute
+  AdminCareersPositionsRoute: typeof AdminCareersPositionsRoute
+  AdminCompanyCsrRoute: typeof AdminCompanyCsrRoute
+  AdminCompanyMediaRoute: typeof AdminCompanyMediaRoute
   AdminManagementGroupRoute: typeof AdminManagementGroupRoute
   AdminSustainabilitySlugRoute: typeof AdminSustainabilitySlugRoute
   AdminSustainabilityCsrRoute: typeof AdminSustainabilityCsrRoute
@@ -586,6 +666,10 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAboutClienteleRoute: AdminAboutClienteleRoute,
+  AdminCareersLifeRoute: AdminCareersLifeRoute,
+  AdminCareersPositionsRoute: AdminCareersPositionsRoute,
+  AdminCompanyCsrRoute: AdminCompanyCsrRoute,
+  AdminCompanyMediaRoute: AdminCompanyMediaRoute,
   AdminManagementGroupRoute: AdminManagementGroupRoute,
   AdminSustainabilitySlugRoute: AdminSustainabilitySlugRoute,
   AdminSustainabilityCsrRoute: AdminSustainabilityCsrRoute,

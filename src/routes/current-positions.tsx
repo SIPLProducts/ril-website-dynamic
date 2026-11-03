@@ -5,18 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { CareersApplication } from "@/components/site/CareersApplication";
 import { CareersLayout } from "@/components/site/CareersLayout";
-import { careersHead, POSITIONS_INTRO, VACANCIES, RECRUITMENT_FLYERS, type Vacancy } from "@/lib/careers";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { careersHead, type Vacancy } from "@/lib/careers";
+import { careersQuery } from "@/lib/site-content.functions";
 
 export const Route = createFileRoute("/current-positions")({
   head: () => careersHead("Current Positions", "Explore current recruitment opportunities and apply to Ramky Infrastructure Limited."),
+  loader: ({ context }) => context.queryClient.ensureQueryData(careersQuery()),
   component: CurrentPositionsPage,
 });
 
 function CurrentPositionsPage() {
   const [selected, setSelected] = useState<Vacancy | null>(null);
   const [application, setApplication] = useState<{ title: string; id: string } | null>(null);
-  const vacancies = VACANCIES.filter((job) => job.status === "open");
-  const flyers = RECRUITMENT_FLYERS.filter((flyer) => flyer.status === "open");
+  const { vacancies, flyers, positionsIntro: POSITIONS_INTRO } = useSuspenseQuery(careersQuery()).data;
   return <CareersLayout title="Current Positions">
     <p className="max-w-5xl whitespace-pre-wrap text-base leading-relaxed text-muted-foreground">{POSITIONS_INTRO}</p>
     <div className="mt-10 grid gap-5 md:grid-cols-2">
@@ -34,7 +36,7 @@ function CurrentPositionsPage() {
       {flyers.map((flyer) => <article key={flyer.id} className="rounded-sm border border-border bg-card p-6">
         <h2 className="text-xl font-semibold">{flyer.title}</h2>
         {flyer.imageUrl && <img src={flyer.imageUrl} alt={flyer.title} className="mt-4 h-auto w-full object-contain" loading="lazy" />}
-        <Button asChild variant="outline" className="mt-4"><a href={flyer.url} target="_blank" rel="noopener noreferrer">View full flyer<ArrowRight /></a></Button>
+        {flyer.url && <Button asChild variant="outline" className="mt-4"><a href={flyer.url} target="_blank" rel="noopener noreferrer">View full flyer<ArrowRight /></a></Button>}
         <ul className="mt-4 space-y-3">{flyer.roles.map((role) => <li key={role} className="flex flex-wrap items-center justify-between gap-3"><span>{role}</span><Button onClick={() => setApplication({ title: role, id: flyer.id })}>Apply Now</Button></li>)}</ul>
       </article>)}
     </div>

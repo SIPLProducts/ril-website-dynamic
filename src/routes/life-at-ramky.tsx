@@ -1,16 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Compass, Target, BadgeCheck } from "lucide-react";
 import { CareersLayout } from "@/components/site/CareersLayout";
-import { careersHead, LIFE_SECTIONS, PURPOSE } from "@/lib/careers";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { careersHead } from "@/lib/careers";
+import { careersQuery } from "@/lib/site-content.functions";
 
 export const Route = createFileRoute("/life-at-ramky")({
   head: () => careersHead("Life at Ramky", "Ramky Infrastructure's vision, mission, values, people, learning and development."),
+  loader: ({ context }) => context.queryClient.ensureQueryData(careersQuery()),
   component: LifeAtRamkyPage,
 });
 
 const CARD = "purpose-card rounded-md border border-border bg-card p-6";
 
 function LifeAtRamkyPage() {
+  const { purpose: PURPOSE, sections: LIFE_SECTIONS } = useSuspenseQuery(careersQuery()).data;
   return <CareersLayout title="Life at Ramky">
     <section aria-labelledby="purpose-title" className="border-b border-border pb-12">
       <h2 id="purpose-title" className="text-2xl font-semibold sm:text-3xl">Vision, Mission and Values</h2>
@@ -31,9 +35,9 @@ function LifeAtRamkyPage() {
       </div>
     </section>
     <div className="divide-y divide-border">
-      {LIFE_SECTIONS.map((section) => <section key={section.title} className="grid gap-5 py-10 lg:grid-cols-[1fr_2fr] lg:gap-14">
+      {LIFE_SECTIONS.map((section) => <section key={section.id} className="grid gap-5 py-10 lg:grid-cols-[1fr_2fr] lg:gap-14">
         <div><h2 className="text-2xl font-semibold leading-snug">{section.title}</h2></div>
-        <div className="space-y-4">{section.paragraphs.map((text, j) => <p key={j} className="text-base leading-relaxed text-muted-foreground">{text}</p>)}</div>
+        <div className="space-y-4">{section.imageUrl && <img src={section.imageUrl} alt={section.title} className="w-full rounded-md object-cover" loading="lazy" />}{section.paragraphs.map((text, j) => <p key={j} className="text-base leading-relaxed text-muted-foreground">{text}</p>)}</div>
       </section>)}
     </div>
   </CareersLayout>;

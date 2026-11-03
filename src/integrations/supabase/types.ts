@@ -128,6 +128,168 @@ export type Database = {
         }
         Relationships: []
       }
+      career_flyers: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          published: boolean
+          roles: Json
+          sort_order: number
+          title: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          roles?: Json
+          sort_order?: number
+          title: string
+          updated_at?: string
+          url?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          roles?: Json
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      career_vacancies: {
+        Row: {
+          created_at: string
+          deadline: string
+          description: string
+          division: string
+          employment_type: string
+          experience: string
+          id: string
+          location: string
+          published: boolean
+          published_date: string
+          qualification: string
+          req_id: string
+          responsibilities: Json
+          skills: Json
+          sort_order: number
+          title: string
+          updated_at: string
+          vacancies: number | null
+        }
+        Insert: {
+          created_at?: string
+          deadline?: string
+          description?: string
+          division?: string
+          employment_type?: string
+          experience?: string
+          id?: string
+          location?: string
+          published?: boolean
+          published_date?: string
+          qualification?: string
+          req_id?: string
+          responsibilities?: Json
+          skills?: Json
+          sort_order?: number
+          title: string
+          updated_at?: string
+          vacancies?: number | null
+        }
+        Update: {
+          created_at?: string
+          deadline?: string
+          description?: string
+          division?: string
+          employment_type?: string
+          experience?: string
+          id?: string
+          location?: string
+          published?: boolean
+          published_date?: string
+          qualification?: string
+          req_id?: string
+          responsibilities?: Json
+          skills?: Json
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          vacancies?: number | null
+        }
+        Relationships: []
+      }
+      careers_life_content: {
+        Row: {
+          id: number
+          mission: string
+          positions_intro: string
+          updated_at: string
+          values_intro: string
+          values_list: Json
+          vision: string
+        }
+        Insert: {
+          id?: number
+          mission?: string
+          positions_intro?: string
+          updated_at?: string
+          values_intro?: string
+          values_list?: Json
+          vision?: string
+        }
+        Update: {
+          id?: number
+          mission?: string
+          positions_intro?: string
+          updated_at?: string
+          values_intro?: string
+          values_list?: Json
+          vision?: string
+        }
+        Relationships: []
+      }
+      careers_life_sections: {
+        Row: {
+          created_at: string
+          id: string
+          image_url: string | null
+          paragraphs: Json
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          paragraphs?: Json
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          paragraphs?: Json
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clientele: {
         Row: {
           created_at: string
