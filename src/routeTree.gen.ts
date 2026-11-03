@@ -33,6 +33,7 @@ import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
 import { Route as ExecutiveLeadershipSlugRouteImport } from './routes/executive-leadership.$slug'
 import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.partners.subsidiaries'
 import { Route as AdminAboutClienteleRouteImport } from './routes/admin.about.clientele'
+import { Route as AdminCareersApplicationsRouteImport } from './routes/admin.careers.applications'
 import { Route as AdminCareersLifeRouteImport } from './routes/admin.careers.life'
 import { Route as AdminCareersPositionsRouteImport } from './routes/admin.careers.positions'
 import { Route as AdminCompanyCsrRouteImport } from './routes/admin.company.csr'
@@ -165,6 +166,12 @@ const AdminAboutClienteleRoute = AdminAboutClienteleRouteImport.update({
   path: '/about/clientele',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCareersApplicationsRoute =
+  AdminCareersApplicationsRouteImport.update({
+    id: '/careers/applications',
+    path: '/careers/applications',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminCareersLifeRoute = AdminCareersLifeRouteImport.update({
   id: '/careers/life',
   path: '/careers/life',
@@ -242,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
   '/admin/company/csr': typeof AdminCompanyCsrRoute
@@ -277,6 +285,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
   '/admin/company/csr': typeof AdminCompanyCsrRoute
@@ -314,6 +323,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
   '/admin/company/csr': typeof AdminCompanyCsrRoute
@@ -352,6 +362,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
     | '/admin/company/csr'
@@ -387,6 +398,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
     | '/admin/company/csr'
@@ -423,6 +435,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
     | '/admin/company/csr'
@@ -624,6 +637,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAboutClienteleRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/careers/applications': {
+      id: '/admin/careers/applications'
+      path: '/careers/applications'
+      fullPath: '/admin/careers/applications'
+      preLoaderRoute: typeof AdminCareersApplicationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/careers/life': {
       id: '/admin/careers/life'
       path: '/careers/life'
@@ -706,6 +726,7 @@ interface AdminRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAboutClienteleRoute: typeof AdminAboutClienteleRoute
+  AdminCareersApplicationsRoute: typeof AdminCareersApplicationsRoute
   AdminCareersLifeRoute: typeof AdminCareersLifeRoute
   AdminCareersPositionsRoute: typeof AdminCareersPositionsRoute
   AdminCompanyCsrRoute: typeof AdminCompanyCsrRoute
@@ -727,6 +748,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAboutClienteleRoute: AdminAboutClienteleRoute,
+  AdminCareersApplicationsRoute: AdminCareersApplicationsRoute,
   AdminCareersLifeRoute: AdminCareersLifeRoute,
   AdminCareersPositionsRoute: AdminCareersPositionsRoute,
   AdminCompanyCsrRoute: AdminCompanyCsrRoute,
