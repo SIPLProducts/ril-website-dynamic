@@ -30,12 +30,12 @@ export interface EsgSection {
   title: string;
   eyebrow: string;
   hero: string;
-  metricsPeriod?: string;
+  metricsPeriod?: string | undefined;
   metrics: EsgMetric[];
-  metricGroups?: EsgMetricGroup[];
-  governance?: EsgGovernance;
+  metricGroups?: EsgMetricGroup[] | undefined;
+  governance?: EsgGovernance | undefined;
   accordions: EsgAccordion[];
-  reports?: EsgReport[];
+  reports?: EsgReport[] | undefined;
   bannerImage?: string | null;
 }
 
