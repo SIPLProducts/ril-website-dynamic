@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink, Leaf, Pause, Play, ShieldCheck, Waves } from "lucide-react";
 import { capabilitiesQuery } from "@/lib/capabilities.functions";
+import { homeHighlightsQuery } from "@/lib/home-highlights.functions";
+import { resolveHomeAsset } from "@/lib/home-assets";
 import { iconFor, imageFor } from "@/lib/capability-defaults";
 import irrigationRegulatorsAsset from "@/assets/irrigation-regulators.jpg.asset.json";
 import hero from "@/assets/hero.asset.json";
@@ -297,116 +299,59 @@ export function Businesses() {
   );
 }
 
-const LANDMARK_PROJECTS = [
-  {
-    name: "Srinagar to Banihal Section (NH-44)",
-    detail: "Rehabilitation, Strengthening and Four-Lanning of Srinagar to Banihal Section (NH-44).",
-    img: lm1,
-  },
-  {
-    name: "Jawahar Nagar Leachate Treatment Facility",
-    detail:
-      "A specialized waste-management plant located at the Jawahar Nagar municipal solid waste dump yard in Hyderabad, Telangana — a 2 MLD capacity system that utilizes advanced Mechanical Vapor Recompression (MVR) technology.",
-    img: lm2,
-  },
-  {
-    name: "410 MLD Water Treatment Plant, Kodandapur",
-    detail:
-      "A massive infrastructure asset located in the Nalgonda district of Telangana. This plant plays into the state's broader water initiatives like Mission Bhagiratha.",
-    img: lm3,
-  },
-  {
-    name: "Jawaharlal Nehru Pharma City (JNPC)",
-    detail:
-      "Located at Parawada near Visakhapatnam (Vizag), Andhra Pradesh. Spanning over 2,400 acres, JNPC is a highly specialized industrial park designed explicitly for the pharmaceutical sector.",
-    img: lm4,
-  },
-  {
-    name: "NAM Expressway",
-    detail:
-      "The NAM Expressway (Narketpally–Addanki–Medarametla Road) is a prominent 212.5-kilometer, four-lane highway that serves as a vital interstate corridor between Telangana and Andhra Pradesh.",
-    img: { url: namExpresswayCombined },
-  },
-  {
-    name: "Indian Institute of Foreign Trade (IIFT), Kolkata",
-    detail:
-      "An autonomous, premier public business school located in Madurdaha, West Bengal.",
-    img: lm7,
-  },
-  {
-    name: "Musi River Rejuvenation Project",
-    detail:
-      "Development of five decentralised sewage treatment plants along the Musi River to treat wastewater and reduce untreated sewage discharge, 480 MLD Total Treatment Capacity",
-    img: musiCombined,
-  },
-  {
-    name: "Ramky One Odyssey",
-    detail:
-      "Ramky One Odyssey, is a premium residential gated community located at Kokapet–Narsingi, Hyderabad. Spread across approximately 5.3 acres, the project comprises three high-rise residential towers of 3B + Ground/Stilt + 36 floors, housing around 783 units.The project has received an IGBC Gold rating and benefits from strategic connectivity to the Financial District, Gachibowli and other key commercial hubs via the ORR.",
-    img: odysseyCombined,
-  },
-  {
-    name: "Narela-Bawana waste-to-energy plant",
-    detail:
-      "largest waste-to-energy plant, with a capacity of 24 MW energy-generation facility spread over 100 acres",
-    img: narelaCombined,
-  },
-];
-
 export function Projects() {
+  const { data } = useQuery(homeHighlightsQuery());
+  const slides = data?.landmarks ?? [];
   const [index, setIndex] = useState(0);
-  const total = LANDMARK_PROJECTS.length;
+  const total = slides.length;
   const go = (n: number) => setIndex((n + total) % total);
 
   useEffect(() => {
+    if (total < 2) return;
     const t = setTimeout(() => setIndex((i) => (i + 1) % total), 6000);
     return () => clearTimeout(t);
   }, [index, total]);
 
-  const current = LANDMARK_PROJECTS[index]!;
+  if (!data || !total) return null;
+  const current = slides[Math.min(index, total - 1)]!;
 
   return (
     <section id="projects" className="mx-auto max-w-[1400px] px-5 py-20 lg:px-10 lg:py-28">
       <div className="max-w-2xl">
-        <p className="eyebrow">Projects that shape places</p>
-        <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">Landmark Engineering</h2>
+        <p className="eyebrow">{data.landmarkEyebrow}</p>
+        <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{data.landmarkTitle}</h2>
       </div>
       <div className="mt-12 overflow-hidden rounded-sm bg-ink">
-        <div className={`group relative w-full ${current.img.url === narelaCombined.url ? "aspect-[1923/658] md:aspect-[16/9] lg:aspect-[21/9]" : current.img.url === musiCombined.url ? "aspect-[2221/720] md:aspect-[16/9] lg:aspect-[21/9]" : "aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]"}`}>
-          {LANDMARK_PROJECTS.map((p, i) => (
-            <img
-              key={p.img.url}
-              src={p.img.url}
-              alt={p.name}
-              loading={i === 0 ? "eager" : "lazy"}
-              className={`absolute inset-0 size-full ${[namExpresswayCombined, musiCombined.url, odysseyCombined.url, narelaCombined.url].includes(p.img.url) ? "object-contain object-top" : "object-cover"} transition-all duration-1000 group-hover:scale-[1.02] ${
-                i === index ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          ))}
+        <div className={`group relative w-full ${current.fit === "contain" ? "aspect-[3/1] md:aspect-[16/9] lg:aspect-[21/9]" : "aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]"}`}>
+          {slides.map((p, i) => {
+            const src = resolveHomeAsset(p.image);
+            return src ? (
+              <img
+                key={p.id}
+                src={src}
+                alt={p.name}
+                loading={i === 0 ? "eager" : "lazy"}
+                className={`absolute inset-0 size-full ${p.fit === "contain" ? "object-contain object-top" : "object-cover"} transition-all duration-1000 group-hover:scale-[1.02] ${i === index ? "opacity-100" : "opacity-0"}`}
+              />
+            ) : null;
+          })}
           <div className="absolute inset-x-0 bottom-0 hidden h-3/5 bg-gradient-to-t from-ink/80 via-ink/35 to-transparent md:block" />
           <div key={index} className="absolute inset-x-0 bottom-0 hidden max-w-3xl p-10 md:block md:pr-40 lg:pr-10">
             <h3 className="text-3xl font-semibold text-ink-foreground">{current.name}</h3>
             <p className="mt-3 text-base leading-relaxed text-ink-foreground/80">{current.detail}</p>
           </div>
+          {total > 1 && (
           <div className="absolute right-4 top-4 flex gap-2 md:bottom-10 md:right-10 md:top-auto">
-            <button
-              type="button"
-              onClick={() => go(index - 1)}
-              aria-label="Previous project"
-              className="inline-flex size-11 items-center justify-center rounded-sm bg-background/90 text-foreground transition-colors hover:bg-brand-orange hover:text-accent-foreground"
-            >
+            <button type="button" onClick={() => go(index - 1)} aria-label="Previous project"
+              className="inline-flex size-11 items-center justify-center rounded-sm bg-background/90 text-foreground transition-colors hover:bg-brand-orange hover:text-accent-foreground">
               <ArrowRight className="size-4 rotate-180" />
             </button>
-            <button
-              type="button"
-              onClick={() => go(index + 1)}
-              aria-label="Next project"
-              className="inline-flex size-11 items-center justify-center rounded-sm bg-background/90 text-foreground transition-colors hover:bg-brand-orange hover:text-accent-foreground"
-            >
+            <button type="button" onClick={() => go(index + 1)} aria-label="Next project"
+              className="inline-flex size-11 items-center justify-center rounded-sm bg-background/90 text-foreground transition-colors hover:bg-brand-orange hover:text-accent-foreground">
               <ArrowRight className="size-4" />
             </button>
           </div>
+          )}
         </div>
         <div className="bg-surface p-5 md:hidden">
           <h3 className="text-xl font-semibold">{current.name}</h3>
@@ -414,14 +359,8 @@ export function Projects() {
         </div>
       </div>
       <div className="mt-1 flex flex-wrap justify-center gap-1">
-        {LANDMARK_PROJECTS.map((p, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => go(i)}
-            aria-label={`Show ${p.name}`}
-            className="flex h-8 min-w-11 items-center justify-center px-1"
-          >
+        {slides.map((p, i) => (
+          <button key={p.id} type="button" onClick={() => go(i)} aria-label={`Show ${p.name}`} className="flex h-8 min-w-11 items-center justify-center px-1">
             <span className={`block h-1.5 rounded-full transition-all ${i === index ? "w-8 bg-brand-orange" : "w-4 bg-border"}`} />
           </button>
         ))}
@@ -430,85 +369,48 @@ export function Projects() {
   );
 }
 
-const sustainabilityStats = [
-  {
-    v: "22% Reduction",
-    l: "Energy Consumption",
-    d: "Reduction in energy consumption compared with FY 2024–25.",
-  },
-  {
-    v: "32% Reduction",
-    l: "Scope 1 & 2 GHG Emissions",
-    d: "Reduction in Scope 1 and Scope 2 greenhouse gas emissions compared with FY 2024–25.",
-  },
-  {
-    v: "1,695 MT",
-    l: "Waste Recycled",
-    d: "98% of total waste generated recycled in FY 2025–26.",
-  },
-  {
-    v: "45,000+",
-    l: "Lives Impacted Through CSR",
-    d: "People positively impacted through CSR initiatives in FY 2025–26.",
-  },
-  {
-    v: "Zero",
-    l: "Workplace Fatalities",
-    d: "Zero workplace fatalities recorded in FY 2025–26.",
-  },
-  {
-    v: "Zero",
-    l: "POSH Complaints",
-    d: "Zero POSH complaints reported in FY 2025–26.",
-  },
-];
-
 export function Sustainability() {
+  const { data } = useQuery(homeHighlightsQuery());
+  if (!data) return null;
+  const s = data.sustainability;
   return (
     <section id="sustainability" className="sustainability-panel">
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-20 lg:grid-cols-2 lg:items-center lg:px-10 lg:py-28">
         <div>
-          <p className="eyebrow">Sustainability</p>
-          <h2 className="mt-4 text-[1.2rem] font-bold leading-tight text-sustainability-foreground sm:text-[1.9rem] xl:text-[2.5rem]">
-            Towards sustainable growth — not as a slogan, as a method.
-          </h2>
-          <p className="mt-6 text-base leading-relaxed text-sustainability-muted">
-            Environmental stewardship is embedded in how we plan sites, manage material, treat water
-            and hand assets over. We measure what we consume, reduce what we can, and design for
-            the operating life ahead.
-          </p>
+          <p className="eyebrow">{s.eyebrow}</p>
+          <h2 className="mt-4 text-[1.2rem] font-bold leading-tight text-sustainability-foreground sm:text-[1.9rem] xl:text-[2.5rem]">{s.title}</h2>
+          {s.body && <p className="mt-6 text-base leading-relaxed text-sustainability-muted">{s.body}</p>}
+          {s.sideStats.length > 0 && (
           <div className="mt-9 grid max-w-xl grid-cols-2 gap-6 sm:gap-10">
-            {[
-              { v: "1.8 M m³", l: "Water treated per day" },
-              { v: "ISO 14001", l: "Certified systems" },
-            ].map((i) => (
-              <div key={i.l} className="brand-rule pt-4">
+            {s.sideStats.map((i, k) => (
+              <div key={k} className="brand-rule pt-4">
                 <p className="font-display text-2xl font-bold text-sustainability-foreground">{i.v}</p>
                 <p className="mt-1 text-sm text-sustainability-muted">{i.l}</p>
               </div>
             ))}
           </div>
+          )}
         </div>
-        <SustainabilityVideo />
+        <SustainabilityVideo src={resolveHomeAsset(s.video)} poster={resolveHomeAsset(s.poster)} />
       </div>
+      {s.stats.length > 0 && (
       <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-8">
-          {sustainabilityStats.map((s) => (
-            <div key={s.l} className="brand-rule pt-4">
-              <p className="font-display text-xl font-bold text-sustainability-foreground sm:text-2xl">
-                {s.v}
-              </p>
-              <p className="mt-1 text-sm text-sustainability-muted">{s.l}</p>
-              <p className="mt-2 text-xs leading-relaxed text-sustainability-muted">{s.d}</p>
+          {s.stats.map((x) => (
+            <div key={x.id} className="brand-rule pt-4">
+              <p className="font-display text-xl font-bold text-sustainability-foreground sm:text-2xl">{x.v}</p>
+              <p className="mt-1 text-sm text-sustainability-muted">{x.l}</p>
+              {x.d && <p className="mt-2 text-xs leading-relaxed text-sustainability-muted">{x.d}</p>}
             </div>
           ))}
         </div>
       </div>
+      )}
     </section>
   );
 }
 
-function SustainabilityVideo() {
+function SustainabilityVideo({ src, poster }: { src: string | null; poster: string | null }) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const v = ref.current;
@@ -520,21 +422,13 @@ function SustainabilityVideo() {
       v.muted = true;
       v.play().catch(() => {});
     }
-  }, []);
+  }, [src]);
   return (
     <div className="relative aspect-video w-full overflow-hidden rounded-sm bg-sustainability-deep lg:aspect-auto lg:h-[30rem]">
-      <video
-        ref={ref}
-        src={hummingbird.url}
-        poster={hummingbirdPoster.url}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-label="Hummingbird feeding on nectar among flowers"
-        className="absolute inset-0 h-full w-full object-cover object-center"
-      />
+      {src ? (
+        <video ref={ref} src={src} poster={poster ?? undefined} autoPlay muted loop playsInline preload="metadata"
+          aria-label="Sustainability video" className="absolute inset-0 h-full w-full object-cover object-center" />
+      ) : poster ? <img src={poster} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
     </div>
   );
 }

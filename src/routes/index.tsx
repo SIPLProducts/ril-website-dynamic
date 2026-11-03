@@ -1,3 +1,4 @@
+import { homeHighlightsQuery } from "@/lib/home-highlights.functions";
 import { capabilitiesQuery } from "@/lib/capabilities.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { managementQuery } from "@/lib/management.functions";
@@ -37,6 +38,7 @@ export const Route = createFileRoute("/")({
       context.queryClient.ensureQueryData(csrQuery()).catch(() => null),
       context.queryClient.ensureQueryData(mediaQuery()).catch(() => null),
       context.queryClient.ensureQueryData(capabilitiesQuery()).catch(() => null),
+      context.queryClient.ensureQueryData(homeHighlightsQuery()).catch(() => null),
     ]),
   component: Index,
 });
