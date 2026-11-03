@@ -36,6 +36,13 @@
       "when": 1793069405526,
       "tag": "0004_accolades",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1793669228194,
+      "tag": "0005_esg_content",
+      "breakpoints": true
     }
   ]
 }
