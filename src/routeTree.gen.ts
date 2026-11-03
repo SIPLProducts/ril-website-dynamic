@@ -34,7 +34,9 @@ import { Route as ExecutiveLeadershipSlugRouteImport } from './routes/executive-
 import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.partners.subsidiaries'
 import { Route as AdminAboutClienteleRouteImport } from './routes/admin.about.clientele'
 import { Route as AdminCapabilitiesIndexRouteImport } from './routes/admin.capabilities.index'
+import { Route as AdminCapabilitiesLandmarksRouteImport } from './routes/admin.capabilities.landmarks'
 import { Route as AdminCapabilitiesProjectsRouteImport } from './routes/admin.capabilities.projects'
+import { Route as AdminCapabilitiesSustainabilityRouteImport } from './routes/admin.capabilities.sustainability'
 import { Route as AdminCareersApplicationsRouteImport } from './routes/admin.careers.applications'
 import { Route as AdminCareersLifeRouteImport } from './routes/admin.careers.life'
 import { Route as AdminCareersPositionsRouteImport } from './routes/admin.careers.positions'
@@ -173,10 +175,22 @@ const AdminCapabilitiesIndexRoute = AdminCapabilitiesIndexRouteImport.update({
   path: '/capabilities/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCapabilitiesLandmarksRoute =
+  AdminCapabilitiesLandmarksRouteImport.update({
+    id: '/capabilities/landmarks',
+    path: '/capabilities/landmarks',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminCapabilitiesProjectsRoute =
   AdminCapabilitiesProjectsRouteImport.update({
     id: '/capabilities/projects',
     path: '/capabilities/projects',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminCapabilitiesSustainabilityRoute =
+  AdminCapabilitiesSustainabilityRouteImport.update({
+    id: '/capabilities/sustainability',
+    path: '/capabilities/sustainability',
     getParentRoute: () => AdminRoute,
   } as any)
 const AdminCareersApplicationsRoute =
@@ -262,7 +276,9 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/capabilities/landmarks': typeof AdminCapabilitiesLandmarksRoute
   '/admin/capabilities/projects': typeof AdminCapabilitiesProjectsRoute
+  '/admin/capabilities/sustainability': typeof AdminCapabilitiesSustainabilityRoute
   '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
@@ -300,7 +316,9 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/capabilities/landmarks': typeof AdminCapabilitiesLandmarksRoute
   '/admin/capabilities/projects': typeof AdminCapabilitiesProjectsRoute
+  '/admin/capabilities/sustainability': typeof AdminCapabilitiesSustainabilityRoute
   '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
@@ -340,7 +358,9 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/capabilities/landmarks': typeof AdminCapabilitiesLandmarksRoute
   '/admin/capabilities/projects': typeof AdminCapabilitiesProjectsRoute
+  '/admin/capabilities/sustainability': typeof AdminCapabilitiesSustainabilityRoute
   '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
@@ -381,7 +401,9 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/capabilities/landmarks'
     | '/admin/capabilities/projects'
+    | '/admin/capabilities/sustainability'
     | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
@@ -419,7 +441,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/capabilities/landmarks'
     | '/admin/capabilities/projects'
+    | '/admin/capabilities/sustainability'
     | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
@@ -458,7 +482,9 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/capabilities/landmarks'
     | '/admin/capabilities/projects'
+    | '/admin/capabilities/sustainability'
     | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
@@ -669,11 +695,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCapabilitiesIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/capabilities/landmarks': {
+      id: '/admin/capabilities/landmarks'
+      path: '/capabilities/landmarks'
+      fullPath: '/admin/capabilities/landmarks'
+      preLoaderRoute: typeof AdminCapabilitiesLandmarksRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/capabilities/projects': {
       id: '/admin/capabilities/projects'
       path: '/capabilities/projects'
       fullPath: '/admin/capabilities/projects'
       preLoaderRoute: typeof AdminCapabilitiesProjectsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/capabilities/sustainability': {
+      id: '/admin/capabilities/sustainability'
+      path: '/capabilities/sustainability'
+      fullPath: '/admin/capabilities/sustainability'
+      preLoaderRoute: typeof AdminCapabilitiesSustainabilityRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/careers/applications': {
@@ -765,7 +805,9 @@ interface AdminRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAboutClienteleRoute: typeof AdminAboutClienteleRoute
+  AdminCapabilitiesLandmarksRoute: typeof AdminCapabilitiesLandmarksRoute
   AdminCapabilitiesProjectsRoute: typeof AdminCapabilitiesProjectsRoute
+  AdminCapabilitiesSustainabilityRoute: typeof AdminCapabilitiesSustainabilityRoute
   AdminCareersApplicationsRoute: typeof AdminCareersApplicationsRoute
   AdminCareersLifeRoute: typeof AdminCareersLifeRoute
   AdminCareersPositionsRoute: typeof AdminCareersPositionsRoute
@@ -789,7 +831,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAboutClienteleRoute: AdminAboutClienteleRoute,
+  AdminCapabilitiesLandmarksRoute: AdminCapabilitiesLandmarksRoute,
   AdminCapabilitiesProjectsRoute: AdminCapabilitiesProjectsRoute,
+  AdminCapabilitiesSustainabilityRoute: AdminCapabilitiesSustainabilityRoute,
   AdminCareersApplicationsRoute: AdminCareersApplicationsRoute,
   AdminCareersLifeRoute: AdminCareersLifeRoute,
   AdminCareersPositionsRoute: AdminCareersPositionsRoute,

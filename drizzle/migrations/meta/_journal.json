@@ -92,6 +92,13 @@
       "when": 1793698842645,
       "tag": "0012_capabilities_dynamic",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1793699617631,
+      "tag": "0013_home_highlights",
+      "breakpoints": true
     }
   ]
 }

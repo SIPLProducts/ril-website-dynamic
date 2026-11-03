@@ -222,6 +222,8 @@ export type Database = {
           eyebrow: string
           id: number
           intro: string
+          landmark_eyebrow: string
+          landmark_title: string
           title: string
           updated_at: string
         }
@@ -229,6 +231,8 @@ export type Database = {
           eyebrow?: string
           id?: number
           intro?: string
+          landmark_eyebrow?: string
+          landmark_title?: string
           title?: string
           updated_at?: string
         }
@@ -236,6 +240,8 @@ export type Database = {
           eyebrow?: string
           id?: number
           intro?: string
+          landmark_eyebrow?: string
+          landmark_title?: string
           title?: string
           updated_at?: string
         }
@@ -869,6 +875,72 @@ export type Database = {
         }
         Relationships: []
       }
+      home_sustainability: {
+        Row: {
+          body: string
+          eyebrow: string
+          id: number
+          poster_url: string | null
+          side_stats: Json
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          body?: string
+          eyebrow?: string
+          id?: number
+          poster_url?: string | null
+          side_stats?: Json
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          body?: string
+          eyebrow?: string
+          id?: number
+          poster_url?: string | null
+          side_stats?: Json
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      home_sustainability_stats: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          note: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string
+          note?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          note?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       ir_contacts: {
         Row: {
           heading: string
@@ -944,6 +1016,42 @@ export type Database = {
           updated_at?: string
           url?: string
           version?: string | null
+        }
+        Relationships: []
+      }
+      landmark_projects: {
+        Row: {
+          created_at: string
+          detail: string
+          fit: string
+          id: string
+          image_url: string | null
+          name: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          detail?: string
+          fit?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          detail?: string
+          fit?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
