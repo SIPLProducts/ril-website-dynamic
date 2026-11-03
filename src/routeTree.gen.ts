@@ -32,6 +32,7 @@ import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
 import { Route as ExecutiveLeadershipSlugRouteImport } from './routes/executive-leadership.$slug'
 import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.partners.subsidiaries'
 import { Route as AdminAboutClienteleRouteImport } from './routes/admin.about.clientele'
+import { Route as AdminManagementGroupRouteImport } from './routes/admin.management.$group'
 import { Route as AdminSustainabilitySlugRouteImport } from './routes/admin.sustainability.$slug'
 
 const IndexRoute = IndexRouteImport.update({
@@ -150,6 +151,11 @@ const AdminAboutClienteleRoute = AdminAboutClienteleRouteImport.update({
   path: '/about/clientele',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminManagementGroupRoute = AdminManagementGroupRouteImport.update({
+  id: '/management/$group',
+  path: '/management/$group',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminSustainabilitySlugRoute = AdminSustainabilitySlugRouteImport.update({
   id: '/sustainability/$slug',
   path: '/sustainability/$slug',
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
 }
 export interface FileRoutesByTo {
@@ -205,6 +212,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
 }
 export interface FileRoutesById {
@@ -232,6 +240,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
 }
 export interface FileRouteTypes {
@@ -260,6 +269,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/management/$group'
     | '/admin/sustainability/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -285,6 +295,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/management/$group'
     | '/admin/sustainability/$slug'
   id:
     | '__root__'
@@ -311,6 +322,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/management/$group'
     | '/admin/sustainability/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -496,6 +508,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAboutClienteleRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/management/$group': {
+      id: '/admin/management/$group'
+      path: '/management/$group'
+      fullPath: '/admin/management/$group'
+      preLoaderRoute: typeof AdminManagementGroupRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/sustainability/$slug': {
       id: '/admin/sustainability/$slug'
       path: '/sustainability/$slug'
@@ -514,6 +533,7 @@ interface AdminRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAboutClienteleRoute: typeof AdminAboutClienteleRoute
+  AdminManagementGroupRoute: typeof AdminManagementGroupRoute
   AdminSustainabilitySlugRoute: typeof AdminSustainabilitySlugRoute
 }
 
@@ -525,6 +545,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAboutClienteleRoute: AdminAboutClienteleRoute,
+  AdminManagementGroupRoute: AdminManagementGroupRoute,
   AdminSustainabilitySlugRoute: AdminSustainabilitySlugRoute,
 }
 
