@@ -78,6 +78,13 @@
       "when": 1793693196179,
       "tag": "0010_careers_purpose_and_applications",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793693313287,
+      "tag": "0011_private_resume_files",
+      "breakpoints": true
     }
   ]
 }
