@@ -82,7 +82,7 @@ function Page() {
                 <td className="px-4 py-3"><div className="flex justify-end gap-1">
                   <Button size="icon" variant="outline" title="View" onClick={() => { setView(a); if (a.status === "new") setStatus(a, "reviewed"); }}><Eye className="size-4" /></Button>
                   <Button size="icon" variant="outline" title="Download resume" disabled={!a.resume_path} onClick={() => openResume(a)}><Download className="size-4" /></Button>
-                  <Button size="icon" variant="outline" title="Delete" className="admin-btn-delete" onClick={() => remove(a)}><Trash2 className="size-4" /></Button>
+                  <button aria-label="Delete" title="Delete" onClick={() => remove(a)} className="btn-grad-danger grid size-9 place-items-center rounded-md shadow-sm hover:opacity-90"><Trash2 className="size-4" /></button>
                 </div></td>
               </tr>
             ))}
