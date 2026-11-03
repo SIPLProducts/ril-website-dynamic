@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Briefcase, Save } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,7 +67,7 @@ function PurposeDialog({ row, nextOrder, onClose, onSaved }: { row: Purpose | nu
     toast.success("Saved — now live on the website"); onSaved();
   }
   return (
-    <AdminDialog open onOpenChange={(o) => !o && onClose()} title={row ? "Edit card" : "Add card"} icon={Briefcase}
+    <AdminDialog icon={Briefcase} title={row ? "Edit card" : "Add card"} subtitle="Shown in Vision, Mission and Values" onClose={onClose}
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0"><Save className="size-4" /> {saving ? "Saving…" : "Save"}</Button></>}>
       <FormSection title="Card">
         <div className="grid gap-4">
