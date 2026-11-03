@@ -158,6 +158,69 @@ export type Database = {
         }
         Relationships: []
       }
+      csr_areas: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      csr_content: {
+        Row: {
+          cta_label: string
+          cta_url: string
+          eyebrow: string
+          id: number
+          intro: string
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cta_label?: string
+          cta_url?: string
+          eyebrow?: string
+          id?: number
+          intro?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          cta_label?: string
+          cta_url?: string
+          eyebrow?: string
+          id?: number
+          intro?: string
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       email_settings: {
         Row: {
           cc: string[]
@@ -411,6 +474,93 @@ export type Database = {
           sections?: Json
           slug?: string
           sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      media_items: {
+        Row: {
+          created_at: string
+          document_url: string | null
+          external_url: string | null
+          id: string
+          item_date: string | null
+          item_type: string
+          kicker: string | null
+          link_label: string | null
+          paragraphs: Json
+          published: boolean
+          sort_order: number
+          source: string | null
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          document_url?: string | null
+          external_url?: string | null
+          id?: string
+          item_date?: string | null
+          item_type?: string
+          kicker?: string | null
+          link_label?: string | null
+          paragraphs?: Json
+          published?: boolean
+          sort_order?: number
+          source?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          document_url?: string | null
+          external_url?: string | null
+          id?: string
+          item_date?: string | null
+          item_type?: string
+          kicker?: string | null
+          link_label?: string | null
+          paragraphs?: Json
+          published?: boolean
+          sort_order?: number
+          source?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      media_page: {
+        Row: {
+          card_subtitle: string
+          card_text: string
+          card_title: string
+          eyebrow: string
+          id: number
+          intro: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          card_subtitle?: string
+          card_text?: string
+          card_title?: string
+          eyebrow?: string
+          id?: number
+          intro?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          card_subtitle?: string
+          card_text?: string
+          card_title?: string
+          eyebrow?: string
+          id?: number
+          intro?: string
+          title?: string
           updated_at?: string
         }
         Relationships: []
