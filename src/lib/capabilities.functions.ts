@@ -11,6 +11,8 @@ export type CapabilityVertical = {
 };
 export type CapabilitiesData = { eyebrow: string; title: string; intro: string; verticals: CapabilityVertical[] };
 
+const STATUS_ORDER: Record<ProjectStatus, number> = { Ongoing: 0, "O&M": 1, Completed: 2 };
+
 function publicClient() {
   const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
   return createClient<Database>(process.env["SUPABASE_URL"]!, key, {
@@ -49,7 +51,8 @@ export const getCapabilities = createServerFn({ method: "GET" }).handler(async (
     verticals: rows.map((r) => ({
       slug: r.slug, title: r.title, cardText: r.card_text, description: r.description, icon: r.icon, imageAlt: r.image_alt,
       image: !r.image_url ? null : r.image_url.startsWith(STORAGE_PREFIX) ? signed.get(r.image_url.slice(STORAGE_PREFIX.length)) ?? null : r.image_url,
-      projects: (p.data ?? []).filter((x) => x.vertical_slug === r.slug).map((x) => ({ name: x.name, location: x.location, client: x.client, status: x.status as ProjectStatus })),
+      projects: (p.data ?? []).filter((x) => x.vertical_slug === r.slug).map((x) => ({ name: x.name, location: x.location, client: x.client, status: x.status as ProjectStatus }))
+        .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]),
     })),
   };
 });
