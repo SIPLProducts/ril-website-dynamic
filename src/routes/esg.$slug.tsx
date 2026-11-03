@@ -3,11 +3,12 @@ import { useState } from "react";
 import { ArrowLeft, ArrowUpRight, ChevronDown, Download, Leaf, Mail, Scale, FileText, Users } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
-import { ESG_SECTIONS, getEsgSection } from "@/lib/esg-sections";
+import { ESG_SECTIONS } from "@/lib/esg-sections";
+import { getEsgPage } from "@/lib/esg-data.functions";
 
 export const Route = createFileRoute("/esg/$slug")({
-  loader: ({ params }) => {
-    const section = getEsgSection(params.slug);
+  loader: async ({ params }) => {
+    const section = await getEsgPage({ data: { slug: params.slug } });
     if (!section) throw notFound();
     return section;
   },
@@ -30,6 +31,7 @@ export const Route = createFileRoute("/esg/$slug")({
   },
   component: EsgPage,
   notFoundComponent: EsgNotFound,
+  errorComponent: ({ error }) => <div role="alert" className="p-10">{error instanceof Error ? error.message : String(error)}</div>,
 });
 
 const ICONS = {
@@ -50,6 +52,12 @@ function EsgPage() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden bg-[#0d2b1f] pb-20 pt-36 text-white lg:pb-28 lg:pt-44">
+          {section.bannerImage && (
+            <>
+              <img src={section.bannerImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-[#0d2b1f]/75" aria-hidden="true" />
+            </>
+          )}
           <div
             className="absolute inset-0 opacity-[0.07]"
             aria-hidden="true"
@@ -204,7 +212,7 @@ function EsgPage() {
         </section>
 
         {/* Reports (ESG Reporting tab only) */}
-        {section.reports && (
+        {section.reports && section.reports.length > 0 && (
           <section className="border-t border-border">
             <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
               <p className="eyebrow">Downloads</p>
@@ -225,18 +233,23 @@ function EsgPage() {
                     <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
                       {report.description}
                     </p>
-                    <button
-                      type="button"
-                      className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
-                    >
-                      <Download className="size-4" /> Download PDF
-                    </button>
+                    {report.url ? (
+                      <a
+                        href={report.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
+                      >
+                        <Download className="size-4" /> Download PDF
+                      </a>
+                    ) : (
+                      <span className="mt-5 inline-flex items-center justify-center rounded-sm border border-border px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                        Coming soon
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
-              <p className="mt-6 text-sm text-muted-foreground">
-                Report files will be attached here once the final PDFs are available.
-              </p>
             </div>
           </section>
         )}

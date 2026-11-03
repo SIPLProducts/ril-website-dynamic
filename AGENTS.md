@@ -19,3 +19,4 @@
 - Per-user email OTP is enforced in the login flow: password check, then sign-out, then `signInWithOtp` and `verifyOtp` (because the auth provider has no per-user MFA flag).
 - Uploaded files go to the private `investor-documents` bucket and are stored as `storage:<path>`; the public read server function converts them to signed URLs (public buckets are blocked by workspace policy).
 - Admin OTP and reset emails go through SMTP settings in `email_settings` (server-only, service role) via `worker-mailer`, falling back to built-in auth emails when SMTP is off/incomplete; codes/links come from `auth.admin.generateLink` so verification stays native.
+- Sustainability (ESG) page content lives in `esg_pages` + `esg_items` (kind = metric|accordion|governance_item|report); `src/lib/esg-sections.ts` keeps only the tab list and types so tabs stay code-controlled.

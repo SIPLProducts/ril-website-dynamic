@@ -200,6 +200,101 @@ export type Database = {
         }
         Relationships: []
       }
+      esg_items: {
+        Row: {
+          body: string
+          created_at: string
+          group_title: string | null
+          id: string
+          kind: string
+          page_slug: string
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+          url: string | null
+          value: string
+          year: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          group_title?: string | null
+          id?: string
+          kind: string
+          page_slug: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          url?: string | null
+          value?: string
+          year?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          group_title?: string | null
+          id?: string
+          kind?: string
+          page_slug?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          url?: string | null
+          value?: string
+          year?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "esg_items_page_slug_fkey"
+            columns: ["page_slug"]
+            isOneToOne: false
+            referencedRelation: "esg_pages"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      esg_pages: {
+        Row: {
+          banner_image_url: string | null
+          eyebrow: string
+          hero: string
+          highlight_label: string
+          highlight_title: string
+          highlight_value: string
+          metrics_period: string
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          banner_image_url?: string | null
+          eyebrow?: string
+          hero?: string
+          highlight_label?: string
+          highlight_title?: string
+          highlight_value?: string
+          metrics_period?: string
+          slug: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          banner_image_url?: string | null
+          eyebrow?: string
+          hero?: string
+          highlight_label?: string
+          highlight_title?: string
+          highlight_value?: string
+          metrics_period?: string
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ir_contacts: {
         Row: {
           heading: string
