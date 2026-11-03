@@ -28,9 +28,9 @@ export const ADMIN_MODULES: AdminModule[] = [
   { key: "management", label: "Management", icon: UsersRound, children: [page("management", "board", "Board Of Directors"), page("management", "executive", "Executive Leadership"), page("management", "senior", "Senior Management")] },
   { key: "capabilities", label: "Capabilities", icon: Wrench },
   { key: "accolades", label: "Accolades", icon: Award, children: [{ key: "awards", label: "Awards", to: "/admin/accolades" }] },
-  { key: "sustainability", label: "Sustainability", icon: Leaf, children: [...ESG_SECTIONS.map((s) => page("esg", s.slug, s.title)), { key: "csr", label: "CSR (Home card)", to: "/admin/sustainability/csr" }] },
-  { key: "media", label: "Media", icon: Newspaper, children: [{ key: "press", label: "Press Releases & Media", to: "/admin/media" }] },
-  { key: "careers", label: "Careers", icon: Briefcase, children: [page("careers", "life", "Life at Ramky"), page("careers", "positions", "Current Positions")] },
+  { key: "sustainability", label: "Sustainability", icon: Leaf, children: [...ESG_SECTIONS.map((s) => page("esg", s.slug, s.title))] },
+  { key: "company", label: "Company", icon: Newspaper, children: [{ key: "csr", label: "CSR", to: "/admin/company/csr" }, { key: "media", label: "Media", to: "/admin/company/media" }] },
+  { key: "careers", label: "Careers", icon: Briefcase, children: [{ key: "life", label: "Life at Ramky", to: "/admin/careers/life" }, { key: "positions", label: "Current Positions", to: "/admin/careers/positions" }] },
 ];
 
 export const isReady = (n: AdminPage | AdminModule): boolean => !!n.to || (n.children ?? []).some(isReady);
