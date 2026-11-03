@@ -1,6 +1,6 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { ArrowDown, ArrowUp, ExternalLink, ImagePlus, Leaf, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -183,6 +183,12 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
     await removeStored(r.url);
     toast.success("Deleted"); refresh();
   }
+  async function renameGroup(oldName: string) {
+    const next = window.prompt(`Rename group "${oldName}" to:`, oldName)?.trim();
+    if (!next || next === oldName) return;
+    const { error } = await supabase.from("esg_items").update({ group_title: next.slice(0, 80) }).eq("page_slug", slug).eq("kind", kind).eq("group_title", oldName);
+    if (error) toast.error(error.message); else { toast.success("Group renamed"); refresh(); }
+  }
 
   const cols = kind === "metric" ? ["Value", "Label", ...(grouped ? ["Group"] : [])] : kind === "report" ? ["Year", "Title", "File"] : kind === "accordion" ? ["Title", "Description"] : ["Title"];
 
@@ -200,8 +206,18 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
           <tr><th className="px-4 py-3">Order</th>{cols.map((c) => <th key={c} className="px-4 py-3">{c}</th>)}<th className="px-4 py-3">Live</th><th className="px-4 py-3 text-right">Actions</th></tr>
         </thead>
         <tbody>
-          {rows.map((r, i) => (
-            <tr key={r.id} className="border-t border-border align-top">
+          {rows.map((r, i) => (<Fragment key={r.id}>
+            {grouped && (i === 0 || rows[i - 1].group_title !== r.group_title) && (
+              <tr className="border-t border-border bg-emerald-50/60">
+                <td colSpan={cols.length + 3} className="px-4 py-2">
+                  <div className="flex items-center gap-2">
+                    <span className="font-display text-sm font-bold text-emerald-800">{r.group_title || "Main Key Metrics (no group heading)"}</span>
+                    {r.group_title && <button aria-label="Rename group" title="Rename group" onClick={() => renameGroup(r.group_title!)} className="btn-grad-edit grid size-6 place-items-center rounded shadow-sm hover:opacity-90"><Pencil className="size-3" /></button>}
+                  </div>
+                </td>
+              </tr>
+            )}
+            <tr className="border-t border-border align-top">
               <td className="px-4 py-2">
                 <div className="flex gap-1">
                   <button aria-label="Move up" disabled={i === 0} onClick={() => move(i, -1)} className="rounded border border-border p-1 disabled:opacity-30"><ArrowUp className="size-3.5" /></button>
@@ -220,7 +236,7 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
                 </div>
               </td>
             </tr>
-          ))}
+          </Fragment>))}
           {!rows.length && <tr><td colSpan={cols.length + 3} className="px-4 py-10 text-center text-muted-foreground">Nothing added yet.</td></tr>}
         </tbody>
       </table>
