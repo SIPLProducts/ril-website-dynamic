@@ -37,6 +37,9 @@ import { Route as AdminCareersLifeRouteImport } from './routes/admin.careers.lif
 import { Route as AdminCareersPositionsRouteImport } from './routes/admin.careers.positions'
 import { Route as AdminCompanyCsrRouteImport } from './routes/admin.company.csr'
 import { Route as AdminCompanyMediaRouteImport } from './routes/admin.company.media'
+import { Route as AdminFooterContactRouteImport } from './routes/admin.footer.contact'
+import { Route as AdminFooterGroupCompaniesRouteImport } from './routes/admin.footer.group-companies'
+import { Route as AdminFooterLinksRouteImport } from './routes/admin.footer.links'
 import { Route as AdminManagementGroupRouteImport } from './routes/admin.management.$group'
 import { Route as AdminSustainabilitySlugRouteImport } from './routes/admin.sustainability.$slug'
 import { Route as AdminSustainabilityCsrRouteImport } from './routes/admin.sustainability.csr'
@@ -182,6 +185,22 @@ const AdminCompanyMediaRoute = AdminCompanyMediaRouteImport.update({
   path: '/company/media',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminFooterContactRoute = AdminFooterContactRouteImport.update({
+  id: '/footer/contact',
+  path: '/footer/contact',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminFooterGroupCompaniesRoute =
+  AdminFooterGroupCompaniesRouteImport.update({
+    id: '/footer/group-companies',
+    path: '/footer/group-companies',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminFooterLinksRoute = AdminFooterLinksRouteImport.update({
+  id: '/footer/links',
+  path: '/footer/links',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminManagementGroupRoute = AdminManagementGroupRouteImport.update({
   id: '/management/$group',
   path: '/management/$group',
@@ -227,6 +246,9 @@ export interface FileRoutesByFullPath {
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
   '/admin/company/csr': typeof AdminCompanyCsrRoute
   '/admin/company/media': typeof AdminCompanyMediaRoute
+  '/admin/footer/contact': typeof AdminFooterContactRoute
+  '/admin/footer/group-companies': typeof AdminFooterGroupCompaniesRoute
+  '/admin/footer/links': typeof AdminFooterLinksRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -259,6 +281,9 @@ export interface FileRoutesByTo {
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
   '/admin/company/csr': typeof AdminCompanyCsrRoute
   '/admin/company/media': typeof AdminCompanyMediaRoute
+  '/admin/footer/contact': typeof AdminFooterContactRoute
+  '/admin/footer/group-companies': typeof AdminFooterGroupCompaniesRoute
+  '/admin/footer/links': typeof AdminFooterLinksRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -293,6 +318,9 @@ export interface FileRoutesById {
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
   '/admin/company/csr': typeof AdminCompanyCsrRoute
   '/admin/company/media': typeof AdminCompanyMediaRoute
+  '/admin/footer/contact': typeof AdminFooterContactRoute
+  '/admin/footer/group-companies': typeof AdminFooterGroupCompaniesRoute
+  '/admin/footer/links': typeof AdminFooterLinksRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -328,6 +356,9 @@ export interface FileRouteTypes {
     | '/admin/careers/positions'
     | '/admin/company/csr'
     | '/admin/company/media'
+    | '/admin/footer/contact'
+    | '/admin/footer/group-companies'
+    | '/admin/footer/links'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -360,6 +391,9 @@ export interface FileRouteTypes {
     | '/admin/careers/positions'
     | '/admin/company/csr'
     | '/admin/company/media'
+    | '/admin/footer/contact'
+    | '/admin/footer/group-companies'
+    | '/admin/footer/links'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -393,6 +427,9 @@ export interface FileRouteTypes {
     | '/admin/careers/positions'
     | '/admin/company/csr'
     | '/admin/company/media'
+    | '/admin/footer/contact'
+    | '/admin/footer/group-companies'
+    | '/admin/footer/links'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -615,6 +652,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCompanyMediaRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/footer/contact': {
+      id: '/admin/footer/contact'
+      path: '/footer/contact'
+      fullPath: '/admin/footer/contact'
+      preLoaderRoute: typeof AdminFooterContactRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/footer/group-companies': {
+      id: '/admin/footer/group-companies'
+      path: '/footer/group-companies'
+      fullPath: '/admin/footer/group-companies'
+      preLoaderRoute: typeof AdminFooterGroupCompaniesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/footer/links': {
+      id: '/admin/footer/links'
+      path: '/footer/links'
+      fullPath: '/admin/footer/links'
+      preLoaderRoute: typeof AdminFooterLinksRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/management/$group': {
       id: '/admin/management/$group'
       path: '/management/$group'
@@ -652,6 +710,9 @@ interface AdminRouteChildren {
   AdminCareersPositionsRoute: typeof AdminCareersPositionsRoute
   AdminCompanyCsrRoute: typeof AdminCompanyCsrRoute
   AdminCompanyMediaRoute: typeof AdminCompanyMediaRoute
+  AdminFooterContactRoute: typeof AdminFooterContactRoute
+  AdminFooterGroupCompaniesRoute: typeof AdminFooterGroupCompaniesRoute
+  AdminFooterLinksRoute: typeof AdminFooterLinksRoute
   AdminManagementGroupRoute: typeof AdminManagementGroupRoute
   AdminSustainabilitySlugRoute: typeof AdminSustainabilitySlugRoute
   AdminSustainabilityCsrRoute: typeof AdminSustainabilityCsrRoute
@@ -670,6 +731,9 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCareersPositionsRoute: AdminCareersPositionsRoute,
   AdminCompanyCsrRoute: AdminCompanyCsrRoute,
   AdminCompanyMediaRoute: AdminCompanyMediaRoute,
+  AdminFooterContactRoute: AdminFooterContactRoute,
+  AdminFooterGroupCompaniesRoute: AdminFooterGroupCompaniesRoute,
+  AdminFooterLinksRoute: AdminFooterLinksRoute,
   AdminManagementGroupRoute: AdminManagementGroupRoute,
   AdminSustainabilitySlugRoute: AdminSustainabilitySlugRoute,
   AdminSustainabilityCsrRoute: AdminSustainabilityCsrRoute,
