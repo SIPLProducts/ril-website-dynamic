@@ -161,7 +161,12 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
     return data as Item[];
   } });
   const refresh = () => qc.invalidateQueries({ queryKey: qk });
-  const groups = [...new Set(rows.map((r) => r.group_title).filter((g): g is string => !!g))];
+  const { data: allGroups = [] } = useQuery({ queryKey: ["admin-esg-groups"], enabled: grouped, queryFn: async () => {
+    const { data, error } = await supabase.from("esg_items").select("group_title").eq("kind", "metric").not("group_title", "is", null);
+    if (error) throw error;
+    return (data ?? []).map((d) => d.group_title as string);
+  } });
+  const groups = [...new Set([...rows.map((r) => r.group_title), ...allGroups].filter((g): g is string => !!g))];
 
   async function toggle(r: Item) {
     const { error } = await supabase.from("esg_items").update({ published: !r.published }).eq("id", r.id);
@@ -296,7 +301,7 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
           {kind === "metric" && <div><Label>Value</Label><Input value={f.value} maxLength={30} placeholder="e.g. 22%" onChange={(e) => setF({ ...f, value: e.target.value })} /><FieldError msg={errs.value} /></div>}
           {kind === "report" && <div><Label>Year</Label><Input value={f.year} maxLength={20} placeholder="e.g. 2026 or 2025-26" onChange={(e) => setF({ ...f, year: e.target.value })} /><FieldError msg={errs.year} /></div>}
           <div className={kind === "metric" || kind === "report" ? "" : "sm:col-span-2"}><Label>{kind === "metric" ? "Label" : "Title"}</Label><Input value={f.title} maxLength={160} onChange={(e) => setF({ ...f, title: e.target.value })} /><FieldError msg={errs.title} /></div>
-          {grouped && <div><Label>Card group heading (optional)</Label><Input list="esg-groups" value={f.group_title} maxLength={80} placeholder="e.g. Workforce & Safety" onChange={(e) => setF({ ...f, group_title: e.target.value })} /><datalist id="esg-groups">{groups.map((g) => <option key={g} value={g} />)}</datalist><p className="mt-1 text-xs text-muted-foreground">Type a new name to create a new group</p></div>}
+          {grouped && <GroupPicker value={f.group_title} groups={groups} onChange={(v) => setF({ ...f, group_title: v })} />}
         </div>
         {(kind === "accordion" || kind === "report") && (
           <div><Label>Description {kind === "report" && <span className="text-muted-foreground">(optional)</span>}</Label><Textarea rows={4} maxLength={2000} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} /><FieldError msg={errs.body} /></div>
@@ -317,5 +322,30 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
         </FormSection>
       )}
     </AdminDialog>
+  );
+}
+
+function GroupPicker({ value, groups, onChange }: { value: string; groups: string[]; onChange: (v: string) => void }) {
+  const NEW = "__new__";
+  const [creating, setCreating] = useState(() => !!value && !groups.includes(value));
+  const selectValue = creating ? NEW : value;
+  return (
+    <div>
+      <Label>Card group heading</Label>
+      <select
+        aria-label="Card group heading"
+        value={selectValue}
+        onChange={(e) => {
+          if (e.target.value === NEW) { setCreating(true); onChange(""); }
+          else { setCreating(false); onChange(e.target.value); }
+        }}
+        className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+        <option value="">None (Main Key Metrics)</option>
+        {groups.map((g) => <option key={g} value={g}>{g}</option>)}
+        <option value={NEW}>+ Create new group…</option>
+      </select>
+      {creating && <Input className="mt-2" autoFocus value={value} maxLength={80} placeholder="New group heading, e.g. Resource Efficiency" onChange={(e) => onChange(e.target.value)} />}
+    </div>
   );
 }
