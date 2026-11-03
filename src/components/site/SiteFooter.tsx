@@ -1,4 +1,6 @@
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { footerQuery } from "@/lib/footer.functions";
 import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
 import milesCityLogo from "@/assets/miles-city.png.asset.json";
 import ramkyEstatesLogo from "@/assets/ramky-estates.svg.asset.json";
@@ -6,7 +8,7 @@ import recepsLogo from "@/assets/receps.png.asset.json";
 import visakhaPharmacityLogo from "@/assets/visakha-pharmacity.jpg.asset.json";
 const logo = logoAsset.url;
 
-const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
+const FALLBACK_COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Company",
     links: [
@@ -43,7 +45,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   },
 ];
 
-const GROUP_COMPANIES = [
+const FALLBACK_COMPANIES = [
   {
     name: "MILES City",
     href: "https://milescity.in",
@@ -67,6 +69,14 @@ const GROUP_COMPANIES = [
 ] as const;
 
 export function SiteFooter() {
+  const { data } = useQuery(footerQuery());
+  const st = data?.settings;
+  const COLUMNS = data ? data.columns : FALLBACK_COLUMNS.map((c) => ({ title: c.title, links: c.links.map((l) => ({ ...l, newTab: false })) }));
+  const GROUP_COMPANIES = data ? data.companies.map((c) => ({ name: c.name, href: c.url, logo: c.logo })) : FALLBACK_COMPANIES;
+  const description = st?.description ?? "An integrated infrastructure developer delivering water, transportation, irrigation, environment and urban infrastructure across India and overseas.";
+  const address = st?.address ?? "Ramky Grandiose, Sy. No. 136/2 & 4, Gachibowli, Hyderabad 500032, India";
+  const phone = st?.phone ?? "+91 40 2301 5000";
+  const email = st?.email ?? "info@ramkyinfrastructure.com";
   return (
     <footer id="contact" className="border-t-2 border-footer-accent bg-footer-background text-foreground">
       <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10">
@@ -81,28 +91,27 @@ export function SiteFooter() {
               className="h-20 w-auto object-contain"
             />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              An integrated infrastructure developer delivering water, transportation, irrigation,
-              environment and urban infrastructure across India and overseas.
+              {description}
             </p>
             <ul className="mt-6 space-y-3 text-sm text-foreground/80">
-              <li className="flex gap-3">
+              {address && <li className="flex gap-3">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-                Ramky Grandiose, Sy. No. 136/2 &amp; 4, Gachibowli, Hyderabad 500032, India
-              </li>
-              <li className="flex gap-3">
+                <span className="whitespace-pre-line">{address}</span>
+              </li>}
+              {phone && <li className="flex gap-3">
                 <Phone className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-                +91 40 2301 5000
-              </li>
-              <li className="flex gap-3">
+                <a href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="hover:text-footer-accent">{phone}</a>
+              </li>}
+              {email && <li className="flex gap-3">
                 <Mail className="mt-0.5 size-4 shrink-0 text-brand-orange" />
-                info@ramkyinfrastructure.com
-              </li>
+                <a href={`mailto:${email}`} className="hover:text-footer-accent">{email}</a>
+              </li>}
             </ul>
           </div>
 
           <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1.3fr]">
             {COLUMNS.map((col) => (
-              <div key={col.title}>
+              <div key={col.title + col.links.length}>
                 <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-footer-accent">
                   {col.title}
                 </h3>
@@ -111,6 +120,7 @@ export function SiteFooter() {
                     <li key={l.label}>
                       <a
                         href={l.href}
+                        {...(l.newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
                         onClick={l.href === "/#csr" ? () => {
                           if (window.location.pathname === "/" && window.location.hash === "#csr") {
                             window.dispatchEvent(new Event("ramky:open-csr"));
@@ -132,12 +142,12 @@ export function SiteFooter() {
         <section className="pt-10" aria-labelledby="group-companies-heading">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="eyebrow">Ramky Group</p>
+              <p className="eyebrow">{st?.groupEyebrow ?? "Ramky Group"}</p>
               <h2 id="group-companies-heading" className="mt-2 text-xl font-semibold text-footer-accent">
-                Group Companies
+                {st?.groupTitle ?? "Group Companies"}
               </h2>
             </div>
-            <p className="hidden text-sm text-muted-foreground sm:block">Visit our group companies</p>
+            <p className="hidden text-sm text-muted-foreground sm:block">{st?.groupSubtitle ?? "Visit our group companies"}</p>
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -150,12 +160,12 @@ export function SiteFooter() {
                 aria-label={`Visit ${company.name} website (opens in a new tab)`}
                 className="group relative flex h-28 items-center justify-center p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               >
-                <img
+                {company.logo ? <img
                   src={company.logo}
                   alt={`${company.name} logo`}
                   loading="lazy"
                   className="max-h-16 max-w-full object-contain"
-                />
+                /> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>}
                 <ExternalLink
                   aria-hidden="true"
                   className="absolute right-2 top-2 size-3.5 text-muted-foreground transition-colors group-hover:text-footer-accent"
@@ -167,8 +177,8 @@ export function SiteFooter() {
 
         <hr className="footer-rule mt-10" aria-hidden="true" />
         <div className="flex flex-col gap-3 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Ramky Infrastructure Limited. All rights reserved.</p>
-          <p className="uppercase tracking-[0.16em]">Towards sustainable growth</p>
+          <p>© {new Date().getFullYear()} {st?.copyrightName ?? "Ramky Infrastructure Limited"}. All rights reserved.</p>
+          <p className="uppercase tracking-[0.16em]">{st?.tagline ?? "Towards sustainable growth"}</p>
         </div>
       </div>
     </footer>
