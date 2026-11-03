@@ -71,6 +71,13 @@
       "when": 1793687092776,
       "tag": "0009_footer_dynamic",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793693196179,
+      "tag": "0010_careers_purpose_and_applications",
+      "breakpoints": true
     }
   ]
 }
