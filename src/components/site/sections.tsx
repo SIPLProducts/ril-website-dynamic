@@ -3,11 +3,10 @@ import { csrQuery, mediaQuery } from "@/lib/site-content.functions";
 import { managementQuery } from "@/lib/management.functions";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { BUSINESS_VERTICALS } from "@/lib/business-projects";
-import { ArrowRight, Droplets, ExternalLink, Factory, Globe2, Leaf, Pause, Play, Route, ShieldCheck, Waves, Zap } from "lucide-react";
+import { ArrowRight, ExternalLink, Leaf, Pause, Play, ShieldCheck, Waves } from "lucide-react";
+import { capabilitiesQuery } from "@/lib/capabilities.functions";
+import { iconFor, imageFor } from "@/lib/capability-defaults";
 import irrigationRegulatorsAsset from "@/assets/irrigation-regulators.jpg.asset.json";
-import powerTransmissionAsset from "@/assets/power-transmission.jpg.asset.json";
-import internationalInfraAsset from "@/assets/international-infra.jpg.asset.json";
 import hero from "@/assets/hero.asset.json";
 import water from "@/assets/water.asset.json";
 import bridge from "@/assets/bridge.asset.json";
@@ -15,7 +14,6 @@ import hummingbird from "@/assets/sustainability-hummingbird.mp4.asset.json";
 import hummingbirdPoster from "@/assets/sustainability-hummingbird-poster.jpg.asset.json";
 import urban from "@/assets/urban.asset.json";
 import irrigation from "@/assets/irrigation.asset.json";
-import industrial from "@/assets/industrial.asset.json";
 import slide3Asset from "@/assets/slide-3.jpg.asset.json";
 import leachateHyd from "@/assets/leachate-hyderabad.asset.json";
 import wtpNalgonda from "@/assets/wtp-nalgonda.jpg.asset.json";
@@ -31,13 +29,7 @@ import namExpresswayCombinedAsset from "@/assets/nam-expressway-combined.jpg.ass
 import musiCombined from "@/assets/musi-two-photos.jpg.asset.json";
 import odysseyCombined from "@/assets/odyssey-combined.jpg.asset.json";
 import narelaCombined from "@/assets/narela-bawana-combined.jpg.asset.json";
-import capWater from "@/assets/cap-water.png.asset.json";
-import capTransportation from "@/assets/cap-transportation.jpg.asset.json";
-import capUrban from "@/assets/cap-urban.jpg.asset.json";
-import capIrrigation from "@/assets/cap-irrigation.jpg.asset.json";
 const irrigationRegulators = irrigationRegulatorsAsset.url;
-const powerTransmission = powerTransmissionAsset.url;
-const internationalInfra = internationalInfraAsset.url;
 const slide3 = slide3Asset.url;
 const namExpresswayCombined = namExpresswayCombinedAsset.url;
 
@@ -267,89 +259,31 @@ export function About() {
   );
 }
 
-const BUSINESSES = [
-  {
-    icon: Droplets,
-    title: "Water & Wastewater",
-    text: "Water treatment and supply, sewerage networks, STPs and desalination for cities and industry.",
-    img: capWater,
-    alt: "Wastewater treatment plant clarifier tanks",
-  },
-  {
-    icon: Route,
-    title: "Transportation",
-    text: "Expressways, highways, urban roads, flyovers and major bridge structures under EPC and HAM.",
-    img: capTransportation,
-    alt: "Long cable-stayed bridge at dusk",
-  },
-  {
-    icon: Factory,
-    title: "Industrial",
-    text: "Industrial parks, heavy civil works, structural steel and plant infrastructure.",
-    img: industrial,
-    alt: "Steel framework of an industrial building under construction",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Urban Infrastructure",
-    text: "Townships, institutional buildings, smart-city works and public realm development.",
-    img: capUrban,
-    alt: "Aerial view of a modern township",
-  },
-  {
-    icon: Waves,
-    title: "Irrigation & Regulators",
-    text: "Canals, barrages, regulators and large-scale water control structures.",
-    img: capIrrigation,
-    alt: "Aerial view of a river barrage with regulator gates",
-  },
-  {
-    icon: Zap,
-    title: "Power Transmission & Distribution",
-    text: "High-voltage transmission corridors, substations and distribution networks.",
-    img: { url: powerTransmission },
-    alt: "High-voltage transmission towers beside an electrical substation",
-  },
-  {
-    icon: Globe2,
-    title: "International Infrastructure",
-    text: "Roads, water and civil infrastructure delivered for clients overseas.",
-    img: { url: internationalInfra },
-    alt: "Large international interchange and bridge under construction",
-  },
-];
-
 export function Businesses() {
+  const { data } = useQuery(capabilitiesQuery());
+  if (!data) return null;
   return (
     <section id="businesses" className="bg-surface py-20 lg:py-28">
       <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
         <div className="max-w-3xl">
-          <p className="eyebrow">Capabilities</p>
-          <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-            Multi-Disciplinary Spectrum
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">Engineering capabilities across essential civil sectors.</p>
+          <p className="eyebrow">{data.eyebrow}</p>
+          <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{data.title}</h2>
+          {data.intro && <p className="mt-4 text-lg text-muted-foreground">{data.intro}</p>}
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {BUSINESSES.map(({ icon: Icon, title, text, img, alt }) => {
-            const v = BUSINESS_VERTICALS.find((b) => b.title === title)!;
+          {data.verticals.map((v) => {
+            const Icon = iconFor(v.icon);
+            const src = imageFor(v.slug, v.image);
             return (
-            <Link key={title} to="/businesses/$slug" params={{ slug: v.slug }} className="card-lift group flex flex-col overflow-hidden rounded-sm bg-card">
-              <div className="relative h-48 overflow-hidden">
-                <img
-                  src={img.url}
-                  alt={alt}
-                  width={1200}
-                  height={900}
-                  loading="lazy"
-                  className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
+            <Link key={v.slug} to="/businesses/$slug" params={{ slug: v.slug }} className="card-lift group flex flex-col overflow-hidden rounded-sm bg-card">
+              <div className="relative h-48 overflow-hidden bg-muted">
+                {src && <img src={src} alt={v.imageAlt || v.title} width={1200} height={900} loading="lazy" className="size-full object-cover transition-transform duration-500 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
                 <Icon className="absolute bottom-4 left-4 size-7 text-ink-foreground" />
               </div>
               <div className="flex flex-1 flex-col p-6">
-                <h3 className="font-display text-lg font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{text}</p>
+                <h3 className="font-display text-lg font-semibold">{v.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{v.cardText}</p>
                 <span className="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-4 font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-blue">
                   Explore <ArrowRight className="size-3.5" />
                 </span>
