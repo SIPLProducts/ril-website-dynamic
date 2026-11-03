@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { csrQuery, mediaQuery } from "@/lib/site-content.functions";
 import { managementQuery } from "@/lib/management.functions";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";

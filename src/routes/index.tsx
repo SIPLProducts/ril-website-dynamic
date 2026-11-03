@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { managementQuery } from "@/lib/management.functions";
+import { csrQuery, mediaQuery } from "@/lib/site-content.functions";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import {
@@ -29,7 +30,12 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(managementQuery()).catch(() => null),
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(managementQuery()).catch(() => null),
+      context.queryClient.ensureQueryData(csrQuery()).catch(() => null),
+      context.queryClient.ensureQueryData(mediaQuery()).catch(() => null),
+    ]),
   component: Index,
 });
 
