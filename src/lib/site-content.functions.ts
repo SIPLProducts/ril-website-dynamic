@@ -115,7 +115,7 @@ export const getCareers = createServerFn({ method: "GET" }).handler(async (): Pr
       experience: r.experience, qualification: r.qualification, employmentType: r.employment_type, deadline: r.deadline,
       vacancies: r.vacancies ?? undefined, description: r.description, responsibilities: strs(r.responsibilities), skills: strs(r.skills), status: "open" as const,
     })),
-    flyers: (f.data ?? []).map((r) => opt<RecruitmentFlyer>({ id: r.id, title: r.title, url: r.url, imageUrl: img(r.image_url), roles: strs(r.roles), status: "open" as const })),
+    flyers: (f.data ?? []).map((r) => ({ ...opt<RecruitmentFlyer>({ id: r.id, title: r.title, url: r.url, imageUrl: img(r.image_url), status: "open" as const }), roles: strs(r.roles) })),
   };
 });
 export const careersQuery = () => queryOptions({ queryKey: ["careers"], queryFn: () => getCareers() });
