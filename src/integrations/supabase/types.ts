@@ -520,6 +520,152 @@ export type Database = {
         }
         Relationships: []
       }
+      footer_columns: {
+        Row: {
+          created_at: string
+          id: string
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      footer_links: {
+        Row: {
+          column_id: string
+          created_at: string
+          href: string
+          id: string
+          label: string
+          new_tab: boolean
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          column_id: string
+          created_at?: string
+          href: string
+          id?: string
+          label: string
+          new_tab?: boolean
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          column_id?: string
+          created_at?: string
+          href?: string
+          id?: string
+          label?: string
+          new_tab?: boolean
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "footer_links_column_id_fkey"
+            columns: ["column_id"]
+            isOneToOne: false
+            referencedRelation: "footer_columns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      footer_settings: {
+        Row: {
+          address: string
+          copyright_name: string
+          description: string
+          email: string
+          group_eyebrow: string
+          group_subtitle: string
+          group_title: string
+          id: number
+          phone: string
+          tagline: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string
+          copyright_name?: string
+          description?: string
+          email?: string
+          group_eyebrow?: string
+          group_subtitle?: string
+          group_title?: string
+          id?: number
+          phone?: string
+          tagline?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          copyright_name?: string
+          description?: string
+          email?: string
+          group_eyebrow?: string
+          group_subtitle?: string
+          group_title?: string
+          id?: number
+          phone?: string
+          tagline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      group_companies: {
+        Row: {
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       ir_contacts: {
         Row: {
           heading: string

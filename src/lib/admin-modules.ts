@@ -1,4 +1,4 @@
-import { Award, Newspaper, Briefcase, Building2, FileText, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
+import { PanelBottom, Award, Newspaper, Briefcase, Building2, FileText, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
 import { IR_SECTIONS } from "@/lib/investor-relations";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
@@ -30,6 +30,7 @@ export const ADMIN_MODULES: AdminModule[] = [
   { key: "accolades", label: "Accolades", icon: Award, children: [{ key: "awards", label: "Awards", to: "/admin/accolades" }] },
   { key: "sustainability", label: "Sustainability", icon: Leaf, children: [...ESG_SECTIONS.map((s) => page("esg", s.slug, s.title))] },
   { key: "company", label: "Company", icon: Newspaper, children: [{ key: "csr", label: "CSR", to: "/admin/company/csr" }, { key: "media", label: "Media", to: "/admin/company/media" }] },
+  { key: "footer", label: "Footer", icon: PanelBottom, children: [{ key: "links", label: "Link Columns", to: "/admin/footer/links" }, { key: "group-companies", label: "Group Companies", to: "/admin/footer/group-companies" }, { key: "contact", label: "Contact & About", to: "/admin/footer/contact" }] },
   { key: "careers", label: "Careers", icon: Briefcase, children: [{ key: "life", label: "Life at Ramky", to: "/admin/careers/life" }, { key: "positions", label: "Current Positions", to: "/admin/careers/positions" }] },
 ];
 

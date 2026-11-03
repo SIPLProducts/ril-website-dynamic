@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { footerQuery } from "../lib/footer.functions";
 
 function NotFoundComponent() {
   return (
@@ -107,6 +108,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
+  loader: async ({ context }) => {
+    try { await context.queryClient.ensureQueryData(footerQuery()); } catch { /* footer falls back to built-in text */ }
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

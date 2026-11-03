@@ -64,6 +64,13 @@
       "when": 1793679045869,
       "tag": "0008_careers_dynamic",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793687092776,
+      "tag": "0009_footer_dynamic",
+      "breakpoints": true
     }
   ]
 }
