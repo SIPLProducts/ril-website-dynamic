@@ -207,7 +207,7 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
         </thead>
         <tbody>
           {rows.map((r, i) => (<Fragment key={r.id}>
-            {grouped && (i === 0 || rows[i - 1].group_title !== r.group_title) && (
+            {grouped && (i === 0 || rows[i - 1]?.group_title !== r.group_title) && (
               <tr className="border-t border-border bg-emerald-50/60">
                 <td colSpan={cols.length + 3} className="px-4 py-2">
                   <div className="flex items-center gap-2">
