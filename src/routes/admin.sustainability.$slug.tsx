@@ -324,3 +324,28 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
     </AdminDialog>
   );
 }
+
+function GroupPicker({ value, groups, onChange }: { value: string; groups: string[]; onChange: (v: string) => void }) {
+  const NEW = "__new__";
+  const [creating, setCreating] = useState(() => !!value && !groups.includes(value));
+  const selectValue = creating ? NEW : value;
+  return (
+    <div>
+      <Label>Card group heading</Label>
+      <select
+        aria-label="Card group heading"
+        value={selectValue}
+        onChange={(e) => {
+          if (e.target.value === NEW) { setCreating(true); onChange(""); }
+          else { setCreating(false); onChange(e.target.value); }
+        }}
+        className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+      >
+        <option value="">None (Main Key Metrics)</option>
+        {groups.map((g) => <option key={g} value={g}>{g}</option>)}
+        <option value={NEW}>+ Create new group…</option>
+      </select>
+      {creating && <Input className="mt-2" autoFocus value={value} maxLength={80} placeholder="New group heading, e.g. Resource Efficiency" onChange={(e) => onChange(e.target.value)} />}
+    </div>
+  );
+}
