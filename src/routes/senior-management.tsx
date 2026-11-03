@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, UserRound } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { publishedSeniorManagement } from "@/lib/senior-management";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { managementQuery } from "@/lib/management.functions";
 
 const TITLE = "Senior Management | Ramky Infrastructure";
 const DESCRIPTION = "The senior management team leading operations, projects and functions at Ramky Infrastructure.";
@@ -18,11 +19,14 @@ export const Route = createFileRoute("/senior-management")({
       { name: "twitter:card", content: "summary" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(managementQuery()),
   component: SeniorManagementPage,
+  errorComponent: () => <p className="p-10">Senior Management could not be loaded. Please refresh.</p>,
 });
 
 function SeniorManagementPage() {
-  const members = publishedSeniorManagement();
+  const { data } = useSuspenseQuery(managementQuery());
+  const members = data.filter((m) => m.group === "senior");
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />

@@ -10,6 +10,9 @@ export type AdminModule = { key: string; label: string; icon: LucideIcon; to?: s
 
 const ADMIN_PATHS: Record<string, string> = {
   "about/clientele": "/admin/about/clientele",
+  "management/board": "/admin/management/board",
+  "management/executive": "/admin/management/executive",
+  "management/senior": "/admin/management/senior",
   ...Object.fromEntries(ESG_SECTIONS.map((s) => [`esg/${s.slug}`, `/admin/sustainability/${s.slug}`])),
 };
 const page = (mod: string, key: string, label: string, children?: AdminPage[]): AdminPage => ({ key, label, to: ADMIN_PATHS[`${mod}/${key}`], children });
@@ -22,7 +25,7 @@ export const ADMIN_MODULES: AdminModule[] = [
       ...ABOUT_SECTIONS.map((s) => page("about", s.slug, s.title, s.slug === "partners" ? [page("about", "subsidiaries", "Subsidiaries")] : undefined)),
     ],
   },
-  { key: "management", label: "Management", icon: UsersRound, children: [page("management", "board", "Board Of Directors"), page("management", "senior", "Senior Management")] },
+  { key: "management", label: "Management", icon: UsersRound, children: [page("management", "board", "Board Of Directors"), page("management", "executive", "Executive Leadership"), page("management", "senior", "Senior Management")] },
   { key: "capabilities", label: "Capabilities", icon: Wrench },
   { key: "accolades", label: "Accolades", icon: Award, children: [{ key: "awards", label: "Awards", to: "/admin/accolades" }] },
   { key: "sustainability", label: "Sustainability", icon: Leaf, children: ESG_SECTIONS.map((s) => page("esg", s.slug, s.title)) },

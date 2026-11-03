@@ -1,5 +1,5 @@
-import { publishedDirectors } from "@/lib/directors";
-import { publishedExecutives } from "@/lib/executives";
+import { useQuery } from "@tanstack/react-query";
+import { managementQuery } from "@/lib/management.functions";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { BUSINESS_VERTICALS } from "@/lib/business-projects";
@@ -738,30 +738,7 @@ export function Journey() {
   );
 }
 
-const DIRECTOR_BY_NAME = new Map(publishedDirectors().map((d) => [d.name, d]));
-
-const MANAGEMENT_GROUPS = [
-  {
-    id: "board-of-directors",
-    title: "Board Of Directors",
-    people: [
-      { name: "Mr. Yancharla Rathnakara Nagaraja", role: "Managing Director", bio: "" },
-      { name: "Dr. Anantapuram Guggela Ravindranath Reddy", role: "Non-Executive Director", bio: "" },
-      { name: "Mr. Isaac Wesley Vijaya Kumar", role: "Non-Executive Director", bio: "" },
-      { name: "Dr. Ravi Kumar Reddy Somavarapu", role: "Independent Director", bio: "" },
-      { name: "Mr. Eshwar Reddy Purmandla", role: "Independent Director", bio: "" },
-      { name: "Ms. Malvieka Joshi", role: "Independent Director", bio: "" },
-      { name: "Dr. Peddibhotla Gangadhara Sastry", role: "Independent Director", bio: "" },
-    ],
-  },
-  {
-    id: "senior-management",
-    title: "Senior Management",
-    people: [
-      { name: "Senior Management Team", role: "Executive Leadership", bio: "Experienced leaders responsible for operations, finance, project controls, safety and quality across the organisation." },
-    ],
-  },
-];
+const SENIOR_CARD = { name: "Senior Management Team", role: "Executive Leadership", bio: "Experienced leaders responsible for operations, finance, project controls, safety and quality across the organisation." };
 
 const linkCls = "group block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2";
 
@@ -785,8 +762,10 @@ function CardBody({ name, role, bio }: { name: string; role: string; bio?: strin
 }
 
 export function Management() {
-  const [board, seniorGroup] = MANAGEMENT_GROUPS;
-  const senior = seniorGroup!.people[0]!;
+  const { data: people = [] } = useQuery(managementQuery());
+  const board = people.filter((p) => p.group === "board");
+  const executives = people.filter((p) => p.group === "executive");
+  const senior = SENIOR_CARD;
   return (
     <section id="management" className="mx-auto max-w-[1400px] px-5 py-20 lg:px-10 lg:py-28">
       <div className="max-w-3xl">
@@ -799,22 +778,16 @@ export function Management() {
 
       <div className="mt-12 space-y-14">
         {/* 1. Board of Directors */}
-        <div id={board!.id} className="scroll-mt-32">
-          <GroupHeading title={board!.title} />
+        <div id="board-of-directors" className="scroll-mt-32">
+          <GroupHeading title="Board Of Directors" />
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {board!.people.map((p) => {
-              const director = DIRECTOR_BY_NAME.get(p.name);
-              const card = <CardBody name={p.name} role={p.role} />;
-              return (
-                <li key={p.name}>
-                  {director ? (
-                    <Link to="/board-of-directors/$slug" params={{ slug: director.slug }} aria-label={`View profile of ${p.name}`} className={linkCls}>
-                      {card}
-                    </Link>
-                  ) : card}
-                </li>
-              );
-            })}
+            {board.map((p) => (
+              <li key={p.id}>
+                <Link to="/board-of-directors/$slug" params={{ slug: p.slug }} aria-label={`View profile of ${p.name}`} className={linkCls}>
+                  <CardBody name={p.name} role={p.designation} />
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -822,7 +795,7 @@ export function Management() {
         <div id="executive-leadership" className="scroll-mt-32">
           <GroupHeading title="Executive Leadership" />
           <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {publishedExecutives().map((e) => (
+            {executives.map((e) => (
               <li key={e.id}>
                 <Link to="/executive-leadership/$slug" params={{ slug: e.slug }} aria-label={`View profile of ${e.name}`} className={linkCls}>
                   <CardBody name={e.name} role={e.designation} />
