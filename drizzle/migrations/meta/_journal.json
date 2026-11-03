@@ -50,6 +50,13 @@
       "when": 1793671986876,
       "tag": "0006_management_people",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1793676694812,
+      "tag": "0007_csr_and_media",
+      "breakpoints": true
     }
   ]
 }

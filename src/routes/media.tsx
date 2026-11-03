@@ -3,7 +3,9 @@ import { useState } from "react";
 import { ArrowLeft, ExternalLink, Newspaper } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { publishedMedia, type MediaItem } from "@/lib/media";
+import type { MediaItem } from "@/lib/media";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { mediaQuery } from "@/lib/site-content.functions";
 
 const TITLE = "Media & Press Releases | Ramky Infrastructure";
 const DESC = "News, press releases, media coverage and official publications from Ramky Infrastructure, latest first.";
@@ -19,6 +21,7 @@ export const Route = createFileRoute("/media")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(mediaQuery()),
   component: MediaPage,
 });
 
@@ -26,7 +29,9 @@ const PAGE = 9;
 const fmt = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" });
 
 function MediaPage() {
-  const items = publishedMedia();
+  const { data } = useSuspenseQuery(mediaQuery());
+  const items = data.items;
+  const pg = data.page;
   const [count, setCount] = useState(PAGE);
 
   return (
@@ -37,9 +42,9 @@ function MediaPage() {
           <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground">
             <Link to="/" className="hover:text-brand-blue">Home</Link> / <span className="text-foreground">Media</span>
           </nav>
-          <p className="eyebrow mt-6">Media Centre</p>
-          <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-5xl">Media &amp; Press Releases</h1>
-          <p className="mt-3 max-w-2xl text-base text-muted-foreground">News, press releases, media coverage and official publications — latest first.</p>
+          <p className="eyebrow mt-6">{pg?.eyebrow ?? "Media Centre"}</p>
+          <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-5xl">{pg?.title ?? "Media & Press Releases"}</h1>
+          <p className="mt-3 max-w-2xl text-base text-muted-foreground">{pg?.intro}</p>
 
           {items.length === 0 ? (
             <div className="mt-12 rounded-sm border border-border bg-card px-6 py-16 text-center shadow-[var(--shadow-card)]">

@@ -24,6 +24,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAccoladesRouteImport } from './routes/admin.accolades'
 import { Route as AdminEmailSettingsRouteImport } from './routes/admin.email-settings'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as BoardOfDirectorsSlugRouteImport } from './routes/board-of-directors.$slug'
@@ -34,6 +35,7 @@ import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.pa
 import { Route as AdminAboutClienteleRouteImport } from './routes/admin.about.clientele'
 import { Route as AdminManagementGroupRouteImport } from './routes/admin.management.$group'
 import { Route as AdminSustainabilitySlugRouteImport } from './routes/admin.sustainability.$slug'
+import { Route as AdminSustainabilityCsrRouteImport } from './routes/admin.sustainability.csr'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -110,6 +112,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminMediaRoute = AdminMediaRouteImport.update({
+  id: '/media',
+  path: '/media',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -161,6 +168,11 @@ const AdminSustainabilitySlugRoute = AdminSustainabilitySlugRouteImport.update({
   path: '/sustainability/$slug',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSustainabilityCsrRoute = AdminSustainabilityCsrRouteImport.update({
+  id: '/sustainability/csr',
+  path: '/sustainability/csr',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -177,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/admin/accolades': typeof AdminAccoladesRoute
   '/admin/email-settings': typeof AdminEmailSettingsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
@@ -188,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
+  '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -203,6 +217,7 @@ export interface FileRoutesByTo {
   '/admin/accolades': typeof AdminAccoladesRoute
   '/admin/email-settings': typeof AdminEmailSettingsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
@@ -214,6 +229,7 @@ export interface FileRoutesByTo {
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
+  '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -231,6 +247,7 @@ export interface FileRoutesById {
   '/admin/accolades': typeof AdminAccoladesRoute
   '/admin/email-settings': typeof AdminEmailSettingsRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
@@ -242,6 +259,7 @@ export interface FileRoutesById {
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
+  '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -260,6 +278,7 @@ export interface FileRouteTypes {
     | '/admin/accolades'
     | '/admin/email-settings'
     | '/admin/login'
+    | '/admin/media'
     | '/admin/reset-password'
     | '/admin/users'
     | '/board-of-directors/$slug'
@@ -271,6 +290,7 @@ export interface FileRouteTypes {
     | '/admin/about/clientele'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
+    | '/admin/sustainability/csr'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -286,6 +306,7 @@ export interface FileRouteTypes {
     | '/admin/accolades'
     | '/admin/email-settings'
     | '/admin/login'
+    | '/admin/media'
     | '/admin/reset-password'
     | '/admin/users'
     | '/board-of-directors/$slug'
@@ -297,6 +318,7 @@ export interface FileRouteTypes {
     | '/admin/about/clientele'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
+    | '/admin/sustainability/csr'
   id:
     | '__root__'
     | '/'
@@ -313,6 +335,7 @@ export interface FileRouteTypes {
     | '/admin/accolades'
     | '/admin/email-settings'
     | '/admin/login'
+    | '/admin/media'
     | '/admin/reset-password'
     | '/admin/users'
     | '/board-of-directors/$slug'
@@ -324,6 +347,7 @@ export interface FileRouteTypes {
     | '/admin/about/clientele'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
+    | '/admin/sustainability/csr'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -452,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/media': {
+      id: '/admin/media'
+      path: '/media'
+      fullPath: '/admin/media'
+      preLoaderRoute: typeof AdminMediaRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/reset-password': {
       id: '/admin/reset-password'
       path: '/reset-password'
@@ -522,6 +553,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSustainabilitySlugRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sustainability/csr': {
+      id: '/admin/sustainability/csr'
+      path: '/sustainability/csr'
+      fullPath: '/admin/sustainability/csr'
+      preLoaderRoute: typeof AdminSustainabilityCsrRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -529,24 +567,28 @@ interface AdminRouteChildren {
   AdminAccoladesRoute: typeof AdminAccoladesRoute
   AdminEmailSettingsRoute: typeof AdminEmailSettingsRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminMediaRoute: typeof AdminMediaRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAboutClienteleRoute: typeof AdminAboutClienteleRoute
   AdminManagementGroupRoute: typeof AdminManagementGroupRoute
   AdminSustainabilitySlugRoute: typeof AdminSustainabilitySlugRoute
+  AdminSustainabilityCsrRoute: typeof AdminSustainabilityCsrRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAccoladesRoute: AdminAccoladesRoute,
   AdminEmailSettingsRoute: AdminEmailSettingsRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminMediaRoute: AdminMediaRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAboutClienteleRoute: AdminAboutClienteleRoute,
   AdminManagementGroupRoute: AdminManagementGroupRoute,
   AdminSustainabilitySlugRoute: AdminSustainabilitySlugRoute,
+  AdminSustainabilityCsrRoute: AdminSustainabilityCsrRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

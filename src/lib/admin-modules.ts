@@ -1,4 +1,4 @@
-import { Award, Briefcase, Building2, FileText, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
+import { Award, Newspaper, Briefcase, Building2, FileText, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
 import { IR_SECTIONS } from "@/lib/investor-relations";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
@@ -28,7 +28,8 @@ export const ADMIN_MODULES: AdminModule[] = [
   { key: "management", label: "Management", icon: UsersRound, children: [page("management", "board", "Board Of Directors"), page("management", "executive", "Executive Leadership"), page("management", "senior", "Senior Management")] },
   { key: "capabilities", label: "Capabilities", icon: Wrench },
   { key: "accolades", label: "Accolades", icon: Award, children: [{ key: "awards", label: "Awards", to: "/admin/accolades" }] },
-  { key: "sustainability", label: "Sustainability", icon: Leaf, children: ESG_SECTIONS.map((s) => page("esg", s.slug, s.title)) },
+  { key: "sustainability", label: "Sustainability", icon: Leaf, children: [...ESG_SECTIONS.map((s) => page("esg", s.slug, s.title)), { key: "csr", label: "CSR (Home card)", to: "/admin/sustainability/csr" }] },
+  { key: "media", label: "Media", icon: Newspaper, children: [{ key: "press", label: "Press Releases & Media", to: "/admin/media" }] },
   { key: "careers", label: "Careers", icon: Briefcase, children: [page("careers", "life", "Life at Ramky"), page("careers", "positions", "Current Positions")] },
 ];
 
