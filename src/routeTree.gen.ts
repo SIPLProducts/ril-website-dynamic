@@ -33,6 +33,8 @@ import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
 import { Route as ExecutiveLeadershipSlugRouteImport } from './routes/executive-leadership.$slug'
 import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.partners.subsidiaries'
 import { Route as AdminAboutClienteleRouteImport } from './routes/admin.about.clientele'
+import { Route as AdminCapabilitiesIndexRouteImport } from './routes/admin.capabilities.index'
+import { Route as AdminCapabilitiesProjectsRouteImport } from './routes/admin.capabilities.projects'
 import { Route as AdminCareersApplicationsRouteImport } from './routes/admin.careers.applications'
 import { Route as AdminCareersLifeRouteImport } from './routes/admin.careers.life'
 import { Route as AdminCareersPositionsRouteImport } from './routes/admin.careers.positions'
@@ -166,6 +168,17 @@ const AdminAboutClienteleRoute = AdminAboutClienteleRouteImport.update({
   path: '/about/clientele',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCapabilitiesIndexRoute = AdminCapabilitiesIndexRouteImport.update({
+  id: '/capabilities/',
+  path: '/capabilities/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCapabilitiesProjectsRoute =
+  AdminCapabilitiesProjectsRouteImport.update({
+    id: '/capabilities/projects',
+    path: '/capabilities/projects',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminCareersApplicationsRoute =
   AdminCareersApplicationsRouteImport.update({
     id: '/careers/applications',
@@ -249,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/capabilities/projects': typeof AdminCapabilitiesProjectsRoute
   '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
@@ -260,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
+  '/admin/capabilities/': typeof AdminCapabilitiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -285,6 +300,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/capabilities/projects': typeof AdminCapabilitiesProjectsRoute
   '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
@@ -296,6 +312,7 @@ export interface FileRoutesByTo {
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
+  '/admin/capabilities': typeof AdminCapabilitiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -323,6 +340,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
+  '/admin/capabilities/projects': typeof AdminCapabilitiesProjectsRoute
   '/admin/careers/applications': typeof AdminCareersApplicationsRoute
   '/admin/careers/life': typeof AdminCareersLifeRoute
   '/admin/careers/positions': typeof AdminCareersPositionsRoute
@@ -334,6 +352,7 @@ export interface FileRoutesById {
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
+  '/admin/capabilities/': typeof AdminCapabilitiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -362,6 +381,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/capabilities/projects'
     | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
@@ -373,6 +393,7 @@ export interface FileRouteTypes {
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
+    | '/admin/capabilities/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -398,6 +419,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/capabilities/projects'
     | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
@@ -409,6 +431,7 @@ export interface FileRouteTypes {
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
+    | '/admin/capabilities'
   id:
     | '__root__'
     | '/'
@@ -435,6 +458,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
+    | '/admin/capabilities/projects'
     | '/admin/careers/applications'
     | '/admin/careers/life'
     | '/admin/careers/positions'
@@ -446,6 +470,7 @@ export interface FileRouteTypes {
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
+    | '/admin/capabilities/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -637,6 +662,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAboutClienteleRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/capabilities/': {
+      id: '/admin/capabilities/'
+      path: '/capabilities'
+      fullPath: '/admin/capabilities/'
+      preLoaderRoute: typeof AdminCapabilitiesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/capabilities/projects': {
+      id: '/admin/capabilities/projects'
+      path: '/capabilities/projects'
+      fullPath: '/admin/capabilities/projects'
+      preLoaderRoute: typeof AdminCapabilitiesProjectsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/careers/applications': {
       id: '/admin/careers/applications'
       path: '/careers/applications'
@@ -726,6 +765,7 @@ interface AdminRouteChildren {
   AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAboutClienteleRoute: typeof AdminAboutClienteleRoute
+  AdminCapabilitiesProjectsRoute: typeof AdminCapabilitiesProjectsRoute
   AdminCareersApplicationsRoute: typeof AdminCareersApplicationsRoute
   AdminCareersLifeRoute: typeof AdminCareersLifeRoute
   AdminCareersPositionsRoute: typeof AdminCareersPositionsRoute
@@ -737,6 +777,7 @@ interface AdminRouteChildren {
   AdminManagementGroupRoute: typeof AdminManagementGroupRoute
   AdminSustainabilitySlugRoute: typeof AdminSustainabilitySlugRoute
   AdminSustainabilityCsrRoute: typeof AdminSustainabilityCsrRoute
+  AdminCapabilitiesIndexRoute: typeof AdminCapabilitiesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -748,6 +789,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAboutClienteleRoute: AdminAboutClienteleRoute,
+  AdminCapabilitiesProjectsRoute: AdminCapabilitiesProjectsRoute,
   AdminCareersApplicationsRoute: AdminCareersApplicationsRoute,
   AdminCareersLifeRoute: AdminCareersLifeRoute,
   AdminCareersPositionsRoute: AdminCareersPositionsRoute,
@@ -759,6 +801,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminManagementGroupRoute: AdminManagementGroupRoute,
   AdminSustainabilitySlugRoute: AdminSustainabilitySlugRoute,
   AdminSustainabilityCsrRoute: AdminSustainabilityCsrRoute,
+  AdminCapabilitiesIndexRoute: AdminCapabilitiesIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

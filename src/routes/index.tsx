@@ -1,3 +1,4 @@
+import { capabilitiesQuery } from "@/lib/capabilities.functions";
 import { createFileRoute } from "@tanstack/react-router";
 import { managementQuery } from "@/lib/management.functions";
 import { csrQuery, mediaQuery } from "@/lib/site-content.functions";
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/")({
       context.queryClient.ensureQueryData(managementQuery()).catch(() => null),
       context.queryClient.ensureQueryData(csrQuery()).catch(() => null),
       context.queryClient.ensureQueryData(mediaQuery()).catch(() => null),
+      context.queryClient.ensureQueryData(capabilitiesQuery()).catch(() => null),
     ]),
   component: Index,
 });

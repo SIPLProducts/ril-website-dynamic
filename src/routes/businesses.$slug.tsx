@@ -3,18 +3,21 @@ import { useMemo, useState } from "react";
 import { ArrowLeft, MapPin, Building2, X } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { BUSINESS_VERTICALS, getBusinessVertical, projectState, type BusinessProject, type ProjectStatus } from "@/lib/business-projects";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { projectState, type BusinessProject, type ProjectStatus } from "@/lib/business-projects";
+import { capabilitiesQuery } from "@/lib/capabilities.functions";
 
 export const Route = createFileRoute("/businesses/$slug")({
-  loader: ({ params }) => {
-    const vertical = getBusinessVertical(params.slug);
+  loader: async ({ params, context }) => {
+    const data = await context.queryClient.ensureQueryData(capabilitiesQuery());
+    const vertical = data.verticals.find((v) => v.slug === params.slug);
     if (!vertical) throw notFound();
-    return { vertical };
+    return { vertical: { title: vertical.title, description: vertical.description, count: vertical.projects.length } };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ title: "Not found — Ramky Infrastructure" }, { name: "robots", content: "noindex" }] };
     const t = `${loaderData.vertical.title} Projects — Ramky Infrastructure`;
-    const d = `${loaderData.vertical.projects.length} ${loaderData.vertical.title} projects by Ramky Infrastructure: ${loaderData.vertical.description}`;
+    const d = `${loaderData.vertical.count} ${loaderData.vertical.title} projects by Ramky Infrastructure: ${loaderData.vertical.description}`;
     return {
       meta: [
         { title: t },
@@ -27,6 +30,7 @@ export const Route = createFileRoute("/businesses/$slug")({
     };
   },
   notFoundComponent: VerticalNotFound,
+  errorComponent: ({ error }) => <div role="alert" className="mx-auto max-w-3xl px-5 py-40 text-center">{error instanceof Error ? error.message : "Something went wrong"}</div>,
   component: VerticalPage,
 });
 
@@ -46,7 +50,10 @@ function VerticalNotFound() {
 }
 
 function VerticalPage() {
-  const { vertical } = Route.useLoaderData();
+  const { slug } = Route.useParams();
+  const { data } = useSuspenseQuery(capabilitiesQuery());
+  const vertical = data.verticals.find((v) => v.slug === slug);
+  if (!vertical) return <VerticalNotFound />;
   return (
     <>
       <SiteHeader />
@@ -55,11 +62,11 @@ function VerticalPage() {
           <Link to="/" hash="businesses" className="inline-flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-blue">
             <ArrowLeft className="size-4" />  All capabilities
           </Link>
-          <p className="eyebrow mt-8">Capabilities</p>
+          <p className="eyebrow mt-8">{data.eyebrow}</p>
           <h1 className="mt-4 text-3xl font-bold sm:text-5xl">{vertical.title}</h1>
           <p className="mt-4 max-w-2xl text-muted-foreground">{vertical.description}</p>
           <div className="mt-6 flex flex-wrap gap-2">
-            {BUSINESS_VERTICALS.map((v) => (
+            {data.verticals.map((v) => (
               <Link key={v.slug} to="/businesses/$slug" params={{ slug: v.slug }}
                 className={`rounded-sm border px-3 py-1.5 text-sm ${v.slug === vertical.slug ? "border-brand-blue bg-brand-blue text-primary-foreground" : "border-border hover:border-brand-blue"}`}>
                 {v.title}
