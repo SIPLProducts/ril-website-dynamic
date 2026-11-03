@@ -21,7 +21,7 @@ export const CAPABILITY_ICONS: Record<string, { label: string; Icon: LucideIcon 
   landmark: { label: "Landmark", Icon: Landmark },
   hardhat: { label: "Construction", Icon: HardHat },
 };
-export const iconFor = (key: string) => (CAPABILITY_ICONS[key] ?? CAPABILITY_ICONS.building).Icon;
+export const iconFor = (key: string): LucideIcon => CAPABILITY_ICONS[key]?.Icon ?? Building2;
 
 /** Built-in photos used when an admin has not uploaded a card image. */
 const DEFAULT_IMAGES: Record<string, string> = {

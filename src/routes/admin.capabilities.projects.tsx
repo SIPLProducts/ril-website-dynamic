@@ -16,7 +16,7 @@ import { STATUSES, fetchVerticals, refreshCapabilities, type ProjectRow } from "
 
 export const Route = createFileRoute("/admin/capabilities/projects")({
   ssr: false,
-  validateSearch: (s: Record<string, unknown>) => ({ v: typeof s.v === "string" ? s.v : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ v: typeof s["v"] === "string" ? s["v"] : undefined }),
   beforeLoad: async () => {
     const staff = await getStaff();
     if (!staff) throw redirect({ to: "/admin/login" });

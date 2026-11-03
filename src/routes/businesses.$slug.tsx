@@ -30,7 +30,7 @@ export const Route = createFileRoute("/businesses/$slug")({
     };
   },
   notFoundComponent: VerticalNotFound,
-  errorComponent: ({ error }) => <div role="alert" className="mx-auto max-w-3xl px-5 py-40 text-center">{error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="mx-auto max-w-3xl px-5 py-40 text-center">{error instanceof Error ? error.message : "Something went wrong"}</div>,
   component: VerticalPage,
 });
 
