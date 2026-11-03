@@ -57,6 +57,13 @@
       "when": 1793676694812,
       "tag": "0007_csr_and_media",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793679045869,
+      "tag": "0008_careers_dynamic",
+      "breakpoints": true
     }
   ]
 }
