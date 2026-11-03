@@ -11,4 +11,8 @@ describe("admin menu", () => {
     expect(isReady(about)).toBe(true);
     expect(isReady(ADMIN_MODULES[1]!)).toBe(false);
   });
+  it("all four Sustainability pages are editable", () => {
+    const esg = ADMIN_MODULES.find((m) => m.key === "sustainability")!;
+    expect(esg.children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Environmental", "Social", "Governance", "ESG Reporting"]);
+  });
 });
