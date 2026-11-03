@@ -31,7 +31,7 @@ export const Route = createFileRoute("/esg/$slug")({
   },
   component: EsgPage,
   notFoundComponent: EsgNotFound,
-  errorComponent: ({ error }) => <div role="alert" className="p-10">{error.message}</div>,
+  errorComponent: ({ error }) => <div role="alert" className="p-10">{error instanceof Error ? error.message : String(error)}</div>,
 });
 
 const ICONS = {

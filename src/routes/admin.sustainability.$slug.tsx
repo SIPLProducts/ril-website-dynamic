@@ -241,11 +241,11 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
   const [mode, setMode] = useState<"file" | "link">(isLink ? "link" : "file");
   const [link, setLink] = useState(isLink ? row!.url! : "");
   const [file, setFile] = useState<File | null>(null);
-  const [errs, setErrs] = useState<Record<string, string>>({});
+  const [errs, setErrs] = useState<{ title?: string; value?: string; body?: string; year?: string; file?: string }>({});
   const [saving, setSaving] = useState(false);
 
   async function save() {
-    const e: Record<string, string> = {};
+    const e: { title?: string; value?: string; body?: string; year?: string; file?: string } = {};
     if (!f.title.trim()) e.title = kind === "metric" ? "Label is required" : "Title is required";
     if (kind === "metric" && !f.value.trim()) e.value = "Value is required";
     if (kind === "accordion" && !f.body.trim()) e.body = "Description is required";
