@@ -70,7 +70,7 @@ function Page() {
     <AdminShell staff={staff} active={{ kind: "module", module: "sustainability", section: slug }} crumbs={["Sustainability", label]}>
       <div key={slug} className="space-y-6">
         <PageEditor slug={slug} label={label} />
-        {kinds.map((k) => <ItemList key={k} slug={slug} kind={k} grouped={k === "metric" && slug === "social"} />)}
+        {kinds.map((k) => <ItemList key={k} slug={slug} kind={k} grouped={k === "metric"} />)}
       </div>
     </AdminShell>
   );
