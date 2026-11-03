@@ -19,19 +19,14 @@ function LifeAtRamkyPage() {
     <section aria-labelledby="purpose-title" className="border-b border-border pb-12">
       <h2 id="purpose-title" className="text-2xl font-semibold sm:text-3xl">Vision, Mission and Values</h2>
       <div className="mt-7 grid items-start gap-6 min-[800px]:grid-cols-3">
-        <div className={CARD}>
-          <h3 className="flex items-center gap-3 text-xl font-semibold text-brand-blue"><Compass aria-hidden="true" className="size-5" />Vision</h3>
-          <p className="mt-3 text-base leading-relaxed text-muted-foreground">{PURPOSE.vision}</p>
-        </div>
-        <div className={CARD}>
-          <h3 className="flex items-center gap-3 text-xl font-semibold text-brand-blue"><Target aria-hidden="true" className="size-5" />Mission</h3>
-          <p className="mt-3 text-base leading-relaxed text-muted-foreground">{PURPOSE.mission}</p>
-        </div>
-        <div className={CARD}>
-          <h3 className="flex items-center gap-3 text-xl font-semibold text-brand-blue"><BadgeCheck aria-hidden="true" className="size-5" />Values</h3>
-          <p className="mt-3 text-base leading-relaxed text-muted-foreground">{PURPOSE.valuesIntro}</p>
-          <ul className="mt-4 space-y-3">{PURPOSE.values.map((value) => <li key={value} className="flex items-start gap-3 text-base font-semibold"><BadgeCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand-green" />{value}</li>)}</ul>
-        </div>
+        {PURPOSE.map((card) => {
+          const Icon = /vision/i.test(card.title) ? Compass : /mission/i.test(card.title) ? Target : BadgeCheck;
+          return <div key={card.id} className={CARD}>
+            <h3 className="flex items-center gap-3 text-xl font-semibold text-brand-blue"><Icon aria-hidden="true" className="size-5" />{card.title}</h3>
+            {card.body && <p className="mt-3 text-base leading-relaxed text-muted-foreground">{card.body}</p>}
+            {card.bullets.length > 0 && <ul className="mt-4 space-y-3">{card.bullets.map((value) => <li key={value} className="flex items-start gap-3 text-base font-semibold"><BadgeCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand-green" />{value}</li>)}</ul>}
+          </div>;
+        })}
       </div>
     </section>
     <div className="divide-y divide-border">

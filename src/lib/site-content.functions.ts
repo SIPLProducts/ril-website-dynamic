@@ -89,13 +89,14 @@ const strs = (v: unknown) => (Array.isArray(v) ? (v as unknown[]).filter((x): x 
 
 export const getCareers = createServerFn({ method: "GET" }).handler(async (): Promise<CareersData> => {
   const sb = publicClient();
-  const [c, s, v, f] = await Promise.all([
+  const [c, s, v, f, pc] = await Promise.all([
     sb.from("careers_life_content").select("*").eq("id", 1).maybeSingle(),
     sb.from("careers_life_sections").select("*").eq("published", true).order("sort_order"),
     sb.from("career_vacancies").select("*").eq("published", true).order("sort_order"),
     sb.from("career_flyers").select("*").eq("published", true).order("sort_order"),
+    sb.from("careers_purpose_cards").select("*").eq("published", true).order("sort_order"),
   ]);
-  for (const r of [c, s, v, f]) if (r.error) throw new Error(r.error.message);
+  for (const r of [c, s, v, f, pc]) if (r.error) throw new Error(r.error.message);
   const paths = [...(s.data ?? []), ...(f.data ?? [])].map((r) => r.image_url).filter((u): u is string => !!u?.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
   const signed = new Map<string, string>();
   if (paths.length) {
@@ -106,7 +107,7 @@ export const getCareers = createServerFn({ method: "GET" }).handler(async (): Pr
   const img = (u: string | null) => (!u ? undefined : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) : u);
   const opt = <T,>(o: unknown) => Object.fromEntries(Object.entries(o as object).filter(([, x]) => x !== undefined && x !== null && x !== "" && !(Array.isArray(x) && !x.length))) as T;
   return {
-    purpose: { vision: c.data?.vision ?? "", mission: c.data?.mission ?? "", valuesIntro: c.data?.values_intro ?? "", values: strs(c.data?.values_list) },
+    purpose: (pc.data ?? []).map((r) => ({ id: r.id, title: r.title, body: r.body, bullets: strs(r.bullets) })),
     positionsIntro: c.data?.positions_intro ?? "",
     sections: (s.data ?? []).map((r) => opt<CareersData["sections"][number]>({ id: r.id, title: r.title, paragraphs: strs(r.paragraphs), imageUrl: img(r.image_url) })),
     vacancies: (v.data ?? []).map((r) => opt<Vacancy>({

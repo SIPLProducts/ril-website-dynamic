@@ -31,7 +31,12 @@ function Page() {
   return (
     <AdminShell staff={staff} active={{ kind: "module", module: "careers", section: "life" }} crumbs={["Careers", "Life at Ramky"]}>
       <div className="space-y-6">
-        <PurposeEditor />
+        <CareersList<Purpose> table="careers_purpose_cards" heading="Vision, Mission and Values cards" hint="cards at the top of the Life at Ramky page — add as many as you need" addLabel="Add card"
+          columns={[
+            { label: "Heading", cell: (r) => <span className="font-medium">{r.title}</span> },
+            { label: "Text", cell: (r) => <span className="line-clamp-2 text-muted-foreground">{r.body || toLines(r.bullets).split("\n").join(" · ")}</span> },
+          ]}
+          renderDialog={(row, next, close, saved) => <PurposeDialog row={row} nextOrder={next} onClose={close} onSaved={saved} />} />
         <CareersList<Section> table="careers_life_sections" heading="Page sections" hint="shown below Vision, Mission and Values" addLabel="Add section"
           columns={[
             { label: "Title", cell: (r) => <span className="font-medium">{r.title}</span> },
@@ -44,43 +49,36 @@ function Page() {
   );
 }
 
-function PurposeEditor() {
-  const qc = useQueryClient();
-  const { data } = useQuery({ queryKey: ["admin-careers-content"], queryFn: async () => {
-    const { data, error } = await supabase.from("careers_life_content").select("*").eq("id", 1).maybeSingle();
-    if (error) throw error;
-    return data;
-  } });
-  const [f, setF] = useState({ vision: "", mission: "", values_intro: "", values: "" });
+type Purpose = { id: string; title: string; body: string; bullets: unknown; published: boolean; sort_order: number };
+
+function PurposeDialog({ row, nextOrder, onClose, onSaved }: { row: Purpose | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
+  const [title, setTitle] = useState(row?.title ?? "");
+  const [body, setBody] = useState(row?.body ?? "");
+  const [bullets, setBullets] = useState(toLines(row?.bullets));
+  const [published, setPublished] = useState(row?.published ?? true);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setF({ vision: data.vision, mission: data.mission, values_intro: data.values_intro, values: toLines(data.values_list) }); }, [data]);
   async function save() {
+    if (!title.trim()) { toast.error("Card heading is required"); return; }
+    if (!body.trim() && !lines(bullets).length) { toast.error("Add some text or bullet points"); return; }
     setSaving(true);
-    const { error } = await supabase.from("careers_life_content").upsert({ id: 1, vision: f.vision, mission: f.mission, values_intro: f.values_intro, values_list: lines(f.values) });
+    const payload = { title: title.trim(), body: body.trim(), bullets: lines(bullets), published };
+    const { error } = row ? await supabase.from("careers_purpose_cards").update(payload).eq("id", row.id) : await supabase.from("careers_purpose_cards").insert({ ...payload, sort_order: nextOrder });
     setSaving(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Saved — now live on the website");
-    qc.invalidateQueries({ queryKey: ["admin-careers-content"] });
-    qc.invalidateQueries({ queryKey: ["careers"] });
+    toast.success("Saved — now live on the website"); onSaved();
   }
   return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-xl font-bold">Vision, Mission and Values</h2>
-          <p className="text-sm text-muted-foreground">The three cards at the top of the Life at Ramky page.</p>
-        </div>
-        <Button onClick={save} disabled={saving} className="neu-btn-gradient border-0"><Save className="size-4" /> {saving ? "Saving…" : "Save"}</Button>
-      </div>
-      <FormSection title="Cards">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div><Label>Vision</Label><Textarea rows={3} value={f.vision} onChange={(e) => setF({ ...f, vision: e.target.value })} /></div>
-          <div><Label>Mission</Label><Textarea rows={3} value={f.mission} onChange={(e) => setF({ ...f, mission: e.target.value })} /></div>
-          <div><Label>Values intro</Label><Textarea rows={3} value={f.values_intro} onChange={(e) => setF({ ...f, values_intro: e.target.value })} /></div>
-          <div><Label>Values (one per line)</Label><Textarea rows={5} value={f.values} onChange={(e) => setF({ ...f, values: e.target.value })} /></div>
+    <AdminDialog open onOpenChange={(o) => !o && onClose()} title={row ? "Edit card" : "Add card"} icon={Briefcase}
+      footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0"><Save className="size-4" /> {saving ? "Saving…" : "Save"}</Button></>}>
+      <FormSection title="Card">
+        <div className="grid gap-4">
+          <div><Label>Card heading *</Label><Input value={title} placeholder="e.g. Vision, Mission, Values, Culture" onChange={(e) => setTitle(e.target.value)} /></div>
+          <div><Label>Text</Label><Textarea rows={4} value={body} onChange={(e) => setBody(e.target.value)} /></div>
+          <div><Label>Bullet points (optional, one per line)</Label><Textarea rows={5} value={bullets} onChange={(e) => setBullets(e.target.value)} /></div>
+          <div className="flex items-center gap-3"><Switch checked={published} onCheckedChange={setPublished} /><Label>Live on website</Label></div>
         </div>
       </FormSection>
-    </section>
+    </AdminDialog>
   );
 }
 

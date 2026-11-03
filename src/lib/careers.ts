@@ -7,7 +7,7 @@ export type Vacancy = {
 export type RecruitmentFlyer = { id: string; title: string; url: string; imageUrl?: string; roles: string[]; status: "open" | "closed" | "draft" };
 
 export type CareersData = {
-  purpose: { vision: string; mission: string; valuesIntro: string; values: string[] };
+  purpose: { id: string; title: string; body: string; bullets: string[] }[];
   positionsIntro: string;
   sections: { id: string; title: string; paragraphs: string[]; imageUrl?: string }[];
   vacancies: Vacancy[];
