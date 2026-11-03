@@ -77,7 +77,3 @@ export const submitApplication = createServerFn({ method: "POST" })
     } catch (e) { console.error("application email", e); }
     return { ok: true, emailed: sent };
   });
-
-export const getResumeUrl = createServerFn({ method: "POST" })
-  .inputValidator((d: { path: string }) => z.object({ path: z.string().startsWith("careers/applications/") }).parse(d))
-  .handler(async () => { throw new Error("Use client signed URL"); });
