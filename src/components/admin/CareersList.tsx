@@ -8,7 +8,7 @@ import { confirmDelete } from "@/components/admin/ConfirmDelete";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
-export type CareersTable = "careers_life_sections" | "career_vacancies" | "career_flyers";
+export type CareersTable = "careers_life_sections" | "career_vacancies" | "career_flyers" | "careers_purpose_cards";
 type Base = { id: string; title: string; published: boolean; sort_order: number; image_url?: string | null };
 
 /** Uploads an image to private storage and returns its `storage:` reference. */

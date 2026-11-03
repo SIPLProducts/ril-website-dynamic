@@ -1,0 +1,3 @@
+DROP POLICY IF EXISTS "Public reads investor files" ON storage.objects;
+CREATE POLICY "Public reads investor files" ON storage.objects FOR SELECT USING (bucket_id = 'investor-documents' AND name NOT LIKE 'careers/applications/%');
+CREATE POLICY "Staff read resume files" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'investor-documents' AND name LIKE 'careers/applications/%' AND public.is_staff(auth.uid()));

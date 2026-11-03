@@ -23,8 +23,8 @@ export const Route = createFileRoute("/admin/email-settings")({
   component: EmailSettingsPage,
 });
 
-type F = { enabled: boolean; host: string; port: number; secure: boolean; username: string; password: string; from_email: string; from_name: string; cc: string[] };
-const blank: F = { enabled: false, host: "smtp.gmail.com", port: 587, secure: false, username: "", password: "", from_email: "", from_name: "Ramky Infrastructure — No Reply", cc: [] };
+type F = { enabled: boolean; host: string; port: number; secure: boolean; username: string; password: string; from_email: string; from_name: string; cc: string[]; careers_to: string };
+const blank: F = { enabled: false, host: "smtp.gmail.com", port: 587, secure: false, username: "", password: "", from_email: "", from_name: "Ramky Infrastructure — No Reply", cc: [], careers_to: "careers@ramky.com" };
 const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 function EmailSettingsPage() {
@@ -42,7 +42,7 @@ function EmailSettingsPage() {
   useEffect(() => {
     load().then((s) => {
       if (!s) return;
-      setF({ enabled: s.enabled, host: s.host || blank.host, port: s.port, secure: s.secure, username: s.username, password: "", from_email: s.from_email, from_name: s.from_name, cc: s.cc ?? [] });
+      setF({ enabled: s.enabled, host: s.host || blank.host, port: s.port, secure: s.secure, username: s.username, password: "", from_email: s.from_email, from_name: s.from_name, cc: s.cc ?? [], careers_to: (s as any).careers_to || "careers@ramky.com" });
       setHasPw(s.hasPassword);
       setTestTo(s.from_email);
     }).catch((e) => toast.error(e instanceof Error ? e.message : "Could not load settings"));
@@ -102,6 +102,7 @@ function EmailSettingsPage() {
               <button type="button" onClick={() => setShowPw((s) => !s)} className="absolute right-3 top-1/2 mt-[3px] -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground">{showPw ? "Hide" : "Show"}</button></div></div>
           <div><Label>From Email</Label><Input className={field} type="email" value={f.from_email} onChange={(e) => set("from_email", e.target.value)} /></div>
           <div><Label>From Name</Label><Input className={field} value={f.from_name} onChange={(e) => set("from_name", e.target.value)} /></div>
+          <div><Label>Job applications go to</Label><Input className={field} type="email" value={f.careers_to} onChange={(e) => set("careers_to", e.target.value)} /></div>
           <div><Label>CC Recipients (optional)</Label>
             <div className="mt-1.5 flex min-h-10 flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2 py-1.5">
               {f.cc.map((c) => <span key={c} className="admin-badge-live inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium">{c}<button type="button" aria-label={`Remove ${c}`} onClick={() => set("cc", f.cc.filter((x) => x !== c))}><X className="size-3" /></button></span>)}

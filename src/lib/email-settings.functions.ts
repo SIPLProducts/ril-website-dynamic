@@ -44,6 +44,7 @@ const saveSchema = z.object({
   from_email: z.string().trim().max(200).refine((v) => !v || z.string().email().safeParse(v).success, "Enter a valid From email"),
   from_name: z.string().trim().max(120),
   cc: z.array(z.string().trim().email()).max(20),
+  careers_to: z.string().trim().email("Enter a valid applications email").max(200),
 });
 
 export const saveEmailSettings = createServerFn({ method: "POST" })

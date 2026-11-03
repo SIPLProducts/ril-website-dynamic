@@ -31,7 +31,7 @@ export const ADMIN_MODULES: AdminModule[] = [
   { key: "sustainability", label: "Sustainability", icon: Leaf, children: [...ESG_SECTIONS.map((s) => page("esg", s.slug, s.title))] },
   { key: "company", label: "Company", icon: Newspaper, children: [{ key: "csr", label: "CSR", to: "/admin/company/csr" }, { key: "media", label: "Media", to: "/admin/company/media" }] },
   { key: "footer", label: "Footer", icon: PanelBottom, children: [{ key: "links", label: "Link Columns", to: "/admin/footer/links" }, { key: "group-companies", label: "Group Companies", to: "/admin/footer/group-companies" }, { key: "contact", label: "Contact & About", to: "/admin/footer/contact" }] },
-  { key: "careers", label: "Careers", icon: Briefcase, children: [{ key: "life", label: "Life at Ramky", to: "/admin/careers/life" }, { key: "positions", label: "Current Positions", to: "/admin/careers/positions" }] },
+  { key: "careers", label: "Careers", icon: Briefcase, children: [{ key: "life", label: "Life at Ramky", to: "/admin/careers/life" }, { key: "positions", label: "Current Positions", to: "/admin/careers/positions" }, { key: "applications", label: "Applications", to: "/admin/careers/applications" }] },
 ];
 
 export const isReady = (n: AdminPage | AdminModule): boolean => !!n.to || (n.children ?? []).some(isReady);

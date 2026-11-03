@@ -128,6 +128,60 @@ export type Database = {
         }
         Relationships: []
       }
+      career_applications: {
+        Row: {
+          cover_note: string
+          created_at: string
+          email: string
+          email_sent: boolean
+          experience: string
+          full_name: string
+          id: string
+          location: string
+          mobile: string
+          position: string
+          qualification: string
+          reference: string
+          resume_name: string | null
+          resume_path: string | null
+          status: string
+        }
+        Insert: {
+          cover_note?: string
+          created_at?: string
+          email: string
+          email_sent?: boolean
+          experience?: string
+          full_name: string
+          id?: string
+          location?: string
+          mobile: string
+          position: string
+          qualification?: string
+          reference?: string
+          resume_name?: string | null
+          resume_path?: string | null
+          status?: string
+        }
+        Update: {
+          cover_note?: string
+          created_at?: string
+          email?: string
+          email_sent?: boolean
+          experience?: string
+          full_name?: string
+          id?: string
+          location?: string
+          mobile?: string
+          position?: string
+          qualification?: string
+          reference?: string
+          resume_name?: string | null
+          resume_path?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       career_flyers: {
         Row: {
           created_at: string
@@ -290,6 +344,39 @@ export type Database = {
         }
         Relationships: []
       }
+      careers_purpose_cards: {
+        Row: {
+          body: string
+          bullets: Json
+          created_at: string
+          id: string
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          bullets?: Json
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          bullets?: Json
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clientele: {
         Row: {
           created_at: string
@@ -385,6 +472,7 @@ export type Database = {
       }
       email_settings: {
         Row: {
+          careers_to: string
           cc: string[]
           enabled: boolean
           from_email: string
@@ -398,6 +486,7 @@ export type Database = {
           username: string
         }
         Insert: {
+          careers_to?: string
           cc?: string[]
           enabled?: boolean
           from_email?: string
@@ -411,6 +500,7 @@ export type Database = {
           username?: string
         }
         Update: {
+          careers_to?: string
           cc?: string[]
           enabled?: boolean
           from_email?: string
