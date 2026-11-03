@@ -605,6 +605,7 @@ function SustainabilityVideo() {
 }
 
 export function InvestorsCareers() {
+  const mediaPage = useQuery(mediaQuery()).data?.page;
   const cards = [
     { id: "careers", eyebrow: "People & Careers", title: "Build a career that stands up", text: "Engineers, planners, safety professionals and site leaders — join teams delivering infrastructure that millions of people use every day.", to: "/careers", cta: "Explore" },
   ];
@@ -624,9 +625,9 @@ export function InvestorsCareers() {
         <CsrCard />
         <div id="media" className="card-lift flex h-full scroll-mt-24 flex-col rounded-sm border border-border bg-card p-8">
           <p className="eyebrow">Media</p>
-          <h3 className="mt-3 text-2xl font-semibold sm:text-3xl">Media</h3>
-          <p className="mt-1 font-display text-sm font-semibold text-brand-blue">News, Press Releases &amp; Publications</p>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">Press releases, media coverage, corporate announcements and official publications from Ramky Infrastructure.</p>
+          <h3 className="mt-3 text-2xl font-semibold sm:text-3xl">{mediaPage?.cardTitle ?? "Media"}</h3>
+          <p className="mt-1 font-display text-sm font-semibold text-brand-blue">{mediaPage?.cardSubtitle}</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{mediaPage?.cardText}</p>
           <div className="h-6" />
           <Link to="/media" className="mt-auto inline-flex self-start items-center gap-2 rounded-sm bg-brand-orange px-5 py-3 font-display text-xs font-semibold uppercase tracking-[0.12em] text-accent-foreground">
             Media Centre <ArrowRight className="size-4" />
@@ -637,14 +638,8 @@ export function InvestorsCareers() {
   );
 }
 
-const CSR_AREAS = [
-  { title: "Natural Resource Management", text: "Community-scale watershed restoration, rural lake rejuvenation, rainwater harvesting structures, and tree plantation drives around project sites." },
-  { title: "Livelihood & Women Empowerment", text: "Vocational skill training for rural youth, supporting self-help groups (SHGs), and micro-enterprise development in project catchment communities." },
-  { title: "Quality Education & Health", text: "School infrastructure enhancement, drinking water filtration in village schools, sanitation facilities, and preventive healthcare camps." },
-  { title: "Institutional CSR Implementation Through Ramky Foundation", text: "Dedicated non-profit arm implementing targeted socio-economic development initiatives across project clusters in India." },
-];
-
 function CsrCard() {
+  const { data: csr } = useQuery(csrQuery());
   const [open, setOpen] = useState(false);
   useEffect(() => {
     const reveal = () => {
@@ -662,16 +657,14 @@ function CsrCard() {
   }, []);
   return (
     <div id="csr" className="card-lift flex h-full scroll-mt-24 flex-col rounded-sm border border-border bg-card p-8">
-      <p className="eyebrow inline-flex items-center gap-2"><Leaf className="size-3.5 text-brand-green" /> CSR</p>
-      <h3 className="mt-3 text-2xl font-semibold sm:text-3xl">Community Stewardship</h3>
-      <p className="mt-1 font-display text-sm font-semibold text-brand-green">Ramky Foundation &amp; Social Commitment</p>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        Infrastructure development creates genuine long-term value when coupled with active community upliftment, natural resource restoration, and livelihood support.
-      </p>
+      <p className="eyebrow inline-flex items-center gap-2"><Leaf className="size-3.5 text-brand-green" /> {csr?.eyebrow ?? "CSR"}</p>
+      <h3 className="mt-3 text-2xl font-semibold sm:text-3xl">{csr?.title ?? "Community Stewardship"}</h3>
+      <p className="mt-1 font-display text-sm font-semibold text-brand-green">{csr?.subtitle}</p>
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{csr?.intro}</p>
       {open && (
         <div id="csr-details" className="mt-5 space-y-4 border-l-2 border-brand-green pl-4">
-          {CSR_AREAS.map((a) => (
-            <div key={a.title}>
+          {(csr?.areas ?? []).map((a) => (
+            <div key={a.id}>
               <h4 className="text-sm font-semibold">{a.title}</h4>
               <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{a.text}</p>
             </div>
@@ -688,14 +681,14 @@ function CsrCard() {
         >
           {open ? "Show less" : "Read more"}
         </button>
-        {open && (
+        {open && csr?.ctaUrl && (
           <a
-            href="https://ramkyfoundation.org/"
+            href={csr.ctaUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-sm bg-brand-orange px-5 py-3 font-display text-xs font-semibold uppercase tracking-[0.12em] text-accent-foreground"
           >
-            Learn About Ramky Group CSR <ExternalLink className="size-4" aria-hidden="true" />
+            {csr.ctaLabel || "Learn more"} <ExternalLink className="size-4" aria-hidden="true" />
             <span className="sr-only">(opens in a new tab)</span>
           </a>
         )}
