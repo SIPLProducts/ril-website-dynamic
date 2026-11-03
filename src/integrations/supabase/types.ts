@@ -128,6 +128,119 @@ export type Database = {
         }
         Relationships: []
       }
+      business_projects: {
+        Row: {
+          client: string
+          created_at: string
+          id: string
+          location: string
+          name: string
+          published: boolean
+          sort_order: number
+          status: string
+          updated_at: string
+          vertical_slug: string
+        }
+        Insert: {
+          client?: string
+          created_at?: string
+          id?: string
+          location?: string
+          name: string
+          published?: boolean
+          sort_order?: number
+          status?: string
+          updated_at?: string
+          vertical_slug: string
+        }
+        Update: {
+          client?: string
+          created_at?: string
+          id?: string
+          location?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
+          status?: string
+          updated_at?: string
+          vertical_slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_projects_vertical_slug_fkey"
+            columns: ["vertical_slug"]
+            isOneToOne: false
+            referencedRelation: "business_verticals"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      business_verticals: {
+        Row: {
+          card_text: string
+          created_at: string
+          description: string
+          icon: string
+          image_alt: string
+          image_url: string | null
+          published: boolean
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          card_text?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          image_alt?: string
+          image_url?: string | null
+          published?: boolean
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          card_text?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          image_alt?: string
+          image_url?: string | null
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      capabilities_settings: {
+        Row: {
+          eyebrow: string
+          id: number
+          intro: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          eyebrow?: string
+          id?: number
+          intro?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          eyebrow?: string
+          id?: number
+          intro?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       career_applications: {
         Row: {
           cover_note: string
