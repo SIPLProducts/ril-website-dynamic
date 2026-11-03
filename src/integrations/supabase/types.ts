@@ -373,6 +373,48 @@ export type Database = {
         }
         Relationships: []
       }
+      management_people: {
+        Row: {
+          created_at: string
+          designation: string
+          grp: string
+          id: string
+          image_url: string | null
+          name: string
+          published: boolean
+          sections: Json
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          designation?: string
+          grp: string
+          id?: string
+          image_url?: string | null
+          name: string
+          published?: boolean
+          sections?: Json
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          designation?: string
+          grp?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          published?: boolean
+          sections?: Json
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

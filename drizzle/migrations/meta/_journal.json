@@ -43,6 +43,13 @@
       "when": 1793669228194,
       "tag": "0005_esg_content",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793671986876,
+      "tag": "0006_management_people",
+      "breakpoints": true
     }
   ]
 }
