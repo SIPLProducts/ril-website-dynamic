@@ -12,6 +12,7 @@ export interface EsgReport {
   title: string;
   description: string;
   year: string;
+  url?: string | null;
 }
 
 export interface EsgMetricGroup {
@@ -35,6 +36,7 @@ export interface EsgSection {
   governance?: EsgGovernance;
   accordions: EsgAccordion[];
   reports?: EsgReport[];
+  bannerImage?: string | null;
 }
 
 export const ESG_SECTIONS: EsgSection[] = [

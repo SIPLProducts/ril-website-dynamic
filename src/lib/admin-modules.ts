@@ -8,7 +8,10 @@ export type AdminPage = { key: string; label: string; to?: string | undefined; c
 /** A website module, in the same order as the public site header. */
 export type AdminModule = { key: string; label: string; icon: LucideIcon; to?: string | undefined; children?: AdminPage[] | undefined };
 
-const ADMIN_PATHS: Record<string, string> = { "about/clientele": "/admin/about/clientele" };
+const ADMIN_PATHS: Record<string, string> = {
+  "about/clientele": "/admin/about/clientele",
+  ...Object.fromEntries(ESG_SECTIONS.map((s) => [`esg/${s.slug}`, `/admin/sustainability/${s.slug}`])),
+};
 const page = (mod: string, key: string, label: string, children?: AdminPage[]): AdminPage => ({ key, label, to: ADMIN_PATHS[`${mod}/${key}`], children });
 
 export const ADMIN_MODULES: AdminModule[] = [
