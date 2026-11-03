@@ -12,8 +12,6 @@ import irrigationRegulatorsAsset from "@/assets/irrigation-regulators.jpg.asset.
 import hero from "@/assets/hero.asset.json";
 import water from "@/assets/water.asset.json";
 import bridge from "@/assets/bridge.asset.json";
-import hummingbird from "@/assets/sustainability-hummingbird.mp4.asset.json";
-import hummingbirdPoster from "@/assets/sustainability-hummingbird-poster.jpg.asset.json";
 import urban from "@/assets/urban.asset.json";
 import irrigation from "@/assets/irrigation.asset.json";
 import slide3Asset from "@/assets/slide-3.jpg.asset.json";
@@ -22,18 +20,8 @@ import wtpNalgonda from "@/assets/wtp-nalgonda.jpg.asset.json";
 import srinagarBanihal from "@/assets/srinagar-banihal-expressway.jpg.asset.json";
 import { WHO_WE_ARE_IMAGES } from "@/lib/who-we-are-images";
 import namBridge from "@/assets/nam-bridge.jpg.asset.json";
-import lm1 from "@/assets/landmark-1.jpg.asset.json";
-import lm2 from "@/assets/landmark-2.jpg.asset.json";
-import lm3 from "@/assets/landmark-3.jpg.asset.json";
-import lm4 from "@/assets/landmark-4.jpg.asset.json";
-import lm7 from "@/assets/landmark-7.jpg.asset.json";
-import namExpresswayCombinedAsset from "@/assets/nam-expressway-combined.jpg.asset.json";
-import musiCombined from "@/assets/musi-two-photos.jpg.asset.json";
-import odysseyCombined from "@/assets/odyssey-combined.jpg.asset.json";
-import narelaCombined from "@/assets/narela-bawana-combined.jpg.asset.json";
 const irrigationRegulators = irrigationRegulatorsAsset.url;
 const slide3 = slide3Asset.url;
-const namExpresswayCombined = namExpresswayCombinedAsset.url;
 
 const HERO_SLIDES = [
   {

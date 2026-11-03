@@ -26,7 +26,7 @@ export const ADMIN_MODULES: AdminModule[] = [
     ],
   },
   { key: "management", label: "Management", icon: UsersRound, children: [page("management", "board", "Board Of Directors"), page("management", "executive", "Executive Leadership"), page("management", "senior", "Senior Management")] },
-  { key: "capabilities", label: "Capabilities", icon: Wrench, children: [{ key: "cards", label: "Capability Cards", to: "/admin/capabilities" }, { key: "projects", label: "Projects", to: "/admin/capabilities/projects" }] },
+  { key: "capabilities", label: "Capabilities", icon: Wrench, children: [{ key: "cards", label: "Capability Cards", to: "/admin/capabilities" }, { key: "projects", label: "Projects", to: "/admin/capabilities/projects" }, { key: "landmarks", label: "Landmark Projects", to: "/admin/capabilities/landmarks" }, { key: "sustainability", label: "Sustainability Highlight", to: "/admin/capabilities/sustainability" }] },
   { key: "accolades", label: "Accolades", icon: Award, children: [{ key: "awards", label: "Awards", to: "/admin/accolades" }] },
   { key: "sustainability", label: "Sustainability", icon: Leaf, children: [...ESG_SECTIONS.map((s) => page("esg", s.slug, s.title))] },
   { key: "company", label: "Company", icon: Newspaper, children: [{ key: "csr", label: "CSR", to: "/admin/company/csr" }, { key: "media", label: "Media", to: "/admin/company/media" }] },
