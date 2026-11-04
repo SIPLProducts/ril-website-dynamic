@@ -7,6 +7,7 @@ import { ArrowRight, ExternalLink, Leaf, Pause, Play, ShieldCheck, Waves } from 
 import { capabilitiesQuery } from "@/lib/capabilities.functions";
 import { homeHighlightsQuery } from "@/lib/home-highlights.functions";
 import { resolveHomeAsset } from "@/lib/home-assets";
+import { homeTopQuery } from "@/lib/home-top.functions";
 import { iconFor, imageFor } from "@/lib/capability-defaults";
 import irrigationRegulatorsAsset from "@/assets/irrigation-regulators.jpg.asset.json";
 import hero from "@/assets/hero.asset.json";
@@ -64,7 +65,10 @@ const HERO_SLIDES = [
 export function Hero() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const activeSlide = HERO_SLIDES[active] ?? HERO_SLIDES[0]!;
+  const { data: top } = useQuery(homeTopQuery());
+  const dbSlides = (top?.slides ?? []).map((x) => ({ ...x, src: resolveHomeAsset(x.image) ?? "" })).filter((x) => x.src);
+  const SLIDES = top ? (dbSlides.length ? dbSlides : HERO_SLIDES) : HERO_SLIDES;
+  const activeSlide = SLIDES[active] ?? SLIDES[0]!;
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPaused(true);
@@ -73,16 +77,16 @@ export function Hero() {
   useEffect(() => {
     if (paused) return;
     const id = setInterval(() => {
-      setActive((i) => (i + 1) % HERO_SLIDES.length);
+      setActive((i) => (i + 1) % SLIDES.length);
     }, 5000);
     return () => clearInterval(id);
-  }, [paused]);
+  }, [paused, SLIDES.length]);
 
   const textShadow = "[text-shadow:0_1px_14px_oklch(0.18_0.03_252/0.6)]";
 
   return (
     <section id="top" className="relative isolate min-h-[92vh] overflow-hidden bg-ink">
-      {HERO_SLIDES.map((slide, i) => (
+      {SLIDES.map((slide, i) => (
         <img
           key={slide.src}
           src={slide.src}
@@ -115,7 +119,7 @@ export function Hero() {
           </p>
         </div>
         <div className="-ml-1.5 mt-7 flex flex-wrap items-center gap-0.5">
-          {HERO_SLIDES.map((slide, i) => (
+          {SLIDES.map((slide, i) => (
             <button
               key={slide.src}
               type="button"
@@ -155,10 +159,13 @@ const STATS = [
 ];
 
 export function StatsBand() {
+  const { data: top } = useQuery(homeTopQuery());
+  const items = top ? top.stats : STATS;
+  if (!items.length) return null;
   return (
     <section className="border-b border-border bg-surface">
       <div className="mx-auto flex max-w-[1280px] flex-wrap justify-center gap-x-8 gap-y-10 px-5 py-12 sm:px-8 lg:px-10">
-        {STATS.map((s) => (
+        {items.map((s) => (
           <div key={s.label} className="rule-accent w-full pt-6 sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1.333rem)] lg:w-[calc(20%-1.6rem)]">
             <p className="font-display text-4xl font-bold text-brand-blue lg:text-[1.75rem] xl:text-4xl">{s.value}</p>
             <p className="mt-2 text-sm text-muted-foreground">{s.label}</p>
@@ -179,25 +186,36 @@ const ABOUT_PARAGRAPHS = [
 
 export function About() {
   const [expanded, setExpanded] = useState(false);
+  const { data: top } = useQuery(homeTopQuery());
+  const a = top?.about;
+  const paras = a?.paragraphs.length ? a.paragraphs : ABOUT_PARAGRAPHS;
+  const icons = [ShieldCheck, Leaf, Waves];
+  const highlights = (a ? a.highlights : [{ t: "Safety first", d: "Zero-harm site culture" }, { t: "Sustainable", d: "Low-impact delivery" }, { t: "Integrated", d: "Concept to O&M" }]).map((h, i) => ({ ...h, icon: icons[i % 3]! }));
+  const fallbackImgs = [WHO_WE_ARE_IMAGES.main, ...WHO_WE_ARE_IMAGES.supporting];
+  const imgs = fallbackImgs.map((f, i) => {
+    const d = a?.images[i];
+    const url = resolveHomeAsset(d?.url);
+    return url ? { slot: f.slot, url, alt: d!.alt || f.alt, position: d!.position || f.position } : f;
+  });
   return (
     <section id="about" className="mx-auto max-w-[1400px] px-5 py-20 lg:px-10 lg:py-28">
       <div className="grid gap-14 lg:grid-cols-[1fr_1.05fr] lg:items-center">
         <div>
-          <p className="eyebrow">Who we are</p>
+          <p className="eyebrow">{a?.eyebrow || "Who we are"}</p>
           <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-            An integrated developer of essential public infrastructure.
+            {a?.title || "An integrated developer of essential public infrastructure."}
           </h2>
           <div className="mt-6 text-base leading-relaxed text-muted-foreground">
-            <p>{ABOUT_PARAGRAPHS[0]}</p>
-            {expanded && (
+            <p>{paras[0]}</p>
+            {expanded && paras.length > 1 && (
               <div className="mt-4 space-y-4">
-                {ABOUT_PARAGRAPHS.slice(1).map((text) => (
-                  <p key={text.slice(0, 24)}>{text}</p>
+                {paras.slice(1).map((text, i) => (
+                  <p key={i}>{text}</p>
                 ))}
               </div>
             )}
           </div>
-          <button
+          {paras.length > 1 && <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
             aria-expanded={expanded}
@@ -205,13 +223,9 @@ export function About() {
           >
             {expanded ? "Read less" : "Read more"}
             <ArrowRight className={`size-4 transition-transform ${expanded ? "-rotate-90" : "rotate-90"}`} />
-          </button>
+          </button>}
           <div className="mt-9 grid gap-5 sm:grid-cols-3">
-            {[
-              { icon: ShieldCheck, t: "Safety first", d: "Zero-harm site culture" },
-              { icon: Leaf, t: "Sustainable", d: "Low-impact delivery" },
-              { icon: Waves, t: "Integrated", d: "Concept to O&M" },
-            ].map(({ icon: Icon, t, d }) => (
+            {highlights.map(({ icon: Icon, t, d }) => (
               <div key={t} className="border-l-2 border-brand-green pl-4">
                 <Icon className="size-5 text-brand-green" />
                 <p className="mt-2 font-display text-sm font-semibold">{t}</p>
@@ -221,7 +235,7 @@ export function About() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          {[WHO_WE_ARE_IMAGES.main, ...WHO_WE_ARE_IMAGES.supporting].map((img, i) => (
+          {imgs.map((img, i) => (
             <figure
               key={img.slot}
               data-slot={img.slot}
@@ -524,18 +538,21 @@ const JOURNEY_MILESTONES = [
 ];
 
 export function Journey() {
+  const { data: top } = useQuery(homeTopQuery());
+  const j = top?.journey;
+  const milestones = j ? j.milestones : JOURNEY_MILESTONES;
   return (
     <section id="journey" className="scroll-mt-24 bg-surface py-20 lg:py-28">
       <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
         <div className="max-w-3xl">
-          <p className="eyebrow">Our Journey</p>
+          <p className="eyebrow">{j?.eyebrow || "Our Journey"}</p>
           <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-            Three decades of building, milestone by milestone.
+            {j?.title || "Three decades of building, milestone by milestone."}
           </h2>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {JOURNEY_MILESTONES.map((milestone) => (
-            <article key={milestone.year} className="border border-border bg-card p-7 shadow-sm">
+          {milestones.map((milestone, i) => (
+            <article key={i} className="border border-border bg-card p-7 shadow-sm">
               <p className="font-display text-3xl font-bold text-brand-orange">{milestone.year}</p>
               <div className="mt-3 h-px w-14 bg-brand-green" />
               <h3 className="mt-5 font-display text-lg font-semibold">{milestone.title}</h3>
