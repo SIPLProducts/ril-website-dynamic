@@ -5,7 +5,7 @@ const mod = (key: string) => ADMIN_MODULES.find((m) => m.key === key)!;
 
 describe("admin menu", () => {
   it("follows the website header order", () => {
-    expect(ADMIN_MODULES.map((m) => m.label)).toEqual(["About Ramky", "Management", "Capabilities", "Accolades", "Sustainability", "Company", "Footer", "Careers"]);
+    expect(ADMIN_MODULES.map((m) => m.label)).toEqual(["Home Page", "About Ramky", "Management", "Capabilities", "Accolades", "Sustainability", "Company", "Footer", "Careers"]);
   });
   it("only Clientele is editable under About Ramky", () => {
     const about = mod("about");
@@ -14,6 +14,9 @@ describe("admin menu", () => {
   });
   it("all four Sustainability pages are editable", () => {
     expect(mod("sustainability").children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Sustainability Section", "Environmental", "Social", "Governance", "ESG Reporting"]);
+  });
+  it("Home Page has its four editable screens", () => {
+    expect(mod("home").children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Hero Slides", "Key Figures", "Who We Are", "Our Journey"]);
   });
   it("recognises the live addresses", () => {
     expect(isLiveHost("ril.siplproducts.com")).toBe(true);
@@ -27,6 +30,6 @@ describe("admin menu", () => {
     expect(isModuleReady(mod("careers"), false)).toBe(true);
   });
   it("keeps the finished modules open on the live site", () => {
-    for (const k of ["about", "management", "capabilities", "accolades", "sustainability", "footer"]) expect(isModuleReady(mod(k), true)).toBe(true);
+    for (const k of ["home", "about", "management", "capabilities", "accolades", "sustainability", "footer"]) expect(isModuleReady(mod(k), true)).toBe(true);
   });
 });
