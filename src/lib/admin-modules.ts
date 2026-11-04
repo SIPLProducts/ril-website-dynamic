@@ -36,6 +36,12 @@ export const ADMIN_MODULES: AdminModule[] = [
 
 export const isReady = (n: AdminPage | AdminModule): boolean => !!n.to || (n.children ?? []).some(isReady);
 
+/** Modules still in progress: shown as "Soon" on the live site, editable in preview. */
+export const LIVE_LOCKED = ["company", "careers"];
+const LIVE_HOSTS = ["ril.siplproducts.com", "www.ril.siplproducts.com", "ril-website-dynamic.lovable.app"];
+export const isLiveHost = (host = typeof window !== "undefined" ? window.location.hostname : ""): boolean => LIVE_HOSTS.includes(host);
+export const isModuleReady = (m: AdminModule, live = isLiveHost()): boolean => !(live && LIVE_LOCKED.includes(m.key)) && isReady(m);
+
 export const CONTACTS_SECTION = "contacts";
 export const DASHBOARD_ICON = LayoutDashboard;
 export const INVESTORS_ICON = Landmark;
