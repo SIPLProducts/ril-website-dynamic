@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ChevronDown, ChevronRight, Columns2, ExternalLink, LogOut, PanelLeftClose, PanelLeftOpen, Rows2, UserPlus, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Staff } from "@/lib/admin-auth";
-import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGroups, isReady, type AdminPage } from "@/lib/admin-modules";
+import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGroups, isModuleReady, isLiveHost, LIVE_LOCKED, type AdminPage } from "@/lib/admin-modules";
 
 const Soon = () => <span className="ml-2 rounded-full border border-primary-foreground/15 px-2 py-0.5 text-[9px] uppercase tracking-wider">Soon</span>;
 import logo from "@/assets/ramky-infra-logo.png.asset.json";
@@ -67,6 +67,9 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const initials = staff.fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase() || "A";
 
   useEffect(() => {
+    if (activeModule && isLiveHost() && LIVE_LOCKED.includes(activeModule)) navigate({ to: "/admin", search: {}, replace: true });
+  }, [activeModule, navigate]);
+  useEffect(() => {
     const v = localStorage.getItem(LAYOUT_KEY);
     if (v === "horizontal" || v === "vertical") setLayout(v);
   }, []);
@@ -91,7 +94,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
           <Link to="/admin" search={{}} className={itemCls(active.kind === "dashboard")}><span className={iconWrap(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /></span>{!collapsed && "Dashboard"}</Link>
         </Tip>
         {ADMIN_MODULES.map((m) => {
-          const ready = isReady(m);
+          const ready = isModuleReady(m);
           const on = activeModule === m.key;
           const open = modOpen[m.key] ?? on;
           if (!ready) return (
@@ -172,7 +175,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
     <nav className="hidden shrink-0 items-center gap-1 overflow-x-auto admin-nav border-t border-primary-foreground/10 px-4 py-1.5 thin-scroll thin-scroll-dark md:flex md:px-6">
       <Link to="/admin" search={{}} className={hItem(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /> Dashboard</Link>
       {ADMIN_MODULES.map((m) => {
-        if (!isReady(m)) return (
+        if (!isModuleReady(m)) return (
           <span key={m.key} title={`${m.label} — coming soon`} className={`${hItem(false)} cursor-not-allowed opacity-55`} aria-disabled>{m.label}<Soon /></span>
         );
         return (
