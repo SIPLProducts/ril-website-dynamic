@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import { resolveHomeAsset } from "@/lib/home-assets";
 
-export async function uploadHomeFile(folder: "landmarks" | "sustainability", file: File) {
+export async function uploadHomeFile(folder: string, file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
   const path = `home/${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
@@ -30,4 +30,5 @@ export const refreshHome = (qc: ReturnType<typeof useQueryClient>) => {
   qc.invalidateQueries({ queryKey: ["admin-home-sus-stats"] });
   qc.invalidateQueries({ queryKey: ["admin-cap-settings"] });
   qc.invalidateQueries({ queryKey: ["home-highlights"] });
+  qc.invalidateQueries({ queryKey: ["home-top"] });
 };
