@@ -32,7 +32,7 @@ const MAX_VIDEO = 20 * 1024 * 1024;
 function Page() {
   const { staff } = Route.useRouteContext();
   return (
-    <AdminShell staff={staff} active={{ kind: "module", module: "capabilities", section: "sustainability" }} crumbs={["Capabilities", "Sustainability Highlight"]}>
+    <AdminShell staff={staff} active={{ kind: "module", module: "sustainability", section: "section" }} crumbs={["Sustainability", "Sustainability Section"]}>
       <div className="space-y-6">
         <ContentEditor />
         <StatList />
