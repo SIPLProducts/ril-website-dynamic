@@ -23,7 +23,7 @@ export function HomeTopHeading({ eyebrowKey, titleKey, anchor, help }: { eyebrow
   async function save() {
     if (!f.t.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
-    const { error } = await supabase.from("home_top").update({ [eyebrowKey]: f.e.trim(), [titleKey]: f.t.trim() }).eq("id", 1);
+    const { error } = await supabase.from("home_top").update({ [eyebrowKey]: f.e.trim(), [titleKey]: f.t.trim() } as never).eq("id", 1);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Saved — now live on the website");
