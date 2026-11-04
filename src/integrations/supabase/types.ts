@@ -875,6 +875,93 @@ export type Database = {
         }
         Relationships: []
       }
+      home_hero_slides: {
+        Row: {
+          alt: string
+          created_at: string
+          headline: string
+          id: string
+          image_url: string | null
+          project: string
+          published: boolean
+          sort_order: number
+          sub: string
+        }
+        Insert: {
+          alt?: string
+          created_at?: string
+          headline?: string
+          id?: string
+          image_url?: string | null
+          project?: string
+          published?: boolean
+          sort_order?: number
+          sub?: string
+        }
+        Update: {
+          alt?: string
+          created_at?: string
+          headline?: string
+          id?: string
+          image_url?: string | null
+          project?: string
+          published?: boolean
+          sort_order?: number
+          sub?: string
+        }
+        Relationships: []
+      }
+      home_journey_milestones: {
+        Row: {
+          id: string
+          published: boolean
+          sort_order: number
+          text: string
+          title: string
+          year: string
+        }
+        Insert: {
+          id?: string
+          published?: boolean
+          sort_order?: number
+          text?: string
+          title?: string
+          year: string
+        }
+        Update: {
+          id?: string
+          published?: boolean
+          sort_order?: number
+          text?: string
+          title?: string
+          year?: string
+        }
+        Relationships: []
+      }
+      home_stats: {
+        Row: {
+          id: string
+          label: string
+          published: boolean
+          sort_order: number
+          value: string
+        }
+        Insert: {
+          id?: string
+          label?: string
+          published?: boolean
+          sort_order?: number
+          value: string
+        }
+        Update: {
+          id?: string
+          label?: string
+          published?: boolean
+          sort_order?: number
+          value?: string
+        }
+        Relationships: []
+      }
       home_sustainability: {
         Row: {
           body: string
@@ -938,6 +1025,42 @@ export type Database = {
           sort_order?: number
           updated_at?: string
           value?: string
+        }
+        Relationships: []
+      }
+      home_top: {
+        Row: {
+          about_eyebrow: string
+          about_highlights: Json
+          about_images: Json
+          about_paragraphs: Json
+          about_title: string
+          id: number
+          journey_eyebrow: string
+          journey_title: string
+          updated_at: string
+        }
+        Insert: {
+          about_eyebrow?: string
+          about_highlights?: Json
+          about_images?: Json
+          about_paragraphs?: Json
+          about_title?: string
+          id?: number
+          journey_eyebrow?: string
+          journey_title?: string
+          updated_at?: string
+        }
+        Update: {
+          about_eyebrow?: string
+          about_highlights?: Json
+          about_images?: Json
+          about_paragraphs?: Json
+          about_title?: string
+          id?: number
+          journey_eyebrow?: string
+          journey_title?: string
+          updated_at?: string
         }
         Relationships: []
       }

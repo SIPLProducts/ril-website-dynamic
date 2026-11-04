@@ -99,6 +99,13 @@
       "when": 1793699617631,
       "tag": "0013_home_highlights",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1793776244336,
+      "tag": "0014_home_top_sections",
+      "breakpoints": true
     }
   ]
 }
