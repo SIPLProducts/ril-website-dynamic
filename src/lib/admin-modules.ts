@@ -1,4 +1,4 @@
-import { PanelBottom, Award, Newspaper, Briefcase, Building2, FileText, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
+import { House, PanelBottom, Award, Newspaper, Briefcase, Building2, FileText, Landmark, LayoutDashboard, Leaf, Users, UsersRound, Wrench, type LucideIcon } from "lucide-react";
 import { IR_SECTIONS } from "@/lib/investor-relations";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
@@ -18,6 +18,7 @@ const ADMIN_PATHS: Record<string, string> = {
 const page = (mod: string, key: string, label: string, children?: AdminPage[]): AdminPage => ({ key, label, to: ADMIN_PATHS[`${mod}/${key}`], children });
 
 export const ADMIN_MODULES: AdminModule[] = [
+  { key: "home", label: "Home Page", icon: House, children: [{ key: "hero", label: "Hero Slides", to: "/admin/home/hero" }, { key: "stats", label: "Key Figures", to: "/admin/home/stats" }, { key: "about", label: "Who We Are", to: "/admin/home/about" }, { key: "journey", label: "Our Journey", to: "/admin/home/journey" }] },
   {
     key: "about", label: "About Ramky", icon: Building2,
     children: [

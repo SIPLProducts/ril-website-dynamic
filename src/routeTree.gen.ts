@@ -45,6 +45,10 @@ import { Route as AdminCompanyMediaRouteImport } from './routes/admin.company.me
 import { Route as AdminFooterContactRouteImport } from './routes/admin.footer.contact'
 import { Route as AdminFooterGroupCompaniesRouteImport } from './routes/admin.footer.group-companies'
 import { Route as AdminFooterLinksRouteImport } from './routes/admin.footer.links'
+import { Route as AdminHomeAboutRouteImport } from './routes/admin.home.about'
+import { Route as AdminHomeHeroRouteImport } from './routes/admin.home.hero'
+import { Route as AdminHomeJourneyRouteImport } from './routes/admin.home.journey'
+import { Route as AdminHomeStatsRouteImport } from './routes/admin.home.stats'
 import { Route as AdminManagementGroupRouteImport } from './routes/admin.management.$group'
 import { Route as AdminSustainabilitySlugRouteImport } from './routes/admin.sustainability.$slug'
 import { Route as AdminSustainabilityCsrRouteImport } from './routes/admin.sustainability.csr'
@@ -236,6 +240,26 @@ const AdminFooterLinksRoute = AdminFooterLinksRouteImport.update({
   path: '/footer/links',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminHomeAboutRoute = AdminHomeAboutRouteImport.update({
+  id: '/home/about',
+  path: '/home/about',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHomeHeroRoute = AdminHomeHeroRouteImport.update({
+  id: '/home/hero',
+  path: '/home/hero',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHomeJourneyRoute = AdminHomeJourneyRouteImport.update({
+  id: '/home/journey',
+  path: '/home/journey',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminHomeStatsRoute = AdminHomeStatsRouteImport.update({
+  id: '/home/stats',
+  path: '/home/stats',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminManagementGroupRoute = AdminManagementGroupRouteImport.update({
   id: '/management/$group',
   path: '/management/$group',
@@ -294,6 +318,10 @@ export interface FileRoutesByFullPath {
   '/admin/footer/contact': typeof AdminFooterContactRoute
   '/admin/footer/group-companies': typeof AdminFooterGroupCompaniesRoute
   '/admin/footer/links': typeof AdminFooterLinksRoute
+  '/admin/home/about': typeof AdminHomeAboutRoute
+  '/admin/home/hero': typeof AdminHomeHeroRoute
+  '/admin/home/journey': typeof AdminHomeJourneyRoute
+  '/admin/home/stats': typeof AdminHomeStatsRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -335,6 +363,10 @@ export interface FileRoutesByTo {
   '/admin/footer/contact': typeof AdminFooterContactRoute
   '/admin/footer/group-companies': typeof AdminFooterGroupCompaniesRoute
   '/admin/footer/links': typeof AdminFooterLinksRoute
+  '/admin/home/about': typeof AdminHomeAboutRoute
+  '/admin/home/hero': typeof AdminHomeHeroRoute
+  '/admin/home/journey': typeof AdminHomeJourneyRoute
+  '/admin/home/stats': typeof AdminHomeStatsRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -378,6 +410,10 @@ export interface FileRoutesById {
   '/admin/footer/contact': typeof AdminFooterContactRoute
   '/admin/footer/group-companies': typeof AdminFooterGroupCompaniesRoute
   '/admin/footer/links': typeof AdminFooterLinksRoute
+  '/admin/home/about': typeof AdminHomeAboutRoute
+  '/admin/home/hero': typeof AdminHomeHeroRoute
+  '/admin/home/journey': typeof AdminHomeJourneyRoute
+  '/admin/home/stats': typeof AdminHomeStatsRoute
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
@@ -422,6 +458,10 @@ export interface FileRouteTypes {
     | '/admin/footer/contact'
     | '/admin/footer/group-companies'
     | '/admin/footer/links'
+    | '/admin/home/about'
+    | '/admin/home/hero'
+    | '/admin/home/journey'
+    | '/admin/home/stats'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -463,6 +503,10 @@ export interface FileRouteTypes {
     | '/admin/footer/contact'
     | '/admin/footer/group-companies'
     | '/admin/footer/links'
+    | '/admin/home/about'
+    | '/admin/home/hero'
+    | '/admin/home/journey'
+    | '/admin/home/stats'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -505,6 +549,10 @@ export interface FileRouteTypes {
     | '/admin/footer/contact'
     | '/admin/footer/group-companies'
     | '/admin/footer/links'
+    | '/admin/home/about'
+    | '/admin/home/hero'
+    | '/admin/home/journey'
+    | '/admin/home/stats'
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
@@ -785,6 +833,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminFooterLinksRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/home/about': {
+      id: '/admin/home/about'
+      path: '/home/about'
+      fullPath: '/admin/home/about'
+      preLoaderRoute: typeof AdminHomeAboutRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/home/hero': {
+      id: '/admin/home/hero'
+      path: '/home/hero'
+      fullPath: '/admin/home/hero'
+      preLoaderRoute: typeof AdminHomeHeroRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/home/journey': {
+      id: '/admin/home/journey'
+      path: '/home/journey'
+      fullPath: '/admin/home/journey'
+      preLoaderRoute: typeof AdminHomeJourneyRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/home/stats': {
+      id: '/admin/home/stats'
+      path: '/home/stats'
+      fullPath: '/admin/home/stats'
+      preLoaderRoute: typeof AdminHomeStatsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/management/$group': {
       id: '/admin/management/$group'
       path: '/management/$group'
@@ -836,6 +912,10 @@ interface AdminRouteChildren {
   AdminFooterContactRoute: typeof AdminFooterContactRoute
   AdminFooterGroupCompaniesRoute: typeof AdminFooterGroupCompaniesRoute
   AdminFooterLinksRoute: typeof AdminFooterLinksRoute
+  AdminHomeAboutRoute: typeof AdminHomeAboutRoute
+  AdminHomeHeroRoute: typeof AdminHomeHeroRoute
+  AdminHomeJourneyRoute: typeof AdminHomeJourneyRoute
+  AdminHomeStatsRoute: typeof AdminHomeStatsRoute
   AdminManagementGroupRoute: typeof AdminManagementGroupRoute
   AdminSustainabilitySlugRoute: typeof AdminSustainabilitySlugRoute
   AdminSustainabilityCsrRoute: typeof AdminSustainabilityCsrRoute
@@ -863,6 +943,10 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminFooterContactRoute: AdminFooterContactRoute,
   AdminFooterGroupCompaniesRoute: AdminFooterGroupCompaniesRoute,
   AdminFooterLinksRoute: AdminFooterLinksRoute,
+  AdminHomeAboutRoute: AdminHomeAboutRoute,
+  AdminHomeHeroRoute: AdminHomeHeroRoute,
+  AdminHomeJourneyRoute: AdminHomeJourneyRoute,
+  AdminHomeStatsRoute: AdminHomeStatsRoute,
   AdminManagementGroupRoute: AdminManagementGroupRoute,
   AdminSustainabilitySlugRoute: AdminSustainabilitySlugRoute,
   AdminSustainabilityCsrRoute: AdminSustainabilityCsrRoute,
