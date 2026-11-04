@@ -18,7 +18,7 @@ const ADMIN_PATHS: Record<string, string> = {
 const page = (mod: string, key: string, label: string, children?: AdminPage[]): AdminPage => ({ key, label, to: ADMIN_PATHS[`${mod}/${key}`], children });
 
 export const ADMIN_MODULES: AdminModule[] = [
-  { key: "home", label: "Home Page", icon: House, children: [{ key: "hero", label: "Hero Slides", to: "/admin/home/hero" }, { key: "stats", label: "Key Figures", to: "/admin/home/stats" }, { key: "about", label: "Who We Are", to: "/admin/home/about" }, { key: "journey", label: "Our Journey", to: "/admin/home/journey" }] },
+  { key: "home", label: "Home", icon: House, children: [{ key: "hero", label: "Hero Slides", to: "/admin/home/hero" }, { key: "stats", label: "Key Figures", to: "/admin/home/stats" }, { key: "about", label: "Who We Are", to: "/admin/home/about" }, { key: "journey", label: "Our Journey", to: "/admin/home/journey" }] },
   {
     key: "about", label: "About Ramky", icon: Building2,
     children: [

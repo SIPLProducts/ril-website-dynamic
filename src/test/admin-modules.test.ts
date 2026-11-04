@@ -5,7 +5,7 @@ const mod = (key: string) => ADMIN_MODULES.find((m) => m.key === key)!;
 
 describe("admin menu", () => {
   it("follows the website header order", () => {
-    expect(ADMIN_MODULES.map((m) => m.label)).toEqual(["Home Page", "About Ramky", "Management", "Capabilities", "Accolades", "Sustainability", "Company", "Footer", "Careers"]);
+    expect(ADMIN_MODULES.map((m) => m.label)).toEqual(["Home", "About Ramky", "Management", "Capabilities", "Accolades", "Sustainability", "Company", "Footer", "Careers"]);
   });
   it("only Clientele is editable under About Ramky", () => {
     const about = mod("about");

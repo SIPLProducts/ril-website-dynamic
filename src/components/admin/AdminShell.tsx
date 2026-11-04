@@ -24,7 +24,7 @@ const subCls = (on: boolean) =>
   `block w-full truncate rounded-md px-3 py-1.5 text-left text-[13px] transition-colors ${on ? "bg-brand-orange/15 font-semibold text-brand-orange" : "text-[var(--admin-nav-foreground)]/80 hover:bg-primary-foreground/5 hover:text-primary-foreground"}`;
 const iconWrap = (on: boolean) => `grid size-7 shrink-0 place-items-center rounded-md ${on ? "admin-accent" : "bg-primary-foreground/[0.06]"}`;
 const hItem = (on: boolean) =>
-  `inline-flex h-10 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-colors ${on ? "bg-primary-foreground/15 text-primary-foreground shadow-[inset_0_-3px_0_var(--brand-orange)]" : "text-[var(--admin-nav-foreground)]/85 hover:bg-primary-foreground/10 hover:text-primary-foreground"}`;
+  `inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-sm font-medium transition-colors ${on ? "bg-primary-foreground/15 text-primary-foreground shadow-[inset_0_-3px_0_var(--brand-orange)]" : "text-[var(--admin-nav-foreground)]/85 hover:bg-primary-foreground/10 hover:text-primary-foreground"}`;
 
 export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; active: Active; crumbs: string[]; children: ReactNode }) {
   const [layout, setLayout] = useState<Layout>("horizontal");
