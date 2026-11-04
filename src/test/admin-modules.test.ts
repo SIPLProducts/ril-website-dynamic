@@ -13,7 +13,7 @@ describe("admin menu", () => {
     expect(isReady(about)).toBe(true);
   });
   it("all four Sustainability pages are editable", () => {
-    expect(mod("sustainability").children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Environmental", "Social", "Governance", "ESG Reporting"]);
+    expect(mod("sustainability").children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Sustainability Section", "Environmental", "Social", "Governance", "ESG Reporting"]);
   });
   it("recognises the live addresses", () => {
     expect(isLiveHost("ril.siplproducts.com")).toBe(true);

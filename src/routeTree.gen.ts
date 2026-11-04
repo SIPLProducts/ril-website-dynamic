@@ -48,6 +48,7 @@ import { Route as AdminFooterLinksRouteImport } from './routes/admin.footer.link
 import { Route as AdminManagementGroupRouteImport } from './routes/admin.management.$group'
 import { Route as AdminSustainabilitySlugRouteImport } from './routes/admin.sustainability.$slug'
 import { Route as AdminSustainabilityCsrRouteImport } from './routes/admin.sustainability.csr'
+import { Route as AdminSustainabilitySectionRouteImport } from './routes/admin.sustainability.section'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -250,6 +251,12 @@ const AdminSustainabilityCsrRoute = AdminSustainabilityCsrRouteImport.update({
   path: '/sustainability/csr',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminSustainabilitySectionRoute =
+  AdminSustainabilitySectionRouteImport.update({
+    id: '/sustainability/section',
+    path: '/sustainability/section',
+    getParentRoute: () => AdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -290,6 +297,7 @@ export interface FileRoutesByFullPath {
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
+  '/admin/sustainability/section': typeof AdminSustainabilitySectionRoute
   '/admin/capabilities/': typeof AdminCapabilitiesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -330,6 +338,7 @@ export interface FileRoutesByTo {
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
+  '/admin/sustainability/section': typeof AdminSustainabilitySectionRoute
   '/admin/capabilities': typeof AdminCapabilitiesIndexRoute
 }
 export interface FileRoutesById {
@@ -372,6 +381,7 @@ export interface FileRoutesById {
   '/admin/management/$group': typeof AdminManagementGroupRoute
   '/admin/sustainability/$slug': typeof AdminSustainabilitySlugRoute
   '/admin/sustainability/csr': typeof AdminSustainabilityCsrRoute
+  '/admin/sustainability/section': typeof AdminSustainabilitySectionRoute
   '/admin/capabilities/': typeof AdminCapabilitiesIndexRoute
 }
 export interface FileRouteTypes {
@@ -415,6 +425,7 @@ export interface FileRouteTypes {
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
+    | '/admin/sustainability/section'
     | '/admin/capabilities/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -455,6 +466,7 @@ export interface FileRouteTypes {
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
+    | '/admin/sustainability/section'
     | '/admin/capabilities'
   id:
     | '__root__'
@@ -496,6 +508,7 @@ export interface FileRouteTypes {
     | '/admin/management/$group'
     | '/admin/sustainability/$slug'
     | '/admin/sustainability/csr'
+    | '/admin/sustainability/section'
     | '/admin/capabilities/'
   fileRoutesById: FileRoutesById
 }
@@ -793,6 +806,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSustainabilityCsrRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/sustainability/section': {
+      id: '/admin/sustainability/section'
+      path: '/sustainability/section'
+      fullPath: '/admin/sustainability/section'
+      preLoaderRoute: typeof AdminSustainabilitySectionRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
@@ -819,6 +839,7 @@ interface AdminRouteChildren {
   AdminManagementGroupRoute: typeof AdminManagementGroupRoute
   AdminSustainabilitySlugRoute: typeof AdminSustainabilitySlugRoute
   AdminSustainabilityCsrRoute: typeof AdminSustainabilityCsrRoute
+  AdminSustainabilitySectionRoute: typeof AdminSustainabilitySectionRoute
   AdminCapabilitiesIndexRoute: typeof AdminCapabilitiesIndexRoute
 }
 
@@ -845,6 +866,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminManagementGroupRoute: AdminManagementGroupRoute,
   AdminSustainabilitySlugRoute: AdminSustainabilitySlugRoute,
   AdminSustainabilityCsrRoute: AdminSustainabilityCsrRoute,
+  AdminSustainabilitySectionRoute: AdminSustainabilitySectionRoute,
   AdminCapabilitiesIndexRoute: AdminCapabilitiesIndexRoute,
 }
 
