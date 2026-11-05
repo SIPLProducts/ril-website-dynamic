@@ -26,5 +26,14 @@ export default defineConfig({
           output: { dir: "dist", serverDir: "dist/server", publicDir: "dist/public" },
           rollupConfig: { external: ["cloudflare:sockets"] },
         } as { preset: string },
+        // Self-hosted: the browser talks to the backend on the SAME address the page
+        // was opened with (private IP, public IP or domain). Nginx forwards /auth/v1,
+        // /rest/v1, /storage/v1 to the backend. Server-side code uses SUPABASE_URL.
+        vite: {
+          define: {
+            "import.meta.env.VITE_SUPABASE_URL":
+              "(typeof window !== 'undefined' ? window.location.origin : process.env.SUPABASE_URL)",
+          },
+        },
       }),
 });
