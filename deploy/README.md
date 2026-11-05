@@ -85,3 +85,25 @@ Laptop: `npm run build && tar -czf ril-dist.tar.gz dist` → upload → server: 
 
 ## Moving existing data (optional)
 The self-hosted database starts empty. Ask us to export current content from Lovable Cloud as SQL and run it in Studio → SQL Editor.
+
+---
+## UPDATE: Port 443 only, IP only (no domain), /admin internal only
+Replaces the Nginx/SSL steps above.
+```bash
+# 1. Database tables (after Supabase is running; create your user in Studio first for 03_super_admin.sql)
+cd /apps/website/ril-website/backend/supabase && sudo bash run-migrations.sh
+# 2. Backend .env (supabase-src/docker/.env): set
+#    SITE_URL=https://38.31.132.10  API_EXTERNAL_URL=https://38.31.132.10  SUPABASE_PUBLIC_URL=https://38.31.132.10
+#    then: cd supabase-src/docker && sudo docker compose up -d
+# 3. Certificate + Nginx
+cd /apps/website/ril-website/nginx && sudo bash make-selfsigned-cert.sh
+sudo cp ril.conf /etc/nginx/sites-available/ril-website
+sudo ln -sf /etc/nginx/sites-available/ril-website /etc/nginx/sites-enabled/ril-website
+sudo rm -f /etc/nginx/sites-enabled/default /etc/nginx/sites-enabled/ril
+sudo nginx -t && sudo systemctl reload nginx
+```
+- Public website: https://38.31.132.10
+- Admin (office only): https://10.200.1.8/admin — from the internet /admin returns 403.
+- Frontend .env: VITE_SUPABASE_URL=https://38.31.132.10 (rebuild dist after changing).
+- Self-signed certificate: browsers show a one-time "Not secure" warning; click Advanced → Proceed.
+- IT: open only inbound 443 → 38.31.132.10 → 10.200.1.8. Ports 80, 3000, 8000 stay closed.
