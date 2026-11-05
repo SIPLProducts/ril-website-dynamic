@@ -17,3 +17,6 @@ No rebuild needed when the IP or domain changes.
 ## Technical details
 - In `vite.config.ts` (self-host branch only) add `define` for `import.meta.env.VITE_SUPABASE_URL` as the expression `(typeof window !== 'undefined' ? window.location.origin : process.env.SUPABASE_URL)`.
 - Update `deploy/nginx/ril.conf` port-80 server with the API proxy locations (with Upgrade headers for realtime); update `deploy/frontend/.env.example` comment.
+
+## Works for every address
+Domain (e.g. ril.ramky.com), public IP and private IP all work. The login goes to the same address the page was opened on, and Nginx on that address passes it to the backend running on the server.
