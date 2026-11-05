@@ -1,21 +1,23 @@
-# Public-IP HTTPS setup (no domain) + one-command table setup
+# Nginx: port 443 only, IP-only, /admin inside the organization only
 
-## What you get
-1. **Nginx config for 38.31.132.10 on port 443** (`deploy/nginx/ril-ip.conf`)
-   - Uses a self-signed SSL certificate, because free certificates (Certbot) need a domain.
-   - Website + /admin go to the app on port 3000; database/login/file calls go to the backend on port 8000.
-   - Port 80 just redirects to https (optional, can be left closed).
-   - No IPv6 lines (your server has IPv6 off).
-   - Browsers will show a "Not secure" warning once until a domain + real certificate is added; then switch to `ril.conf` and run Certbot.
-2. **Certificate script** (`deploy/nginx/make-selfsigned-cert.sh`) – one command creates the certificate for the IP.
-3. **Table setup script** (`deploy/backend/supabase/run-migrations.sh`)
-   - Runs 01_schema.sql (all tables, roles, security rules), 02_storage.sql (private files bucket), 03_super_admin.sql (makes your login Super Admin) inside the database container – no extra tools needed.
-   - Safe to run again; shows a table count at the end.
-4. **Frontend .env update**: `VITE_SUPABASE_URL=https://38.31.132.10` (backend reached through Nginx, so port 8000 never needs to be public).
-5. **README section**: exact server commands in order — cert, nginx, migrations, create admin user in Studio, Super Admin SQL, build/deploy dist, PM2.
+## What changes in the deploy folder
+1. **New `deploy/nginx/ril.conf`** (replaces the old one)
+   - Only port 443. No port 80 block, no domain name.
+   - Answers on `38.31.132.10` (public) and `10.200.1.8` (private).
+   - Self-signed certificate for both IPs (Certbot needs a domain, so it is removed).
+   - **/admin is blocked from the internet**: allowed only from the office network (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 by default — editable list at the top of the file). Public visitors get "403 Forbidden".
+   - Website pages -> app on port 3000; database/login/file calls -> backend on port 8000 (port 8000 and Studio never exposed).
+   - No IPv6 lines.
+2. **`deploy/nginx/make-selfsigned-cert.sh`** — one command creates the certificate.
+3. **`deploy/backend/supabase/run-migrations.sh`** — loads all tables, file storage and Super Admin SQL into the database container in one go; safe to re-run.
+4. **`.env.example` + README** updated: `VITE_SUPABASE_URL=https://38.31.132.10`, exact command order.
+
+## Important note on /admin
+Office staff must open the admin via the private address `https://10.200.1.8/admin`. Admin pages call login/database through the same address, so it works fully inside the office. If your office reaches the internet through 38.31.132.10 itself (hairpin NAT), the server sees the real office IP only when traffic stays internal — using 10.200.1.8 avoids that problem.
 
 ## Technical details
-- `ril-ip.conf`: `server_name 38.31.132.10 _;` `ssl_certificate /etc/nginx/ssl/ril-ip.crt`; locations `/rest/v1/ /auth/v1/ /storage/v1/ /realtime/v1/` -> `http://127.0.0.1:8000` (websocket upgrade headers for realtime, `client_max_body_size 100m`), `/` -> `http://127.0.0.1:3000`.
-- Cert: `openssl req -x509 -nodes -days 825 -newkey rsa:2048 -subj "/CN=38.31.132.10" -addext "subjectAltName=IP:38.31.132.10"`.
-- Migrations: `docker exec -i supabase-db psql -U postgres -d postgres -v ON_ERROR_STOP=1 < file.sql`.
-- Backend `.env`: set `SITE_URL`, `API_EXTERNAL_URL`, `SUPABASE_PUBLIC_URL` to `https://38.31.132.10`, then `docker compose up -d`.
+- `map $remote_addr $ril_internal` / `allow 10.0.0.0/8; ... deny all;` inside `location ^~ /admin` (also the admin server-function path `/_serverFn` stays open because the public careers form uses it; admin functions are already protected by login + roles).
+- Backend locations `^/(rest|auth|storage|realtime)/v1/` with websocket headers, `client_max_body_size 50M`.
+- Cert: `openssl req -x509 -nodes -days 825 -newkey rsa:2048 -subj "/CN=38.31.132.10" -addext "subjectAltName=IP:38.31.132.10,IP:10.200.1.8"`.
+- Migrations: `docker exec -i supabase-db psql -U postgres -d postgres -v ON_ERROR_STOP=1 < sql/0X_*.sql`.
+- Backend `.env`: `SITE_URL`, `API_EXTERNAL_URL`, `SUPABASE_PUBLIC_URL` = `https://38.31.132.10`, then `docker compose up -d`.
