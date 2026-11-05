@@ -17,11 +17,8 @@ async function loadSettings(admin: any): Promise<EmailSettings | null> {
   return data as EmailSettings | null;
 }
 async function smtpSend(s: EmailSettings, to: string, subject: string, html: string) {
-  const { WorkerMailer } = await import("worker-mailer");
-  await WorkerMailer.send(
-    { host: s.host, port: s.port, secure: s.secure, startTls: !s.secure, credentials: { username: s.username, password: s.password }, authType: ["plain", "login"] },
-    { from: { name: s.from_name, email: s.from_email }, to, ...(s.cc.length ? { cc: s.cc } : {}), subject, html },
-  );
+  const { sendMail } = await import("@/lib/send-mail.server");
+  await sendMail(s, { from: { name: s.from_name, email: s.from_email }, to, cc: s.cc, subject, html });
 }
 
 export const getEmailSettings = createServerFn({ method: "POST" })

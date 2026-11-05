@@ -66,11 +66,8 @@ export const submitApplication = createServerFn({ method: "POST" })
       if (settings && smtpReady(settings)) {
         const rows: [string, string][] = [["Position", fields.position], ["Job Req ID", fields.reference || "—"], ["Name", fields.full_name], ["Email", fields.email], ["Mobile", fields.mobile], ["Location", fields.location], ["Qualification", fields.qualification], ["Experience (years)", fields.experience || "—"], ["Cover note", fields.cover_note || "—"]];
         const html = brandedEmail("New job application", `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.map(([k, v]) => `<tr><td style="padding:6px 8px;color:#6b7785;vertical-align:top;white-space:nowrap">${k}</td><td style="padding:6px 8px">${esc(v).replace(/\n/g, "<br>")}</td></tr>`).join("")}</table><p style="font-size:13px;color:#6b7785">Resume attached. Also available in the admin portal under Careers → Applications.</p>`);
-        const { WorkerMailer } = await import("worker-mailer");
-        await WorkerMailer.send(
-          { host: settings.host, port: settings.port, secure: settings.secure, startTls: !settings.secure, credentials: { username: settings.username, password: settings.password }, authType: ["plain", "login"] },
-          { from: { name: settings.from_name, email: settings.from_email }, to: settings.careers_to || "careers@ramky.com", reply: { email: fields.email, name: fields.full_name }, subject: `Application: ${fields.position}${fields.reference ? ` (${fields.reference})` : ""} — ${fields.full_name}`, html, attachments: [{ filename: file.name, content: toBase64(buf), mimeType: file.type || undefined }] } as any,
-        );
+        const { sendMail } = await import("@/lib/send-mail.server");
+        await sendMail(settings, { from: { name: settings.from_name, email: settings.from_email }, to: settings.careers_to || "careers@ramky.com", replyTo: { email: fields.email, name: fields.full_name }, subject: `Application: ${fields.position}${fields.reference ? ` (${fields.reference})` : ""} — ${fields.full_name}`, html, attachments: [{ filename: file.name, content: toBase64(buf), mimeType: file.type || undefined }] });
         sent = true;
         await admin.from("career_applications").update({ email_sent: true }).eq("id", ins.data.id);
       }
