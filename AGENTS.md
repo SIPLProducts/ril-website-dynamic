@@ -21,3 +21,6 @@
 - Admin OTP and reset emails go through SMTP settings in `email_settings` (server-only, service role) via `worker-mailer`, falling back to built-in auth emails when SMTP is off/incomplete; codes/links come from `auth.admin.generateLink` so verification stays native.
 - Sustainability (ESG) page content lives in `esg_pages` + `esg_items` (kind = metric|accordion|governance_item|report); `src/lib/esg-sections.ts` keeps only the tab list and types so tabs stay code-controlled.
 - Management people (board/executive/senior) live in `management_people` with profile paragraphs in a `sections` jsonb; `src/lib/management.ts` keeps the group list and section headings so layouts stay code-controlled.
+
+## Self-hosting
+- `vite.config.ts` switches nitro to the `node-server` preset with output in `dist/` only outside the Lovable sandbox, so `npm run build` makes a self-hostable Node server (`node dist/server/index.mjs`) while Lovable publishing stays unchanged.
