@@ -1,22 +1,25 @@
-# Fix: investor "View/Download" and /admin returning 404 on the server
+# Fix: View, Download, year collapse and /admin not working on the server
 
-## Likely causes (to confirm on the server first)
-1. **Old build running** – the server is running a website build made before the investor-file fix, so the `/files/...` address doesn't exist yet and returns 404. This also explains `/admin` failing: page assets from an older/newer build don't match (the same 404 asset issue as before).
-2. **New uploads stored only in file storage** – "Annual Report FY 25-26" and "Notice of the 32nd AGM" were uploaded on the server on 05 Nov. If storage isn't set up there, the file can't be found, so the page returns 404.
-3. **Missing server key** – if the website's `.env` on the server lacks the backend service key, the file lookup silently fails and returns 404.
+## What is actually wrong
+The page text loads, but **nothing you click responds**: View, Download, the FY year collapse and the whole /admin area. That pattern means the page's interactive files (the `/assets/....js` files) return **404** on the server. Without them the browser shows only static text. This is the same "Failed to load resource: 404" you see in the console.
 
-## What I will change in the app
-- Make the file page fall back more reliably: look up the file by its path in the database copy first, then storage, without requiring the exact document-row match that can fail on dumped data.
-- Return clear messages instead of a bare 404 (e.g. "file not uploaded to server", "server key missing") so the cause shows directly in the browser.
-- Make sure every admin upload always saves a copy of the file in the database so future dumps include it.
+Usual causes (I'll confirm with one check):
+- The running website (PM2) is an **old build**, while the page refers to files from a **newer build** (or the other way round), so the file names don't match.
+- The browser has **cached old pages** that point to files that no longer exist.
+- `dist/` was copied partly, or `npm run build` ran while PM2 kept serving the old folder.
 
-## Server steps I will give you (copy-paste)
-1. Pull the new code, then `npm run build`, then `pm2 restart` the website (fixes old-build 404s and /admin).
-2. Check the `.env` has the backend URL and service key.
-3. One check command to list which investor files are present in the database, and re-upload any missing ones from /admin.
-4. Hard-refresh the browser (Ctrl+Shift+R) so old cached page files are dropped.
+## Fix steps
+1. **Check:** a command that lists which `/assets/` file the page asks for and whether it exists in `dist/public/assets/` on the server.
+2. **Clean rebuild:** stop PM2, delete `dist/`, run `npm run build`, start PM2 again from the same folder.
+3. **Nginx:** serve `/assets/` straight from `dist/public/assets` with long-term caching, and stop caching the HTML pages. Then a rebuild can't leave old pages pointing at files that are gone.
+4. **Browser:** hard refresh (Ctrl+Shift+R) or open a new Incognito window.
+5. **Verify:** View and Download open the PDF, years collapse, and /admin/login loads.
+
+## App changes
+- Update `deploy/nginx/ril.conf` with a static `/assets/` location (both ports) and `Cache-Control: no-cache` on HTML.
+- Add `deploy/redeploy.sh` that runs the clean rebuild in one command (stop, clean, build, restart, check assets), so this doesn't happen again.
+- Make the investor file link (`/files/...`) report a clear reason when a file is missing instead of a bare 404.
 
 ## Technical details
-- `src/routes/files.$.tsx`: drop the hard `ir_documents` gate (keep `..` guard; restrict to bucket paths), add explicit error text, log errors.
-- `src/lib/ir-files.functions.ts`: verify upload copy is awaited before saving the document.
-- Diagnostic SQL: `select path, size from ir_files;` vs `select url from ir_documents where url like 'storage:%';`
+- Nginx: `location ^~ /assets/ { alias /apps/website/ril-website/frontend/dist/public/assets/; expires 1y; add_header Cache-Control "public, immutable"; try_files $uri =404; }`, placed before `location /`; set `proxy_hide_header Cache-Control; add_header Cache-Control "no-cache";` on the HTML proxy.
+- The check: `curl -sk https://10.200.1.8/ | grep -o '/assets/[^"]*\.js' | head` compared against `ls dist/public/assets`.
