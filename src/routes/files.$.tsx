@@ -10,7 +10,7 @@ export const Route = createFileRoute("/files/$")({
         if (!path || path.includes("..")) return new Response("Not found", { status: 404 });
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data: doc } = await supabaseAdmin.from("ir_documents").select("id").eq("url", STORAGE_PREFIX + path).eq("published", true).limit(1).maybeSingle();
-        if (!doc) return new Response("Not found", { status: 404 });
+        if (!doc) return new Response("This document is not published or its record was not found on this server.", { status: 404 });
 
         let body: Uint8Array | null = null;
         let mime = "application/pdf";
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/files/$")({
           mime = row.mime;
         } else {
           const { data: blob } = await supabaseAdmin.storage.from(IR_BUCKET).download(path);
-          if (!blob) return new Response("Not found", { status: 404 });
+          if (!blob) return new Response("The file for this document has not been uploaded to this server. Re-upload it from the admin portal.", { status: 404 });
           body = new Uint8Array(await blob.arrayBuffer());
           mime = blob.type || mime;
         }
