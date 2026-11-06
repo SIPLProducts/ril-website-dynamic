@@ -151,27 +151,17 @@ export function SiteFooter() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {GROUP_COMPANIES.map((company) => (
-              <a
-                key={company.name}
-                href={company.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Visit ${company.name} website (opens in a new tab)`}
-                className="group relative flex h-28 items-center justify-center p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                {company.logo ? <img
-                  src={company.logo}
-                  alt={`${company.name} logo`}
-                  loading="lazy"
-                  className="max-h-16 max-w-full object-contain"
-                /> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>}
-                <ExternalLink
-                  aria-hidden="true"
-                  className="absolute right-2 top-2 size-3.5 text-muted-foreground transition-colors group-hover:text-footer-accent"
-                />
+            {GROUP_COMPANIES.map((company) => {
+              const inner = company.logo ? <img src={company.logo} alt={`${company.name} logo`} loading="lazy" className="max-h-16 max-w-full object-contain" /> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>;
+              const cls = "group relative flex h-28 items-center justify-center p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+              if (!company.href) return <div key={company.name} className={cls}>{inner}</div>;
+              return (
+              <a key={company.name} href={company.href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${company.name} website (opens in a new tab)`} className={cls}>
+                {inner}
+                <ExternalLink aria-hidden="true" className="absolute right-2 top-2 size-3.5 text-muted-foreground transition-colors group-hover:text-footer-accent" />
               </a>
-            ))}
+              );
+            })}
           </div>
         </section>
 

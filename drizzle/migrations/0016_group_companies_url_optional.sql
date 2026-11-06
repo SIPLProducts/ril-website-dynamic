@@ -1,0 +1,1 @@
+ALTER TABLE public.group_companies ALTER COLUMN url DROP NOT NULL;

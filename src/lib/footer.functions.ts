@@ -10,7 +10,7 @@ export type FooterData = {
     groupEyebrow: string; groupTitle: string; groupSubtitle: string;
   };
   columns: { id: string; title: string; links: { id: string; label: string; href: string; newTab: boolean }[] }[];
-  companies: { id: string; name: string; url: string; logo: string | null }[];
+  companies: { id: string; name: string; url: string | null; logo: string | null }[];
 };
 
 function publicClient() {

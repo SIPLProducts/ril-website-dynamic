@@ -851,7 +851,7 @@ export type Database = {
           published: boolean
           sort_order: number
           updated_at: string
-          url: string
+          url: string | null
         }
         Insert: {
           created_at?: string
@@ -861,7 +861,7 @@ export type Database = {
           published?: boolean
           sort_order?: number
           updated_at?: string
-          url: string
+          url?: string | null
         }
         Update: {
           created_at?: string
@@ -871,7 +871,7 @@ export type Database = {
           published?: boolean
           sort_order?: number
           updated_at?: string
-          url?: string
+          url?: string | null
         }
         Relationships: []
       }

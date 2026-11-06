@@ -24,7 +24,7 @@ export const Route = createFileRoute("/admin/footer/group-companies")({
   component: Page,
 });
 
-type Company = { id: string; name: string; url: string; logo_url: string | null; published: boolean; sort_order: number };
+type Company = { id: string; name: string; url: string | null; logo_url: string | null; published: boolean; sort_order: number };
 
 async function uploadLogo(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
@@ -156,7 +156,7 @@ function CompanyList() {
               </td>
               <td className="px-4 py-2"><Logo url={r.logo_url} name={r.name} /></td>
               <td className="px-4 py-2 font-medium">{r.name}</td>
-              <td className="px-4 py-2"><a href={r.url} target="_blank" rel="noreferrer" className="text-brand-orange hover:underline">{r.url}</a></td>
+              <td className="px-4 py-2">{r.url ? <a href={r.url} target="_blank" rel="noreferrer" className="text-brand-orange hover:underline">{r.url}</a> : "—"}</td>
               <td className="px-4 py-2"><Switch checked={r.published} onCheckedChange={() => toggle(r)} aria-label="Live" /></td>
               <td className="px-4 py-2">
                 <div className="flex justify-end gap-2">
@@ -176,20 +176,19 @@ function CompanyList() {
 
 function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const [name, setName] = useState(row?.name ?? "");
-  const [url, setUrl] = useState(row?.url ?? "https://");
+  const [url, setUrl] = useState(row?.url ?? "");
   const [published, setPublished] = useState(row?.published ?? true);
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const current = usePreview(row?.logo_url ?? null);
   async function save() {
     if (!name.trim()) { toast.error("Company name is required"); return; }
-    if (!/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(url.trim())) { toast.error("Website must be a full link starting with https://"); return; }
-    if (!file && !row?.logo_url) { toast.error("Please upload the company logo"); return; }
+    if (url.trim() && !/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(url.trim())) { toast.error("Website must be a full link starting with https://"); return; }
     setSaving(true);
     try {
       let logo_url = row?.logo_url ?? null;
       if (file) logo_url = await uploadLogo(file);
-      const payload = { name: name.trim(), url: url.trim(), published, logo_url };
+      const payload = { name: name.trim(), url: url.trim() || null, published, logo_url };
       const { error } = row
         ? await supabase.from("group_companies").update(payload).eq("id", row.id)
         : await supabase.from("group_companies").insert({ ...payload, sort_order: nextOrder });
@@ -205,11 +204,11 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
       <FormSection title="Company details">
         <div className="grid gap-4 sm:grid-cols-2">
           <div><Label>Company name *</Label><Input value={name} maxLength={120} onChange={(e) => setName(e.target.value)} placeholder="e.g. MILES City" /></div>
-          <div><Label>Website link *</Label><Input value={url} maxLength={300} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" /></div>
+          <div><Label>Website link</Label><Input value={url} maxLength={300} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" /></div>
         </div>
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Live on website</label>
       </FormSection>
-      <FormSection title={row ? "Logo (upload a new one to replace)" : "Logo *"}>
+      <FormSection title={row ? "Logo (upload a new one to replace)" : "Logo"}>
         {current && !file && <img src={current} alt="Current logo" className="h-16 max-w-[200px] rounded border border-border bg-background object-contain p-2" />}
         <FileDropzone file={file} onFile={setFile} accept="image/png,image/jpeg,image/svg+xml,image/webp" hint="PNG, JPG, SVG or WEBP — a transparent background looks best" />
       </FormSection>
