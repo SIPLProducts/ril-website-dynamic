@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
+import { STORAGE_PREFIX, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
 
 /** Public read of published investor documents and contacts (no login required). */
 export const getIrData = createServerFn({ method: "GET" }).handler(async () => {
@@ -26,18 +26,8 @@ export const getIrData = createServerFn({ method: "GET" }).handler(async () => {
   if (contactsRes.error) throw new Error(contactsRes.error.message);
 
   const docs = docsRes.data as IrDocumentRow[];
-  const paths = docs.filter((d) => d.url.startsWith(STORAGE_PREFIX)).map((d) => d.url.slice(STORAGE_PREFIX.length));
-  if (paths.length) {
-    const { data } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    const signed = new Map((data ?? []).map((s) => [s.path, s.signedUrl]));
-    // Signed URLs come from the server-side address; rewrite to the browser-facing one.
-    const browserBase = process.env["VITE_SUPABASE_URL"] ?? process.env["SUPABASE_URL"]!;
-    for (const d of docs) {
-      if (!d.url.startsWith(STORAGE_PREFIX)) continue;
-      const s = signed.get(d.url.slice(STORAGE_PREFIX.length));
-      if (s) d.url = s.replace(process.env["SUPABASE_URL"]!, browserBase);
-    }
-  }
+  // Uploaded files are served from /files/<path> on whatever address the site was opened with.
+  for (const d of docs) if (d.url.startsWith(STORAGE_PREFIX)) d.url = "/files/" + d.url.slice(STORAGE_PREFIX.length).split("/").map(encodeURIComponent).join("/");
   const contacts: IrContact[] = contactsRes.data.map((c) => ({ heading: c.heading, lines: c.lines as IrContact["lines"] }));
   return { docs, contacts };
 });

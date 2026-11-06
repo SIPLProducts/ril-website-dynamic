@@ -31,6 +31,7 @@ import { Route as BoardOfDirectorsSlugRouteImport } from './routes/board-of-dire
 import { Route as BusinessesSlugRouteImport } from './routes/businesses.$slug'
 import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
 import { Route as ExecutiveLeadershipSlugRouteImport } from './routes/executive-leadership.$slug'
+import { Route as FilesSplatRouteImport } from './routes/files.$'
 import { Route as AboutPartnersSubsidiariesRouteImport } from './routes/about.partners.subsidiaries'
 import { Route as AdminAboutClienteleRouteImport } from './routes/admin.about.clientele'
 import { Route as AdminCapabilitiesIndexRouteImport } from './routes/admin.capabilities.index'
@@ -162,6 +163,11 @@ const EsgSlugRoute = EsgSlugRouteImport.update({
 const ExecutiveLeadershipSlugRoute = ExecutiveLeadershipSlugRouteImport.update({
   id: '/executive-leadership/$slug',
   path: '/executive-leadership/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilesSplatRoute = FilesSplatRouteImport.update({
+  id: '/files/$',
+  path: '/files/$',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutPartnersSubsidiariesRoute =
@@ -304,6 +310,7 @@ export interface FileRoutesByFullPath {
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
   '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/files/$': typeof FilesSplatRoute
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
   '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/files/$': typeof FilesSplatRoute
   '/admin': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
@@ -396,6 +404,7 @@ export interface FileRoutesById {
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
   '/executive-leadership/$slug': typeof ExecutiveLeadershipSlugRoute
+  '/files/$': typeof FilesSplatRoute
   '/admin/': typeof AdminIndexRoute
   '/about/partners/subsidiaries': typeof AboutPartnersSubsidiariesRoute
   '/admin/about/clientele': typeof AdminAboutClienteleRoute
@@ -444,6 +453,7 @@ export interface FileRouteTypes {
     | '/businesses/$slug'
     | '/esg/$slug'
     | '/executive-leadership/$slug'
+    | '/files/$'
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
@@ -489,6 +499,7 @@ export interface FileRouteTypes {
     | '/businesses/$slug'
     | '/esg/$slug'
     | '/executive-leadership/$slug'
+    | '/files/$'
     | '/admin'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
@@ -535,6 +546,7 @@ export interface FileRouteTypes {
     | '/businesses/$slug'
     | '/esg/$slug'
     | '/executive-leadership/$slug'
+    | '/files/$'
     | '/admin/'
     | '/about/partners/subsidiaries'
     | '/admin/about/clientele'
@@ -576,6 +588,7 @@ export interface RootRouteChildren {
   BusinessesSlugRoute: typeof BusinessesSlugRoute
   EsgSlugRoute: typeof EsgSlugRoute
   ExecutiveLeadershipSlugRoute: typeof ExecutiveLeadershipSlugRoute
+  FilesSplatRoute: typeof FilesSplatRoute
   AboutPartnersSubsidiariesRoute: typeof AboutPartnersSubsidiariesRoute
 }
 
@@ -733,6 +746,13 @@ declare module '@tanstack/react-router' {
       path: '/executive-leadership/$slug'
       fullPath: '/executive-leadership/$slug'
       preLoaderRoute: typeof ExecutiveLeadershipSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/files/$': {
+      id: '/files/$'
+      path: '/files/$'
+      fullPath: '/files/$'
+      preLoaderRoute: typeof FilesSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about/partners/subsidiaries': {
@@ -972,6 +992,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessesSlugRoute: BusinessesSlugRoute,
   EsgSlugRoute: EsgSlugRoute,
   ExecutiveLeadershipSlugRoute: ExecutiveLeadershipSlugRoute,
+  FilesSplatRoute: FilesSplatRoute,
   AboutPartnersSubsidiariesRoute: AboutPartnersSubsidiariesRoute,
 }
 export const routeTree = rootRouteImport

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { getStaff } from "@/lib/admin-auth";
+import { saveIrFile } from "@/lib/ir-files.functions";
 import { CONTACTS_SECTION } from "@/lib/admin-modules";
 import { IR_BUCKET, IR_SECTIONS, STORAGE_PREFIX, rollingFyLabels, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
 import logo from "@/assets/ramky-infra-logo.png.asset.json";
@@ -168,7 +169,10 @@ function DocumentsManager({ sectionKey }: { sectionKey: string }) {
     mutationFn: async (d: IrDocumentRow) => {
       const { error } = await supabase.from("ir_documents").delete().eq("id", d.id);
       if (error) throw error;
-      if (d.url.startsWith(STORAGE_PREFIX)) await supabase.storage.from(IR_BUCKET).remove([d.url.slice(STORAGE_PREFIX.length)]);
+      if (d.url.startsWith(STORAGE_PREFIX)) {
+        await supabase.storage.from(IR_BUCKET).remove([d.url.slice(STORAGE_PREFIX.length)]);
+        await supabase.from("ir_files").delete().eq("path", d.url.slice(STORAGE_PREFIX.length));
+      }
     },
     onSuccess: () => { toast.success("Document deleted"); refresh(); },
     onError: (e: Error) => toast.error(e.message),
@@ -268,6 +272,7 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
         const path = `${d.section_key}/${Date.now()}-${file.name.replace(/[^\w.-]+/g, "_")}`;
         const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type || "application/pdf" });
         if (error) throw error;
+        await saveIrFile({ data: { path } });
         url = STORAGE_PREFIX + path;
       }
       const row = { section_key: d.section_key, title: d.title.trim(), doc_type: d.doc_type || "Document", doc_date: d.doc_date, fy_year: d.fy_year, quarter: d.quarter, disclosure_category: d.disclosure_category, version: d.version, description: d.description, url, published: d.published };

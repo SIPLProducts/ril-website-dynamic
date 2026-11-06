@@ -1142,6 +1142,30 @@ export type Database = {
         }
         Relationships: []
       }
+      ir_files: {
+        Row: {
+          data: string
+          mime: string
+          path: string
+          size: number
+          updated_at: string
+        }
+        Insert: {
+          data: string
+          mime?: string
+          path: string
+          size?: number
+          updated_at?: string
+        }
+        Update: {
+          data?: string
+          mime?: string
+          path?: string
+          size?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       landmark_projects: {
         Row: {
           created_at: string

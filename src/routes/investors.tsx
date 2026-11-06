@@ -268,7 +268,7 @@ function DocList({ docs, onView, detailed }: { docs: IrDocument[]; onView: (d: I
             <button onClick={() => onView(d)} className="inline-flex items-center gap-1.5 rounded-sm border border-brand-blue px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue hover:text-primary-foreground">
               <Eye className="size-3.5" /> View
             </button>
-            <a href={d.url} download className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
+            <a href={d.url.startsWith("/files/") ? d.url + "?download" : d.url} download className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
               <Download className="size-3.5" /> Download
             </a>
           </div>
@@ -322,7 +322,7 @@ function Viewer({ doc, onClose }: { doc: IrDocument; onClose: () => void }) {
           <FileText className="size-5 shrink-0 text-brand-orange" />
           <p className="min-w-0 flex-1 truncate text-sm font-semibold">{doc.title}</p>
           <a href={doc.url} target="_blank" rel="noreferrer" className="hidden items-center gap-1 text-xs text-brand-blue hover:underline sm:inline-flex"><ExternalLink className="size-3.5" /> New tab</a>
-          <a href={doc.url} download className="inline-flex items-center gap-1 text-xs text-brand-blue hover:underline"><Download className="size-3.5" /> Download</a>
+          <a href={doc.url.startsWith("/files/") ? doc.url + "?download" : doc.url} download className="inline-flex items-center gap-1 text-xs text-brand-blue hover:underline"><Download className="size-3.5" /> Download</a>
           <button onClick={onClose} aria-label="Close viewer" className="rounded-sm p-1 hover:bg-surface"><X className="size-5" /></button>
         </div>
         <iframe src={doc.url} title={doc.title} className="flex-1 bg-surface" />
