@@ -1,3 +1,4 @@
+import { browserStorageUrl } from "@/lib/storage-url";
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
@@ -30,8 +31,7 @@ export const getAccolades = createServerFn({ method: "GET" }).handler(async () =
   const signed = new Map<string, string>();
   if (paths.length) {
     const { data: s } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    const browserBase = process.env["VITE_SUPABASE_URL"] ?? process.env["SUPABASE_URL"]!;
-    for (const x of s ?? []) if (x.path && x.signedUrl) signed.set(x.path, x.signedUrl.replace(process.env["SUPABASE_URL"]!, browserBase));
+    for (const x of s ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
   }
   const resolve = (u: string | null) => (!u ? null : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) ?? null : u);
   return rows.map<PublicAward>((r) => ({
