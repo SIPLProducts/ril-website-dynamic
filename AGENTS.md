@@ -10,6 +10,7 @@
 <!-- LOVABLE:END -->
 
 ## Website architecture
+- Serialize each request's QueryClient cache through Router dehydrate/hydrate so public content and images remain identical between server HTML and the first browser render.
 - Keep the target TanStack bootstrap and pinned dependencies; import site pages, shared site components, and static content modules from the supplied website to preserve its experience without replacing runtime infrastructure.
 - Store imported binary media as Lovable asset pointers; keep the favicon as a real public file so browser icons resolve.
 
@@ -17,7 +18,7 @@
 - Investor Relations documents and contacts live in the database (`ir_documents` keyed by `section_key` = `category/subTab[/child]`, `ir_contacts`); the tab structure stays in `src/lib/investor-relations.ts` so layouts stay code-controlled while content is admin-editable.
 - The admin portal lives at `/admin` (client-only, noindex, never linked from the public site). Staff = `admin` or `super_admin` in `user_roles` plus an active `admin_profiles` row; RLS uses `is_staff`/`is_super_admin`. There is no public sign-up: super admins create accounts through server functions in `src/lib/admin-users.functions.ts`.
 - Per-user email OTP is enforced in the login flow: password check, then sign-out, then `signInWithOtp` and `verifyOtp` (because the auth provider has no per-user MFA flag).
-- Uploaded files go to the private `investor-documents` bucket and are stored as `storage:<path>`; the public read server function converts them to signed URLs (public buckets are blocked by workspace policy).
+- Uploaded files stay in the private `investor-documents` bucket as `storage:<path>`; public reads use stable same-origin `/files/` URLs. The file handler verifies an exact public-content reference using anonymous RLS before privileged storage access, so unpublished uploads and resumes stay private and browser URLs never depend on storage hosts or expiring signatures.
 - Admin OTP and reset emails go through SMTP settings in `email_settings` (server-only, service role) via `worker-mailer`, falling back to built-in auth emails when SMTP is off/incomplete; codes/links come from `auth.admin.generateLink` so verification stays native.
 - Sustainability (ESG) page content lives in `esg_pages` + `esg_items` (kind = metric|accordion|governance_item|report); `src/lib/esg-sections.ts` keeps only the tab list and types so tabs stay code-controlled.
 - Management people (board/executive/senior) live in `management_people` with profile paragraphs in a `sections` jsonb; `src/lib/management.ts` keeps the group list and section headings so layouts stay code-controlled.

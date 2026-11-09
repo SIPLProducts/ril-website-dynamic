@@ -78,6 +78,9 @@ Admin → Email Configuration: enter your company SMTP host/port/user/password �
 ## Updating the site later
 Laptop: `npm run build && tar -czf ril-dist.tar.gz dist` → upload → server: `bash deploy.sh`.
 
+### Uploaded-image update
+Rebuild and deploy the latest website code; no SQL migration is needed for this update. Published uploaded images and documents now use `/files/<path>` on the visitor's current address. Nginx must proxy `/files/` to the Node website (port 3000), like other website requests, without rewriting or redirecting it to port 8000. The website's server-only backend URL and service key must point to the self-hosted backend. Existing uploaded bytes must already be present there; this update does not copy missing files between installations. Private resumes and unpublished uploads remain inaccessible from this public endpoint. This does not remove browser certificate warnings when accessing HTTPS through an IP not covered by the certificate.
+
 ## Firewall checklist for IT
 - Inbound 443 (and 80 for SSL renewal) from internet → 38.31.132.10 → 10.200.1.8
 - Port 8000 and 3000: internal only, never public

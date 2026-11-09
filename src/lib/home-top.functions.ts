@@ -1,9 +1,8 @@
-import { browserStorageUrl } from "@/lib/storage-url";
+import { publishedFileUrl } from "@/lib/file-url";
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 
 export type HomeImage = { url: string | null; alt: string; position: string };
 export type HomeTop = {
@@ -28,7 +27,7 @@ function publicClient() {
   });
 }
 
-/** Image values: "storage:<path>" (signed here), "asset:<key>" (resolved in the browser), or a URL. */
+/** Image values: "storage:<path>" (served through the website), "asset:<key>" (resolved in the browser), or a URL. */
 export const getHomeTop = createServerFn({ method: "GET" }).handler(async (): Promise<HomeTop> => {
   const sb = publicClient();
   const [s, st, j, t] = await Promise.all([
@@ -38,14 +37,7 @@ export const getHomeTop = createServerFn({ method: "GET" }).handler(async (): Pr
     sb.from("home_top").select("*").eq("id", 1).maybeSingle(),
   ]);
   const images = (Array.isArray(t.data?.about_images) ? t.data.about_images : []) as { url?: string; alt?: string; position?: string }[];
-  const all = [...(s.data ?? []).map((r) => r.image_url), ...images.map((i) => i.url)];
-  const paths = all.filter((u): u is string => !!u?.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-  const signed = new Map<string, string>();
-  if (paths.length) {
-    const { data } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    for (const x of data ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-  }
-  const res = (u: string | null | undefined) => !u ? null : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) ?? null : u;
+  const res = publishedFileUrl;
   const paras = Array.isArray(t.data?.about_paragraphs) ? (t.data.about_paragraphs as unknown[]).map(String) : [];
   const hl = Array.isArray(t.data?.about_highlights) ? (t.data.about_highlights as { t?: string; d?: string }[]) : [];
   return {

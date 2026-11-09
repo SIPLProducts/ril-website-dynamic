@@ -2,7 +2,8 @@ import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { STORAGE_PREFIX, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
+import { type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
+import { publishedFileUrl } from "@/lib/file-url";
 
 /** Public read of published investor documents and contacts (no login required). */
 export const getIrData = createServerFn({ method: "GET" }).handler(async () => {
@@ -27,7 +28,7 @@ export const getIrData = createServerFn({ method: "GET" }).handler(async () => {
 
   const docs = docsRes.data as IrDocumentRow[];
   // Uploaded files are served from /files/<path> on whatever address the site was opened with.
-  for (const d of docs) if (d.url.startsWith(STORAGE_PREFIX)) d.url = "/files/" + d.url.slice(STORAGE_PREFIX.length).split("/").map(encodeURIComponent).join("/");
+  for (const d of docs) d.url = publishedFileUrl(d.url) ?? d.url;
   const contacts: IrContact[] = contactsRes.data.map((c) => ({ heading: c.heading, lines: c.lines as IrContact["lines"] }));
   return { docs, contacts };
 });

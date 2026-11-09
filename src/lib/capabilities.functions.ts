@@ -1,9 +1,8 @@
-import { browserStorageUrl } from "@/lib/storage-url";
+import { publishedFileUrl } from "@/lib/file-url";
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import type { BusinessProject, ProjectStatus } from "@/lib/business-projects";
 
 export type CapabilityVertical = {
@@ -38,19 +37,13 @@ export const getCapabilities = createServerFn({ method: "GET" }).handler(async (
   ]);
   if (v.error) throw new Error("Could not load capabilities");
   const rows = v.data ?? [];
-  const paths = rows.map((r) => r.image_url).filter((u): u is string => !!u?.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-  const signed = new Map<string, string>();
-  if (paths.length) {
-    const { data } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    for (const x of data ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-  }
   return {
     eyebrow: s.data?.eyebrow ?? "Capabilities",
     title: s.data?.title ?? "Multi-Disciplinary Spectrum",
     intro: s.data?.intro ?? "",
     verticals: rows.map((r) => ({
       slug: r.slug, title: r.title, cardText: r.card_text, description: r.description, icon: r.icon, imageAlt: r.image_alt,
-      image: !r.image_url ? null : r.image_url.startsWith(STORAGE_PREFIX) ? signed.get(r.image_url.slice(STORAGE_PREFIX.length)) ?? null : r.image_url,
+      image: publishedFileUrl(r.image_url),
       projects: (p.data ?? []).filter((x) => x.vertical_slug === r.slug).map((x) => ({ name: x.name, location: x.location, client: x.client, status: x.status as ProjectStatus }))
         .sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status]),
     })),

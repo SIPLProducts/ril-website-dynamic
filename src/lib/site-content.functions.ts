@@ -1,9 +1,8 @@
-import { browserStorageUrl } from "@/lib/storage-url";
+import { publishedFileUrl } from "@/lib/file-url";
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import type { MediaItem, MediaType } from "@/lib/media";
 import type { CareersData, RecruitmentFlyer, Vacancy } from "@/lib/careers";
 
@@ -57,13 +56,7 @@ export const getMedia = createServerFn({ method: "GET" }).handler(async (): Prom
   if (p.error) throw new Error(p.error.message);
   if (i.error) throw new Error(i.error.message);
   const rows = i.data ?? [];
-  const paths = rows.map((r) => r.document_url).filter((u): u is string => !!u?.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-  const signed = new Map<string, string>();
-  if (paths.length) {
-    const { data: s } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    for (const x of s ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-  }
-  const doc = (u: string | null) => (!u ? undefined : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) : u);
+  const doc = (u: string | null) => publishedFileUrl(u) ?? undefined;
   const items: MediaItem[] = rows.map((r) => {
     const paragraphs = Array.isArray(r.paragraphs) ? (r.paragraphs as unknown[]).filter((x): x is string => typeof x === "string" && !!x.trim()) : [];
     const m: MediaItem = { id: r.id, title: r.title, type: r.item_type as MediaType, published: true };
@@ -97,13 +90,7 @@ export const getCareers = createServerFn({ method: "GET" }).handler(async (): Pr
     sb.from("careers_purpose_cards").select("*").eq("published", true).order("sort_order"),
   ]);
   for (const r of [c, s, v, f, pc]) if (r.error) throw new Error(r.error.message);
-  const paths = [...(s.data ?? []), ...(f.data ?? [])].map((r) => r.image_url).filter((u): u is string => !!u?.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-  const signed = new Map<string, string>();
-  if (paths.length) {
-    const { data: sg } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    for (const x of sg ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-  }
-  const img = (u: string | null) => (!u ? undefined : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) : u);
+  const img = (u: string | null) => publishedFileUrl(u) ?? undefined;
   const opt = <T,>(o: unknown) => Object.fromEntries(Object.entries(o as object).filter(([, x]) => x !== undefined && x !== null && x !== "" && !(Array.isArray(x) && !x.length))) as T;
   return {
     purpose: (pc.data ?? []).map((r) => ({ id: r.id, title: r.title, body: r.body, bullets: strs(r.bullets) })),
@@ -114,7 +101,7 @@ export const getCareers = createServerFn({ method: "GET" }).handler(async (): Pr
       experience: r.experience, qualification: r.qualification, employmentType: r.employment_type, deadline: r.deadline,
       vacancies: r.vacancies ?? undefined, description: r.description, responsibilities: strs(r.responsibilities), skills: strs(r.skills), status: "open" as const,
     })),
-    flyers: (f.data ?? []).map((r) => ({ ...opt<RecruitmentFlyer>({ id: r.id, title: r.title, url: r.url, imageUrl: img(r.image_url), status: "open" as const }), roles: strs(r.roles) })),
+    flyers: (f.data ?? []).map((r) => ({ ...opt<RecruitmentFlyer>({ id: r.id, title: r.title, url: publishedFileUrl(r.url) ?? undefined, imageUrl: img(r.image_url), status: "open" as const }), roles: strs(r.roles) })),
   };
 });
 export const careersQuery = () => queryOptions({ queryKey: ["careers"], queryFn: () => getCareers() });

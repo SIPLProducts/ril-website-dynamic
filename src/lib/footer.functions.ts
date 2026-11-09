@@ -1,9 +1,8 @@
-import { browserStorageUrl } from "@/lib/storage-url";
+import { publishedFileUrl } from "@/lib/file-url";
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 
 export type FooterData = {
   settings: {
@@ -39,12 +38,6 @@ export const getFooter = createServerFn({ method: "GET" }).handler(async (): Pro
   ]);
   if (s.error || !s.data) return null;
   const rows = g.data ?? [];
-  const paths = rows.map((r) => r.logo_url).filter((u): u is string => !!u?.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-  const signed = new Map<string, string>();
-  if (paths.length) {
-    const { data } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    for (const x of data ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-  }
   const d = s.data;
   return {
     settings: {
@@ -57,7 +50,7 @@ export const getFooter = createServerFn({ method: "GET" }).handler(async (): Pro
     })),
     companies: rows.map((r) => ({
       id: r.id, name: r.name, url: r.url,
-      logo: !r.logo_url ? null : r.logo_url.startsWith(STORAGE_PREFIX) ? signed.get(r.logo_url.slice(STORAGE_PREFIX.length)) ?? null : r.logo_url,
+      logo: publishedFileUrl(r.logo_url),
     })),
   };
 });

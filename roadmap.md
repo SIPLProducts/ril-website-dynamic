@@ -5,3 +5,7 @@
 - [x] Neumorphic login, Super Admin/Admin roles, user management, per-user OTP, Active/Inactive
 - [x] Super Admin masteradmin@sharviinfotech.com created (set-password email sent)
 - [x] deploy/ folder + self-host email
+
+# Uploaded images on every address
+- [x] Serve published uploaded media through the website without signed-URL redirects
+- [x] Verify published images render and private/unpublished files remain inaccessible

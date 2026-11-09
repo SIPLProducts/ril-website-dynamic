@@ -1,9 +1,8 @@
-import { browserStorageUrl } from "@/lib/storage-url";
+import { publishedFileUrl } from "@/lib/file-url";
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 
 export type LandmarkSlide = { id: string; name: string; detail: string; image: string | null; fit: "cover" | "contain" };
 export type HomeHighlights = {
@@ -29,7 +28,7 @@ function publicClient() {
   });
 }
 
-/** Stored values: "storage:<path>" (uploaded, signed here), "asset:<key>" (bundled default, resolved in the browser), or a URL. */
+/** Stored values: "storage:<path>" (uploaded, served through the website), "asset:<key>" (bundled default, resolved in the browser), or a URL. */
 export const getHomeHighlights = createServerFn({ method: "GET" }).handler(async (): Promise<HomeHighlights> => {
   const sb = publicClient();
   const [c, l, h, s] = await Promise.all([
@@ -38,14 +37,7 @@ export const getHomeHighlights = createServerFn({ method: "GET" }).handler(async
     sb.from("home_sustainability").select("*").eq("id", 1).maybeSingle(),
     sb.from("home_sustainability_stats").select("*").eq("published", true).order("sort_order"),
   ]);
-  const all = [...(l.data ?? []).map((r) => r.image_url), h.data?.video_url, h.data?.poster_url];
-  const paths = all.filter((u): u is string => !!u?.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-  const signed = new Map<string, string>();
-  if (paths.length) {
-    const { data } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-    for (const x of data ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-  }
-  const res = (u: string | null | undefined) => !u ? null : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) ?? null : u;
+  const res = publishedFileUrl;
   const side = Array.isArray(h.data?.side_stats) ? (h.data.side_stats as { v?: string; l?: string }[]) : [];
   return {
     landmarkEyebrow: c.data?.landmark_eyebrow ?? "Projects that shape places",

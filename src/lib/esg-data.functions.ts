@@ -1,9 +1,8 @@
-import { browserStorageUrl } from "@/lib/storage-url";
+import { publishedFileUrl } from "@/lib/file-url";
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import type { EsgMetricGroup, EsgSection } from "@/lib/esg-sections";
 
 /** Public read of one Sustainability (ESG) page with its live items; returns null for unknown pages. */
@@ -32,14 +31,7 @@ export const getEsgPage = createServerFn({ method: "GET" })
     if (!page) return null;
     const items = iRes.data ?? [];
 
-    const urls = [page.banner_image_url, ...items.map((i) => i.url)];
-    const paths = urls.filter((u): u is string => !!u && u.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-    const signed = new Map<string, string>();
-    if (paths.length) {
-      const { data: s } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-      for (const x of s ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-    }
-    const resolve = (u: string | null | undefined) => (!u ? null : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) ?? null : u);
+    const resolve = publishedFileUrl;
 
     const metrics = items.filter((i) => i.kind === "metric");
     const groups: EsgMetricGroup[] = [];

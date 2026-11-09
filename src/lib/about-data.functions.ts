@@ -1,10 +1,9 @@
-import { browserStorageUrl } from "@/lib/storage-url";
+import { publishedFileUrl } from "@/lib/file-url";
 import { createServerFn } from "@tanstack/react-start";
 import { queryOptions } from "@tanstack/react-query";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 
 export type AboutContent = { eyebrow: string; title: string; subtitle: string; bannerImage: string | null; statement: string; image: string | null };
 export type ClientItem = { id: string; image: string | null; description: string };
@@ -35,14 +34,7 @@ export const getAboutData = createServerFn({ method: "GET" })
     if (lRes.error) throw new Error(lRes.error.message);
     const rows = lRes.data ?? [];
 
-    const urls = [cRes.data?.banner_image_url, cRes.data?.image_url, ...rows.map((r) => r.image_url)];
-    const paths = urls.filter((u): u is string => !!u && u.startsWith(STORAGE_PREFIX)).map((u) => u.slice(STORAGE_PREFIX.length));
-    const signed = new Map<string, string>();
-    if (paths.length) {
-      const { data: s } = await sb.storage.from(IR_BUCKET).createSignedUrls(paths, 60 * 60 * 24);
-      for (const x of s ?? []) if (x.path && x.signedUrl) signed.set(x.path, browserStorageUrl(x.signedUrl));
-    }
-    const resolve = (u: string | null | undefined) => (!u ? null : u.startsWith(STORAGE_PREFIX) ? signed.get(u.slice(STORAGE_PREFIX.length)) ?? null : u);
+    const resolve = publishedFileUrl;
 
     const content: AboutContent | null = cRes.data
       ? { eyebrow: cRes.data.eyebrow, title: cRes.data.title, subtitle: cRes.data.subtitle, bannerImage: resolve(cRes.data.banner_image_url), statement: cRes.data.statement, image: resolve(cRes.data.image_url) }

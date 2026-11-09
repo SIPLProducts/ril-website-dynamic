@@ -1,16 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
+import { IR_BUCKET } from "@/lib/investor-relations";
 
-/** Serves published investor documents from the database (falls back to file storage). */
+/** Serves published website uploads directly, without redirects or expiring browser URLs. */
 export const Route = createFileRoute("/files/$")({
   server: {
     handlers: {
       GET: async ({ params, request }) => {
-        const path = decodeURIComponent(params._splat ?? "");
-        if (!path || path.includes("..")) return new Response("Not found", { status: 404 });
+        const path = params._splat ?? "";
+        const { isPublishedFile, publicFileClient, validFilePath } = await import("@/lib/public-files.server");
+        if (!validFilePath(path)) return new Response("Not found", { status: 404 });
+        // Verify using anonymous RLS before loading the privileged storage client.
+        if (!await isPublishedFile(publicFileClient(), path)) {
+          return new Response("This file is not published or its record was not found on this server.", { status: 404 });
+        }
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data: doc } = await supabaseAdmin.from("ir_documents").select("id").eq("url", STORAGE_PREFIX + path).eq("published", true).limit(1).maybeSingle();
-        if (!doc) return new Response("This document is not published or its record was not found on this server.", { status: 404 });
 
         let body: Uint8Array | null = null;
         let mime = "application/pdf";
@@ -22,7 +25,7 @@ export const Route = createFileRoute("/files/$")({
           mime = row.mime;
         } else {
           const { data: blob } = await supabaseAdmin.storage.from(IR_BUCKET).download(path);
-          if (!blob) return new Response("The file for this document has not been uploaded to this server. Re-upload it from the admin portal.", { status: 404 });
+          if (!blob) return new Response("This file has not been uploaded to this server. Re-upload it from the admin portal.", { status: 404 });
           body = new Uint8Array(await blob.arrayBuffer());
           mime = blob.type || mime;
         }
@@ -31,8 +34,10 @@ export const Route = createFileRoute("/files/$")({
         return new Response(body as unknown as BodyInit, {
           headers: {
             "Content-Type": mime,
-            "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${name.replace(/"/g, "")}"`,
-            "Cache-Control": "public, max-age=3600",
+            "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${name.replace(/[^\x20-\x7e]|["\\]/g, "_")}"; filename*=UTF-8''${encodeURIComponent(name)}`,
+            "Cache-Control": "no-store",
+            "X-Content-Type-Options": "nosniff",
+            "Content-Security-Policy": "sandbox",
           },
         });
       },
