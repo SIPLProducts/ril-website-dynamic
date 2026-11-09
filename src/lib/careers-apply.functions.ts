@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { brandedEmail, smtpReady, type EmailSettings } from "@/lib/email-config";
@@ -51,7 +52,7 @@ export const submitApplication = createServerFn({ method: "POST" })
 
     const buf = await file.arrayBuffer();
     const ext = file.name.split(".").pop()!.toLowerCase();
-    const path = `careers/applications/${crypto.randomUUID()}.${ext}`;
+    const path = `careers/applications/${safeRandomUUID()}.${ext}`;
     const up = await admin.storage.from("investor-documents").upload(path, buf, { contentType: file.type || "application/octet-stream" });
     if (up.error) { console.error("resume upload", up.error); throw new Error("Could not upload resume. Please try again."); }
 

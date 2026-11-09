@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-react";
@@ -14,7 +15,7 @@ type Base = { id: string; title: string; published: boolean; sort_order: number;
 /** Uploads an image to private storage and returns its `storage:` reference. */
 export async function uploadImage(file: File, folder: string) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const path = `careers/${folder}/${crypto.randomUUID()}.${ext}`;
+  const path = `careers/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw error;
   return STORAGE_PREFIX + path;

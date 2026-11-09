@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -39,7 +40,7 @@ const dateInFy = (endYear: number) => (fyOf(today()).endYear === endYear ? today
 
 async function uploadImage(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-  const path = `accolades/${crypto.randomUUID()}.${ext}`;
+  const path = `accolades/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
   return STORAGE_PREFIX + path;

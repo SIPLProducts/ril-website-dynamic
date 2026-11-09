@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -28,7 +29,7 @@ type Company = { id: string; name: string; url: string | null; logo_url: string 
 
 async function uploadLogo(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
-  const path = `footer/group-companies/${crypto.randomUUID()}.${ext}`;
+  const path = `footer/group-companies/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
   return STORAGE_PREFIX + path;

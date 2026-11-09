@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { useEffect, useState } from "react";
 import type { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,7 +22,7 @@ export async function fetchVerticals() {
 
 export async function uploadCapabilityImage(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const path = `capabilities/${crypto.randomUUID()}.${ext}`;
+  const path = `capabilities/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
   return STORAGE_PREFIX + path;

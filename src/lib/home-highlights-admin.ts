@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { useEffect, useState } from "react";
 import type { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,7 +7,7 @@ import { resolveHomeAsset } from "@/lib/home-assets";
 
 export async function uploadHomeFile(folder: string, file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
-  const path = `home/${folder}/${crypto.randomUUID()}.${ext}`;
+  const path = `home/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
   return STORAGE_PREFIX + path;

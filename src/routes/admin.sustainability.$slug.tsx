@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Fragment, useEffect, useState } from "react";
@@ -43,7 +44,7 @@ const MAX_PDF = 50 * 1024 * 1024;
 
 async function upload(file: File, folder: string) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
-  const path = `esg/${folder}/${crypto.randomUUID()}.${ext}`;
+  const path = `esg/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
   return STORAGE_PREFIX + path;

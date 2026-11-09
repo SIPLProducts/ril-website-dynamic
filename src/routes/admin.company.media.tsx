@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -191,7 +192,7 @@ function ItemDialog({ row, newOrder, onClose, onSaved }: { row: Row | null; newO
     try {
       let document_url = docUrl;
       if (file) {
-        const path = `media/${crypto.randomUUID()}.pdf`;
+        const path = `media/${safeRandomUUID()}.pdf`;
         const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: "application/pdf" });
         if (error) throw new Error(error.message);
         document_url = STORAGE_PREFIX + path;

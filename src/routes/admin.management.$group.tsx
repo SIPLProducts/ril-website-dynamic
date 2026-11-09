@@ -1,3 +1,4 @@
+import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -34,7 +35,7 @@ type Row = { id: string; grp: string; slug: string; name: string; designation: s
 
 async function uploadImage(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const path = `management/${crypto.randomUUID()}.${ext}`;
+  const path = `management/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
   return STORAGE_PREFIX + path;
