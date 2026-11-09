@@ -25,7 +25,7 @@ export const Route = createFileRoute("/admin/footer/group-companies")({
   component: Page,
 });
 
-type Company = { id: string; name: string; url: string | null; logo_url: string | null; published: boolean; sort_order: number };
+type Company = { id: string; name: string; url: string | null; logo_url: string | null; published: boolean; show_logo: boolean; show_name: boolean; show_link: boolean; sort_order: number };
 
 async function uploadLogo(file: File) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
@@ -108,7 +108,7 @@ function CompanyList() {
   const qc = useQueryClient();
   const [editing, setEditing] = useState<Company | "new" | null>(null);
   const { data: rows = [] } = useQuery({ queryKey: ["admin-group-companies"], queryFn: async () => {
-    const { data, error } = await supabase.from("group_companies").select("id,name,url,logo_url,published,sort_order").order("sort_order");
+    const { data, error } = await supabase.from("group_companies").select("id,name,url,logo_url,show_logo,show_name,show_link,published,sort_order").order("sort_order");
     if (error) throw error;
     return data as Company[];
   } });
@@ -179,6 +179,9 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
   const [name, setName] = useState(row?.name ?? "");
   const [url, setUrl] = useState(row?.url ?? "");
   const [published, setPublished] = useState(row?.published ?? true);
+  const [showLogo, setShowLogo] = useState(row?.show_logo ?? true);
+  const [showName, setShowName] = useState(row?.show_name ?? false);
+  const [showLink, setShowLink] = useState(row?.show_link ?? true);
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const current = usePreview(row?.logo_url ?? null);
@@ -189,7 +192,7 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
     try {
       let logo_url = row?.logo_url ?? null;
       if (file) logo_url = await uploadLogo(file);
-      const payload = { name: name.trim(), url: url.trim() || null, published, logo_url };
+      const payload = { name: name.trim(), url: url.trim() || null, published, logo_url, show_logo: showLogo, show_name: showName, show_link: showLink };
       const { error } = row
         ? await supabase.from("group_companies").update(payload).eq("id", row.id)
         : await supabase.from("group_companies").insert({ ...payload, sort_order: nextOrder });
@@ -208,6 +211,7 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
           <div><Label>Website link</Label><Input value={url} maxLength={300} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" /></div>
         </div>
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Live on website</label>
+        <div className="space-y-2"><p className="text-xs font-semibold uppercase tracking-widest text-brand-blue">Display on website</p><div className="flex flex-wrap gap-6"><label className="flex items-center gap-2 text-sm"><Switch checked={showLogo} onCheckedChange={setShowLogo} /> Show logo</label><label className="flex items-center gap-2 text-sm"><Switch checked={showName} onCheckedChange={setShowName} /> Show company name</label><label className="flex items-center gap-2 text-sm"><Switch checked={showLink} onCheckedChange={setShowLink} /> Link to website</label></div></div>
       </FormSection>
       <FormSection title={row ? "Logo (upload a new one to replace)" : "Logo"}>
         {current && !file && <img src={current} alt="Current logo" className="h-16 max-w-[200px] rounded border border-border bg-background object-contain p-2" />}

@@ -120,6 +120,13 @@
       "when": 1793964291436,
       "tag": "0016_group_companies_url_optional",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1794215488915,
+      "tag": "0017_group_company_display_flags",
+      "breakpoints": true
     }
   ]
 }

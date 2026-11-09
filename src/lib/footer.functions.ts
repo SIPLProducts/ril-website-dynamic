@@ -10,7 +10,7 @@ export type FooterData = {
     groupEyebrow: string; groupTitle: string; groupSubtitle: string;
   };
   columns: { id: string; title: string; links: { id: string; label: string; href: string; newTab: boolean }[] }[];
-  companies: { id: string; name: string; url: string | null; logo: string | null }[];
+  companies: { id: string; name: string; url: string | null; logo: string | null; showLogo: boolean; showName: boolean; showLink: boolean }[];
 };
 
 function publicClient() {
@@ -34,7 +34,7 @@ export const getFooter = createServerFn({ method: "GET" }).handler(async (): Pro
     sb.from("footer_settings").select("*").eq("id", 1).maybeSingle(),
     sb.from("footer_columns").select("id,title").eq("published", true).order("sort_order"),
     sb.from("footer_links").select("id,column_id,label,href,new_tab").eq("published", true).order("sort_order"),
-    sb.from("group_companies").select("id,name,url,logo_url").eq("published", true).order("sort_order"),
+    sb.from("group_companies").select("id,name,url,logo_url,show_logo,show_name,show_link").eq("published", true).order("sort_order"),
   ]);
   if (s.error || !s.data) return null;
   const rows = g.data ?? [];
@@ -49,7 +49,7 @@ export const getFooter = createServerFn({ method: "GET" }).handler(async (): Pro
       links: (l.data ?? []).filter((x) => x.column_id === col.id).map((x) => ({ id: x.id, label: x.label, href: x.href, newTab: x.new_tab })),
     })),
     companies: rows.map((r) => ({
-      id: r.id, name: r.name, url: r.url,
+      id: r.id, name: r.name, url: r.url, showLogo: r.show_logo, showName: r.show_name, showLink: r.show_link,
       logo: publishedFileUrl(r.logo_url),
     })),
   };

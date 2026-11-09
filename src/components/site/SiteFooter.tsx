@@ -72,7 +72,7 @@ export function SiteFooter() {
   const { data } = useQuery(footerQuery());
   const st = data?.settings;
   const COLUMNS = data ? data.columns : FALLBACK_COLUMNS.map((c) => ({ title: c.title, links: c.links.map((l) => ({ ...l, newTab: false })) }));
-  const GROUP_COMPANIES = data ? data.companies.map((c) => ({ name: c.name, href: c.url, logo: c.logo })) : FALLBACK_COMPANIES;
+  const GROUP_COMPANIES = data ? data.companies.map((c) => ({ name: c.name, href: c.showLink ? c.url : null, logo: c.showLogo ? c.logo : null, showName: c.showName })) : FALLBACK_COMPANIES;
   const description = st?.description ?? "An integrated infrastructure developer delivering water, transportation, irrigation, environment and urban infrastructure across India and overseas.";
   const address = st?.address ?? "Ramky Grandiose, Sy. No. 136/2 & 4, Gachibowli, Hyderabad 500032, India";
   const phone = st?.phone ?? "+91 40 2301 5000";
@@ -152,7 +152,8 @@ export function SiteFooter() {
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {GROUP_COMPANIES.map((company) => {
-              const inner = company.logo ? <img src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className="h-full max-h-36 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]" /> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>;
+              const withName = "showName" in company && company.showName;
+              const inner = company.logo ? <div className="flex h-full w-full flex-col items-center justify-center gap-1"><img src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className={`${withName ? "max-h-28" : "h-full max-h-36"} min-h-0 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]`} />{withName && <span className="text-center text-xs font-semibold text-foreground">{company.name}</span>}</div> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>;
               const cls = "group relative flex h-40 items-center justify-center p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
               if (!company.href) return <div key={company.name} className={cls}>{inner}</div>;
               return (

@@ -1,0 +1,1 @@
+ALTER TABLE public.group_companies ADD COLUMN IF NOT EXISTS show_logo boolean NOT NULL DEFAULT true, ADD COLUMN IF NOT EXISTS show_name boolean NOT NULL DEFAULT false, ADD COLUMN IF NOT EXISTS show_link boolean NOT NULL DEFAULT true;

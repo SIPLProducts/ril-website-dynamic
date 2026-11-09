@@ -849,6 +849,9 @@ export type Database = {
           logo_url: string | null
           name: string
           published: boolean
+          show_link: boolean
+          show_logo: boolean
+          show_name: boolean
           sort_order: number
           updated_at: string
           url: string | null
@@ -859,6 +862,9 @@ export type Database = {
           logo_url?: string | null
           name: string
           published?: boolean
+          show_link?: boolean
+          show_logo?: boolean
+          show_name?: boolean
           sort_order?: number
           updated_at?: string
           url?: string | null
@@ -869,6 +875,9 @@ export type Database = {
           logo_url?: string | null
           name?: string
           published?: boolean
+          show_link?: boolean
+          show_logo?: boolean
+          show_name?: boolean
           sort_order?: number
           updated_at?: string
           url?: string | null
