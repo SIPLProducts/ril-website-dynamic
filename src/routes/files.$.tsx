@@ -29,6 +29,9 @@ export const Route = createFileRoute("/files/$")({
           body = new Uint8Array(await blob.arrayBuffer());
           mime = blob.type || mime;
         }
+        const ext = path.split(".").pop()?.toLowerCase() ?? "";
+        const byExt: Record<string, string> = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", avif: "image/avif", pdf: "application/pdf", mp4: "video/mp4", webm: "video/webm" };
+        if (byExt[ext] && (!mime || mime === "application/octet-stream" || mime === "application/pdf")) mime = byExt[ext];
         const name = (path.split("/").pop() ?? "document").replace(/^\d+-/, "");
         const download = new URL(request.url).searchParams.has("download");
         return new Response(body as unknown as BodyInit, {
@@ -37,7 +40,7 @@ export const Route = createFileRoute("/files/$")({
             "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${name.replace(/[^\x20-\x7e]|["\\]/g, "_")}"; filename*=UTF-8''${encodeURIComponent(name)}`,
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff",
-            "Content-Security-Policy": "sandbox",
+            ...(mime === "image/svg+xml" ? { "Content-Security-Policy": "script-src 'none'" } : {}),
           },
         });
       },
