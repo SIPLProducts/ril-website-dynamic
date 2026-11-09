@@ -152,8 +152,8 @@ export function SiteFooter() {
 
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {GROUP_COMPANIES.map((company) => {
-              const inner = company.logo ? <img src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className="h-full max-h-24 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]" /> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>;
-              const cls = "group relative flex h-32 items-center justify-center p-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
+              const inner = company.logo ? <img src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className="h-full max-h-36 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]" /> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>;
+              const cls = "group relative flex h-40 items-center justify-center p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
               if (!company.href) return <div key={company.name} className={cls}>{inner}</div>;
               return (
               <a key={company.name} href={company.href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${company.name} website (opens in a new tab)`} className={cls}>
