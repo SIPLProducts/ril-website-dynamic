@@ -13,18 +13,21 @@ export const Route = createFileRoute("/files/$")({
         if (!await isPublishedFile(publicFileClient(), path)) {
           return new Response("This file is not published or its record was not found on this server.", { status: 404 });
         }
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        // The privileged client is unavailable when its key is missing (e.g. a sandbox); fall back to the anonymous client.
+        let sb: ReturnType<typeof publicFileClient>;
+        try { sb = (await import("@/integrations/supabase/client.server")).supabaseAdmin as unknown as ReturnType<typeof publicFileClient>; void sb.storage; }
+        catch (e) { console.error(e); sb = publicFileClient(); }
 
         let body: Uint8Array | null = null;
         let mime = "application/pdf";
-        const { data: row } = await supabaseAdmin.from("ir_files").select("mime,data").eq("path", path).maybeSingle();
+        const { data: row } = await sb.from("ir_files").select("mime,data").eq("path", path).maybeSingle();
         if (row?.data) {
           const hex = String(row.data).replace(/^\\x/, "");
           body = new Uint8Array(hex.length / 2);
           for (let i = 0; i < body.length; i++) body[i] = parseInt(hex.substr(i * 2, 2), 16);
           mime = row.mime;
         } else {
-          const { data: blob } = await supabaseAdmin.storage.from(IR_BUCKET).download(path);
+          const { data: blob } = await sb.storage.from(IR_BUCKET).download(path);
           if (!blob) return new Response("This file has not been uploaded to this server. Re-upload it from the admin portal.", { status: 404 });
           body = new Uint8Array(await blob.arrayBuffer());
           mime = blob.type || mime;
