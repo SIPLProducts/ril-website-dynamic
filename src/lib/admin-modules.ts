@@ -9,7 +9,9 @@ export type AdminPage = { key: string; label: string; to?: string | undefined; c
 export type AdminModule = { key: string; label: string; icon: LucideIcon; to?: string | undefined; children?: AdminPage[] | undefined };
 
 const ADMIN_PATHS: Record<string, string> = {
-  "about/clientele": "/admin/about/clientele",
+  ...Object.fromEntries(ABOUT_SECTIONS.map((s) => [`about/${s.slug}`, `/admin/about/${s.slug}`])),
+  "about/history-milestones": "/admin/about/history-milestones",
+  "about/subsidiaries": "/admin/about/subsidiaries",
   "management/board": "/admin/management/board",
   "management/executive": "/admin/management/executive",
   "management/senior": "/admin/management/senior",
@@ -32,13 +34,13 @@ export const ADMIN_MODULES: AdminModule[] = [
   { key: "sustainability", label: "Sustainability", icon: Leaf, children: [{ key: "section", label: "Sustainability Section", to: "/admin/sustainability/section" }, ...ESG_SECTIONS.map((s) => page("esg", s.slug, s.title))] },
   { key: "company", label: "Company", icon: Newspaper, children: [{ key: "csr", label: "CSR", to: "/admin/company/csr" }, { key: "media", label: "Media", to: "/admin/company/media" }] },
   { key: "footer", label: "Footer", icon: PanelBottom, children: [{ key: "links", label: "Link Columns", to: "/admin/footer/links" }, { key: "group-companies", label: "Group Companies", to: "/admin/footer/group-companies" }, { key: "contact", label: "Contact & About", to: "/admin/footer/contact" }] },
-  { key: "careers", label: "Careers", icon: Briefcase, children: [{ key: "life", label: "Life at Ramky", to: "/admin/careers/life" }, { key: "positions", label: "Current Positions", to: "/admin/careers/positions" }, { key: "applications", label: "Applications", to: "/admin/careers/applications" }] },
+  { key: "careers", label: "Careers", icon: Briefcase, children: [{ key: "landing", label: "Careers Page", to: "/admin/careers/landing" }, { key: "life", label: "Life at Ramky", to: "/admin/careers/life" }, { key: "positions", label: "Current Positions", to: "/admin/careers/positions" }, { key: "applications", label: "Applications", to: "/admin/careers/applications" }] },
 ];
 
 export const isReady = (n: AdminPage | AdminModule): boolean => !!n.to || (n.children ?? []).some(isReady);
 
 /** Modules still in progress: shown as "Soon" on the live site, editable in preview. */
-export const LIVE_LOCKED = ["company", "careers"];
+export const LIVE_LOCKED: string[] = [];
 const LIVE_HOSTS = ["ril.siplproducts.com", "www.ril.siplproducts.com", "ril-website-dynamic.lovable.app"];
 export const isLiveHost = (host = typeof window !== "undefined" ? window.location.hostname : ""): boolean => LIVE_HOSTS.includes(host);
 export const isModuleReady = (m: AdminModule, live = isLiveHost()): boolean => !(live && LIVE_LOCKED.includes(m.key)) && isReady(m);

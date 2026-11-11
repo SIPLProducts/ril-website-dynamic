@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { pageListQuery } from "@/lib/page-lists.functions";
 import { HistoryMilestones } from "@/components/site/HistoryMilestones";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -18,14 +20,17 @@ export const Route = createFileRoute("/history-milestones")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageListQuery("history_milestones")).catch(() => null),
   component: HistoryMilestonesPage,
 });
 
 function HistoryMilestonesPage() {
+  const { data } = useQuery(pageListQuery("history_milestones"));
+  const items = (data ?? []).map((r) => ({ year: r["year"] ?? "", text: r["text"] ?? "" }));
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      <HistoryMilestones />
+      <HistoryMilestones items={items} />
       <SiteFooter />
     </div>
   );

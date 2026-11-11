@@ -9,6 +9,7 @@ import { getStaff } from "@/lib/admin-auth";
 import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import { clientImageError, imageFileError } from "@/lib/admin-validation";
 import { AdminShell } from "@/components/admin/AdminShell";
+import { AboutContentEditor } from "@/components/admin/AboutContentEditor";
 import { AdminDialog, FieldError, FileDropzone, FormSection } from "@/components/admin/AdminDialog";
 import { confirmDelete } from "@/components/admin/ConfirmDelete";
 import { Button } from "@/components/ui/button";
@@ -56,88 +57,10 @@ function Page() {
   return (
     <AdminShell staff={staff} active={{ kind: "about", section: SLUG }} crumbs={["About Ramky", "Clientele"]}>
       <div className="space-y-6">
-        <ContentEditor />
+        <AboutContentEditor slug={SLUG} label="Clientele" />
         <ClientList />
       </div>
     </AdminShell>
-  );
-}
-
-function ImageField({ label, url, file, onFile, onRemove }: { label: string; url: string | null; file: File | null; onFile: (f: File | null) => void; onRemove: () => void }) {
-  const preview = usePreview(url);
-  const local = file ? URL.createObjectURL(file) : null;
-  const shown = local ?? preview;
-  return (
-    <div>
-      <Label>{label} <span className="text-muted-foreground">(optional)</span></Label>
-      <div className="mt-2 grid gap-3 sm:grid-cols-[10rem_1fr]">
-        <div className="grid h-28 place-items-center overflow-hidden rounded-lg border border-border bg-surface">
-          {shown ? <img src={shown} alt="" className="h-full w-full object-cover" /> : <ImagePlus className="size-7 text-muted-foreground" />}
-        </div>
-        <div className="space-y-2">
-          <FileDropzone file={file} onFile={onFile} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
-          {url && !file && <Button type="button" size="sm" variant="outline" onClick={onRemove}><Trash2 className="size-4" /> Remove image</Button>}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ContentEditor() {
-  const qc = useQueryClient();
-  const { data } = useQuery({ queryKey: ["admin-about", SLUG], queryFn: async () => {
-    const { data, error } = await supabase.from("about_content").select("*").eq("slug", SLUG).maybeSingle();
-    if (error) throw error;
-    return data;
-  } });
-  const [f, setF] = useState({ eyebrow: "", title: "", subtitle: "", statement: "", banner_image_url: null as string | null, image_url: null as string | null });
-  const [bannerFile, setBannerFile] = useState<File | null>(null);
-  const [imgFile, setImgFile] = useState<File | null>(null);
-  const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, subtitle: data.subtitle, statement: data.statement, banner_image_url: data.banner_image_url, image_url: data.image_url }); }, [data]);
-
-  async function save() {
-    const err = imageFileError(bannerFile, false) ?? imageFileError(imgFile, false);
-    if (err) { toast.error(err); return; }
-    if (!f.title.trim()) { toast.error("Title is required"); return; }
-    setSaving(true);
-    try {
-      const next = { ...f };
-      if (bannerFile) next.banner_image_url = await uploadImage(bannerFile, "banner");
-      if (imgFile) next.image_url = await uploadImage(imgFile, "section");
-      const { error } = await supabase.from("about_content").upsert({ slug: SLUG, ...next });
-      if (error) throw new Error(error.message);
-      if (data?.banner_image_url && data.banner_image_url !== next.banner_image_url) await removeStored(data.banner_image_url);
-      if (data?.image_url && data.image_url !== next.image_url) await removeStored(data.image_url);
-      setBannerFile(null); setImgFile(null);
-      toast.success("Saved — now live on the website");
-      qc.invalidateQueries({ queryKey: ["admin-about", SLUG] });
-      qc.invalidateQueries({ queryKey: ["about-data", SLUG] });
-    } catch (e) { toast.error(e instanceof Error ? e.message : "Save failed"); } finally { setSaving(false); }
-  }
-
-  return (
-    <section className="rounded-xl border border-border bg-card p-6 shadow-sm">
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <div>
-          <h2 className="font-display text-xl font-bold">Clientele page content</h2>
-          <p className="text-sm text-muted-foreground">Top banner and the About Ramky block.</p>
-        </div>
-        <Button onClick={save} disabled={saving} className="neu-btn-gradient border-0"><Save className="size-4" /> {saving ? "Saving…" : "Save"}</Button>
-      </div>
-      <FormSection title="Top banner">
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div><Label>Small heading</Label><Input value={f.eyebrow} maxLength={80} onChange={(e) => setF({ ...f, eyebrow: e.target.value })} /></div>
-          <div><Label>Title</Label><Input value={f.title} maxLength={80} onChange={(e) => setF({ ...f, title: e.target.value })} /></div>
-          <div><Label>Subtitle</Label><Input value={f.subtitle} maxLength={200} onChange={(e) => setF({ ...f, subtitle: e.target.value })} /></div>
-        </div>
-        <ImageField label="Background image" url={f.banner_image_url} file={bannerFile} onFile={setBannerFile} onRemove={() => setF({ ...f, banner_image_url: null })} />
-      </FormSection>
-      <FormSection title="About Ramky">
-        <div><Label>Description</Label><Textarea rows={4} maxLength={2000} value={f.statement} onChange={(e) => setF({ ...f, statement: e.target.value })} /></div>
-        <ImageField label="Image" url={f.image_url} file={imgFile} onFile={setImgFile} onRemove={() => setF({ ...f, image_url: null })} />
-      </FormSection>
-    </section>
   );
 }
 

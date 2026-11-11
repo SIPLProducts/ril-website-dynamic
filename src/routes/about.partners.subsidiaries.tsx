@@ -3,7 +3,9 @@ import { ArrowLeft } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { OrgList } from "@/components/site/OrgList";
-import { SUBSIDIARIES } from "@/lib/organisations";
+import { SUBSIDIARIES, type Organisation } from "@/lib/organisations";
+import { useQuery } from "@tanstack/react-query";
+import { pageListQuery } from "@/lib/page-lists.functions";
 
 export const Route = createFileRoute("/about/partners/subsidiaries")({
   head: () => ({
@@ -16,10 +18,13 @@ export const Route = createFileRoute("/about/partners/subsidiaries")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(pageListQuery("subsidiaries")).catch(() => null),
   component: SubsidiariesPage,
 });
 
 function SubsidiariesPage() {
+  const { data } = useQuery(pageListQuery("subsidiaries"));
+  const items: Organisation[] = data?.length ? data.map((r, i) => ({ id: r.id, name: r["name"] ?? "", displayOrder: i + 1, status: "published" })) : SUBSIDIARIES;
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -31,7 +36,7 @@ function SubsidiariesPage() {
           </div>
         </section>
         <section className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10 lg:py-20">
-          <OrgList items={SUBSIDIARIES} />
+          <OrgList items={items} />
           <a href="/about/partners" className="mt-10 inline-flex items-center gap-2 font-display text-sm font-semibold uppercase text-brand-blue hover:text-brand-orange">
             <ArrowLeft className="size-4" /> Back to Partners
           </a>

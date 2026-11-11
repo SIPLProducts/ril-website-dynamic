@@ -400,6 +400,45 @@ export type Database = {
         }
         Relationships: []
       }
+      careers_landing_cards: {
+        Row: {
+          created_at: string
+          eyebrow: string
+          href: string
+          id: string
+          image_url: string | null
+          published: boolean
+          sort_order: number
+          text: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          eyebrow?: string
+          href?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          text?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          eyebrow?: string
+          href?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          text?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       careers_life_content: {
         Row: {
           id: number
@@ -884,6 +923,36 @@ export type Database = {
         }
         Relationships: []
       }
+      history_milestones: {
+        Row: {
+          created_at: string
+          id: string
+          published: boolean
+          sort_order: number
+          text: string
+          updated_at: string
+          year: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          text?: string
+          updated_at?: string
+          year: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          published?: boolean
+          sort_order?: number
+          text?: string
+          updated_at?: string
+          year?: string
+        }
+        Relationships: []
+      }
       home_hero_slides: {
         Row: {
           alt: string
@@ -1253,6 +1322,57 @@ export type Database = {
         }
         Relationships: []
       }
+      management_system_items: {
+        Row: {
+          created_at: string
+          cta: string
+          doc_page: string
+          doc_url: string | null
+          focus_areas: string
+          icon: string
+          id: string
+          kind: string
+          published: boolean
+          sort_order: number
+          standard: string
+          summary: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta?: string
+          doc_page?: string
+          doc_url?: string | null
+          focus_areas?: string
+          icon?: string
+          id?: string
+          kind?: string
+          published?: boolean
+          sort_order?: number
+          standard?: string
+          summary?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta?: string
+          doc_page?: string
+          doc_url?: string | null
+          focus_areas?: string
+          icon?: string
+          id?: string
+          kind?: string
+          published?: boolean
+          sort_order?: number
+          standard?: string
+          summary?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       media_items: {
         Row: {
           created_at: string
@@ -1336,6 +1456,33 @@ export type Database = {
           id?: number
           intro?: string
           title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subsidiaries: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          published?: boolean
+          sort_order?: number
           updated_at?: string
         }
         Relationships: []

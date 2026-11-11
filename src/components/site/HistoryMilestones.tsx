@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-const MILESTONES = [
+export const DEFAULT_MILESTONES = [
   { year: "1994", text: "Ramky Founded" },
   { year: "1995", text: "Enters Water and Wastewater Management" },
   { year: "1998", text: "Expanded to Industrial Parks and Urban Infrastructure" },
@@ -20,7 +20,8 @@ const MILESTONES = [
   { year: "2026", text: "Transformation Strategy with 3 New Orders worth INR 6500 Crores" },
 ];
 
-export function HistoryMilestones() {
+export function HistoryMilestones({ items }: { items?: { year: string; text: string }[] }) {
+  const MILESTONES = items?.length ? items : DEFAULT_MILESTONES;
   const [active, setActive] = useState(0);
   const total = MILESTONES.length;
   const railRef = useRef<HTMLDivElement>(null);
@@ -77,7 +78,7 @@ export function HistoryMilestones() {
               const isActive = i === active;
               return (
                 <button
-                  key={m.year}
+                  key={`${m.year}-${i}`}
                   data-index={i}
                   role="tab"
                   id={`ms-tab-${i}`}

@@ -6,12 +6,16 @@ import { ABOUT_SECTIONS, getAboutSection } from "@/lib/about-sections";
 import { ManagementSystems } from "@/components/site/ManagementSystems";
 import { aboutDataQuery, type ClientItem } from "@/lib/about-data.functions";
 import { useQuery } from "@tanstack/react-query";
+import { pageListQuery } from "@/lib/page-lists.functions";
 
 export const Route = createFileRoute("/about/$slug")({
   loader: async ({ params, context }) => {
     const section = getAboutSection(params.slug);
     if (!section) throw notFound();
-    if (section.slug === "clientele") await context.queryClient.ensureQueryData(aboutDataQuery(section.slug)).catch(() => null);
+    await Promise.all([
+      context.queryClient.ensureQueryData(aboutDataQuery(section.slug)).catch(() => null),
+      section.slug === "management-systems" ? context.queryClient.ensureQueryData(pageListQuery("management_system_items")).catch(() => null) : null,
+    ]);
     return section;
   },
   errorComponent: ({ error }) => <div role="alert" className="p-10">{error instanceof Error ? error.message : String(error)}</div>,
@@ -47,9 +51,8 @@ const ICONS = {
 function AboutSectionPage() {
   const section = Route.useLoaderData();
   const Icon = ICONS[section.slug];
-  const isClientele = section.slug === "clientele";
-  const { data: live } = useQuery({ ...aboutDataQuery(section.slug), enabled: isClientele });
-  const c = isClientele ? live?.content : null;
+  const { data: live } = useQuery(aboutDataQuery(section.slug));
+  const c = live?.content;
   const eyebrow = c?.eyebrow || section.eyebrow;
   const title = c?.title || section.title;
   const subtitle = c?.subtitle || section.description;

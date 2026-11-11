@@ -1,7 +1,22 @@
 import { useState } from "react";
 import { Award, ExternalLink, FileText, HardHat, Leaf, ShieldCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { CERTIFICATIONS, POLICIES, type ManagedDocument } from "@/lib/management-systems";
+import { useQuery } from "@tanstack/react-query";
+import { CERTIFICATIONS, POLICIES, type Certification, type ManagedDocument, type Policy } from "@/lib/management-systems";
+import { pageListQuery, type PageListRow } from "@/lib/page-lists.functions";
+
+type Icon = Certification["icon"];
+const asIcon = (v: string | null): Icon => (v === "safety" || v === "environment" ? v : "quality");
+function fromRows(rows: PageListRow[] | undefined) {
+  if (!rows?.length) return { certs: CERTIFICATIONS, policies: POLICIES };
+  const doc = (r: PageListRow) => ({ title: r["title"] ?? "", url: r["doc_url"] ?? "", ...(Number(r["doc_page"]) > 0 ? { page: Number(r["doc_page"]) } : {}) });
+  const certs: Certification[] = rows.filter((r) => r["kind"] === "certificate").map((r) => ({
+    id: r.id, standard: r["standard"] ?? "", title: r["title"] ?? "", icon: asIcon(r["icon"] ?? null), summary: r["summary"] ?? "",
+    focusAreas: (r["focus_areas"] ?? "").split(",").map((t) => t.trim()).filter(Boolean), cta: r["cta"] || "View Certificate", document: doc(r),
+  }));
+  const policies: Policy[] = rows.filter((r) => r["kind"] === "policy").map((r) => ({ id: r.id, title: r["title"] ?? "", summary: r["summary"] ?? "", cta: r["cta"] || "View Policy", document: doc(r) }));
+  return { certs, policies };
+}
 
 const ICONS = { quality: Award, safety: HardHat, environment: Leaf };
 
@@ -11,6 +26,8 @@ function docSrc(doc: ManagedDocument) {
 
 export function ManagementSystems() {
   const [open, setOpen] = useState<ManagedDocument | null>(null);
+  const { data } = useQuery(pageListQuery("management_system_items"));
+  const { certs, policies } = fromRows(data);
 
   return (
     <>
@@ -25,7 +42,7 @@ export function ManagementSystems() {
         </p>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {CERTIFICATIONS.map((c) => {
+          {certs.map((c) => {
             const Icon = ICONS[c.icon];
             return (
               <article
@@ -50,10 +67,10 @@ export function ManagementSystems() {
                 </ul>
                 <button
                   type="button"
-                  onClick={() => setOpen(c.document)}
+                  onClick={() => c.document.url && setOpen(c.document)}
                   className="mt-auto inline-flex min-h-11 items-center justify-center gap-2 self-start bg-brand-orange px-5 font-display text-sm font-semibold uppercase text-primary-foreground transition-colors hover:bg-brand-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
                 >
-                  <FileText className="size-4" aria-hidden="true" /> View Certificate
+                  <FileText className="size-4" aria-hidden="true" /> {c.cta ?? "View Certificate"}
                 </button>
               </article>
             );
@@ -70,7 +87,7 @@ export function ManagementSystems() {
             commitments that guide our people, processes and project delivery.
           </p>
           <div className="mt-12 grid gap-6 md:grid-cols-2">
-            {POLICIES.map((p) => (
+            {policies.map((p) => (
               <article
                 key={p.id}
                 className="flex h-full flex-col border-l-4 border-brand-blue bg-card p-7 transition-shadow hover:shadow-lg lg:p-9"
@@ -79,7 +96,7 @@ export function ManagementSystems() {
                 <p className="mt-4 leading-relaxed text-muted-foreground">{p.summary}</p>
                 <button
                   type="button"
-                  onClick={() => setOpen(p.document)}
+                  onClick={() => p.document.url && setOpen(p.document)}
                   className="mt-7 inline-flex min-h-11 items-center justify-center gap-2 self-start border border-brand-blue px-5 font-display text-sm font-semibold uppercase text-brand-blue transition-colors hover:bg-brand-blue hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2"
                 >
                   <FileText className="size-4" aria-hidden="true" /> {p.cta}

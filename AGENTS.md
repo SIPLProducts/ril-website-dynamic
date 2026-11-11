@@ -26,3 +26,4 @@
 ## Self-hosting
 - `vite.config.ts` switches nitro to the `node-server` preset with output in `dist/` only outside the Lovable sandbox, so `npm run build` makes a self-hostable Node server (`node dist/server/index.mjs`) while Lovable publishing stays unchanged.
 - Self-hosted builds set the browser backend URL to window.location.origin (vite define in vite.config.ts) so private IP, public IP and domain all work; Nginx proxies /auth|rest|storage|realtime/v1 on every port.
+- Simple admin-edited page lists (history_milestones, subsidiaries, management_system_items, careers_landing_cards) use the generic HomeListEditor and getPageList reader, with code defaults as fallback, so new list pages need no bespoke admin code.

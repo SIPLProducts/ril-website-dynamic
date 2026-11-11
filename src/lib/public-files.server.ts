@@ -24,6 +24,8 @@ export async function isPublishedFile(sb: SupabaseClient<Database>, path: string
     sb.from("career_flyers").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("career_flyers").select("id").eq("url", ref).eq("published", true).limit(1),
     sb.from("esg_items").select("id").eq("url", ref).eq("published", true).limit(1),
+    sb.from("management_system_items").select("id").eq("doc_url", ref).eq("published", true).limit(1),
+    sb.from("careers_landing_cards").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("about_content").select("slug").eq("banner_image_url", ref).limit(1),
     sb.from("about_content").select("slug").eq("image_url", ref).limit(1),
     sb.from("esg_pages").select("slug").eq("banner_image_url", ref).limit(1),

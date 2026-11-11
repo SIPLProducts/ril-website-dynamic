@@ -13,6 +13,7 @@ export type Certification = {
   icon: "quality" | "safety" | "environment";
   summary: string;
   focusAreas: string[];
+  cta?: string;
   document: ManagedDocument;
 };
 
