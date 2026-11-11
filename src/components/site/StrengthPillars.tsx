@@ -21,11 +21,11 @@ export function StrengthPillars({ extra }: { extra: Record<string, string> }) {
         <div>
           <h2 className="text-2xl font-bold sm:text-3xl">{x("pillarsTitle")}</h2>
           <ul className="mt-8 divide-y divide-border border-y border-border">
-            {pillars.map((p) => (
+            {pillars.map((p, i) => (
               <li key={p.id} className="grid gap-5 py-7 sm:grid-cols-[11rem_1fr] sm:gap-8">
                 {p["image_url"] && <img src={p["image_url"]} alt={p["title"] ?? ""} loading="lazy" className="aspect-square w-full max-w-[11rem] rounded-lg object-cover" />}
                 <div className={p["image_url"] ? "" : "sm:col-span-2"}>
-                  <h3 className="font-display text-lg font-semibold">{p["title"]}</h3>
+                  <h3 className="font-display text-lg font-semibold"><span className="mr-2 text-primary">{i + 1}.</span>{(p["title"] ?? "").replace(/^\s*\d+\s*[.)\-–:]?\s*/, "")}</h3>
                   <div className="mt-3 space-y-2 leading-relaxed text-muted-foreground">
                     {(p["body"] ?? "").split(/\\n|\r?\n/).map((l) => l.trim()).filter(Boolean).map((l, j) => <Line key={j} text={l} />)}
                   </div>
