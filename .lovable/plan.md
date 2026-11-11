@@ -6,7 +6,7 @@
 3. **Management Systems** (/about/management-systems) — page heading/intro, ISO certificates (name, standard, description, certificate file), policy documents (title, PDF upload).
 4. **About sub-pages** (Partners, Strength & Strategies, Geographic Presence, and other About pages) — heading, subtitle, banner image, statement, side image. Uses the existing About content store, so all About pages are edited the same way.
 5. **Careers landing** (/careers) — heading, intro and the two cards (title, text, image).
-6. **Turn on CSR, Media and Careers** on the live site (remove "Soon") — only if you confirm.
+6. **Turn on CSR, Media and Careers** on the live site (remove "Soon") (confirmed).
 
 Every page keeps its current look; only the text, images and files become editable. Images and PDFs use the same upload method as other modules, so they work on private IP, public IP and domain.
 
