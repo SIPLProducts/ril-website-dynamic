@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
 
-export type AboutContent = { eyebrow: string; title: string; subtitle: string; bannerImage: string | null; statement: string; image: string | null };
+export type AboutContent = { eyebrow: string; title: string; subtitle: string; bannerImage: string | null; statement: string; image: string | null; extra: Record<string, string> };
 export type ClientItem = { id: string; image: string | null; description: string };
 
 /** Public read of editable About page content (and clientele list for the clientele page). */
@@ -37,7 +37,7 @@ export const getAboutData = createServerFn({ method: "GET" })
     const resolve = publishedFileUrl;
 
     const content: AboutContent | null = cRes.data
-      ? { eyebrow: cRes.data.eyebrow, title: cRes.data.title, subtitle: cRes.data.subtitle, bannerImage: resolve(cRes.data.banner_image_url), statement: cRes.data.statement, image: resolve(cRes.data.image_url) }
+      ? { eyebrow: cRes.data.eyebrow, title: cRes.data.title, subtitle: cRes.data.subtitle, bannerImage: resolve(cRes.data.banner_image_url), statement: cRes.data.statement, image: resolve(cRes.data.image_url), extra: (cRes.data.extra && typeof cRes.data.extra === "object" && !Array.isArray(cRes.data.extra) ? cRes.data.extra : {}) as Record<string, string> }
       : null;
     const clients: ClientItem[] = rows.map((r) => ({ id: r.id, image: resolve(r.image_url), description: r.description }));
     return { content, clients };

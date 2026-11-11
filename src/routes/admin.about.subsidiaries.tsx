@@ -20,7 +20,7 @@ function Page() {
   return (
     <AdminShell staff={staff} active={{ kind: "about", section: "subsidiaries" }} crumbs={["About Ramky", "Partners", "Subsidiaries"]}>
       <HomeListEditor table="subsidiaries" title="Subsidiaries" itemName="Subsidiary" icon={Network}
-        help="Company names listed on the Subsidiaries page"
+        help="Company names and logos listed on the Subsidiaries page" withImage imageOptional
         fields={[{ key: "name", label: "Company name", required: true, max: 160 }]} />
     </AdminShell>
   );

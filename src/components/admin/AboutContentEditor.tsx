@@ -59,11 +59,11 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
     if (error) throw error;
     return data;
   } });
-  const [f, setF] = useState({ eyebrow: "", title: "", subtitle: "", statement: "", banner_image_url: null as string | null, image_url: null as string | null });
+  const [f, setF] = useState({ eyebrow: "", title: "", subtitle: "", statement: "", banner_image_url: null as string | null, image_url: null as string | null, extra: {} as Record<string, string> });
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [imgFile, setImgFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, subtitle: data.subtitle, statement: data.statement, banner_image_url: data.banner_image_url, image_url: data.image_url }); }, [data]);
+  useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, subtitle: data.subtitle, statement: data.statement, banner_image_url: data.banner_image_url, image_url: data.image_url, extra: (data.extra && typeof data.extra === "object" && !Array.isArray(data.extra) ? data.extra : {}) as Record<string, string> }); }, [data]);
 
   async function save() {
     const err = imageFileError(bannerFile, false) ?? imageFileError(imgFile, false);
@@ -106,7 +106,28 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
         <div><Label>Description</Label><Textarea rows={4} maxLength={2000} value={f.statement} onChange={(e) => setF({ ...f, statement: e.target.value })} /></div>
         <ImageField label="Image" url={f.image_url} file={imgFile} onFile={setImgFile} onRemove={() => setF({ ...f, image_url: null })} />
       </FormSection>
+      {slug === "management-systems" && (<>
+        <FormSection title="Certified Systems section">
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["certEyebrow", "Small heading"], ["certTitle", "Main heading"], ["certIntro", "Intro paragraph", true]]} />
+        </FormSection>
+        <FormSection title="Our Commitment section">
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["commitEyebrow", "Small heading"], ["commitTitle", "Main heading"], ["commitIntro", "Intro paragraph", true], ["tagline", "Bottom line"]]} />
+        </FormSection>
+      </>)}
     </section>
   );
 }
 
+
+function ExtraFields({ f, set, items }: { f: Record<string, string>; set: (v: Record<string, string>) => void; items: [string, string, boolean?][] }) {
+  return (
+    <div className="grid gap-4">
+      {items.map(([k, label, long]) => (
+        <div key={k}><Label>{label}</Label>
+          {long ? <Textarea rows={3} maxLength={1500} value={f[k] ?? ""} onChange={(e) => set({ ...f, [k]: e.target.value })} />
+            : <Input value={f[k] ?? ""} maxLength={160} onChange={(e) => set({ ...f, [k]: e.target.value })} />}
+        </div>
+      ))}
+    </div>
+  );
+}

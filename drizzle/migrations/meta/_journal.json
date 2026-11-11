@@ -134,6 +134,13 @@
       "when": 1794377281194,
       "tag": "0018_dynamic_pages",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1794379733730,
+      "tag": "0019_subsidiary_images_mgmt_headings",
+      "breakpoints": true
     }
   ]
 }

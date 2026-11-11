@@ -3,6 +3,7 @@ import { Award, ExternalLink, FileText, HardHat, Leaf, ShieldCheck } from "lucid
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
 import { CERTIFICATIONS, POLICIES, type Certification, type ManagedDocument, type Policy } from "@/lib/management-systems";
+import { aboutDataQuery } from "@/lib/about-data.functions";
 import { pageListQuery, type PageListRow } from "@/lib/page-lists.functions";
 
 type Icon = Certification["icon"];
@@ -28,17 +29,17 @@ export function ManagementSystems() {
   const [open, setOpen] = useState<ManagedDocument | null>(null);
   const { data } = useQuery(pageListQuery("management_system_items"));
   const { certs, policies } = fromRows(data);
+  const { data: about } = useQuery(aboutDataQuery("management-systems"));
+  const x = about?.content?.extra ?? {};
+  const t = (k: string, d: string) => (x[k]?.trim() ? x[k] : d);
 
   return (
     <>
       <section className="mx-auto max-w-[1400px] px-5 pb-16 lg:px-10 lg:pb-24">
-        <p className="eyebrow">Certified Systems</p>
-        <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Management Systems</h2>
+        <p className="eyebrow">{t("certEyebrow", "Certified Systems")}</p>
+        <h2 className="mt-4 text-3xl font-bold sm:text-4xl">{t("certTitle", "Management Systems")}</h2>
         <p className="mt-5 max-w-4xl text-lg leading-relaxed text-muted-foreground">
-          Our management systems reflect our commitment to quality, occupational health and safety, and
-          environmental responsibility across the lifecycle of our projects. These internationally recognised
-          standards guide the way we design, engineer, procure, construct, operate and maintain critical
-          infrastructure.
+          {t("certIntro", "Our management systems reflect our commitment to quality, occupational health and safety, and environmental responsibility across the lifecycle of our projects. These internationally recognised standards guide the way we design, engineer, procure, construct, operate and maintain critical infrastructure.")}
         </p>
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -80,11 +81,10 @@ export function ManagementSystems() {
 
       <section className="bg-surface">
         <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-24">
-          <p className="eyebrow">Our Commitment</p>
-          <h2 className="mt-4 text-3xl font-bold sm:text-4xl">Our Management Commitments</h2>
+          <p className="eyebrow">{t("commitEyebrow", "Our Commitment")}</p>
+          <h2 className="mt-4 text-3xl font-bold sm:text-4xl">{t("commitTitle", "Our Management Commitments")}</h2>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-            Our management systems are supported by clearly defined Quality and Health, Safety & Environment
-            commitments that guide our people, processes and project delivery.
+            {t("commitIntro", "Our management systems are supported by clearly defined Quality and Health, Safety & Environment commitments that guide our people, processes and project delivery.")}
           </p>
           <div className="mt-12 grid gap-6 md:grid-cols-2">
             {policies.map((p) => (
@@ -105,7 +105,7 @@ export function ManagementSystems() {
             ))}
           </div>
           <p className="mt-14 text-center font-display text-lg font-semibold text-brand-blue sm:text-xl">
-            Integrated management systems. Responsible execution. Consistent performance.
+            {t("tagline", "Integrated management systems. Responsible execution. Consistent performance.")}
           </p>
         </div>
       </section>

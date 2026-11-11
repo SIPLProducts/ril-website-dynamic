@@ -13,6 +13,7 @@ export async function isPublishedFile(sb: SupabaseClient<Database>, path: string
   const matches = await Promise.all([
     sb.from("ir_documents").select("id").eq("url", ref).eq("published", true).limit(1),
     sb.from("group_companies").select("id").eq("logo_url", ref).eq("published", true).limit(1),
+    sb.from("subsidiaries").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("clientele").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("accolades").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("management_people").select("id").eq("image_url", ref).eq("published", true).limit(1),

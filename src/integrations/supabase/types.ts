@@ -17,6 +17,7 @@ export type Database = {
       about_content: {
         Row: {
           banner_image_url: string | null
+          extra: Json
           eyebrow: string
           image_url: string | null
           slug: string
@@ -27,6 +28,7 @@ export type Database = {
         }
         Insert: {
           banner_image_url?: string | null
+          extra?: Json
           eyebrow?: string
           image_url?: string | null
           slug: string
@@ -37,6 +39,7 @@ export type Database = {
         }
         Update: {
           banner_image_url?: string | null
+          extra?: Json
           eyebrow?: string
           image_url?: string | null
           slug?: string
@@ -1464,6 +1467,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          image_url: string | null
           name: string
           published: boolean
           sort_order: number
@@ -1472,6 +1476,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          image_url?: string | null
           name: string
           published?: boolean
           sort_order?: number
@@ -1480,6 +1485,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          image_url?: string | null
           name?: string
           published?: boolean
           sort_order?: number

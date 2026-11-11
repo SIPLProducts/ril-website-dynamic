@@ -25,6 +25,7 @@ export const Route = createFileRoute("/about/partners/subsidiaries")({
 function SubsidiariesPage() {
   const { data } = useQuery(pageListQuery("subsidiaries"));
   const items: Organisation[] = data?.length ? data.map((r, i) => ({ id: r.id, name: r["name"] ?? "", displayOrder: i + 1, status: "published" })) : SUBSIDIARIES;
+  const withLogos = data?.some((r) => r["image_url"]) ? data : null;
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -36,7 +37,18 @@ function SubsidiariesPage() {
           </div>
         </section>
         <section className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10 lg:py-20">
-          <OrgList items={items} />
+          {withLogos ? (
+            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {withLogos.map((r) => (
+                <li key={r.id} className="flex flex-col items-center border border-border bg-card p-5 text-center transition-shadow hover:shadow-lg">
+                  <div className="grid h-32 w-full place-items-center bg-background">
+                    {r["image_url"] ? <img src={r["image_url"]} alt={`${r["name"] ?? ""} logo`} loading="lazy" className="max-h-28 max-w-full object-contain" /> : <span className="font-display text-lg font-bold text-brand-blue">{r["name"]}</span>}
+                  </div>
+                  <p className="mt-4 font-display text-sm font-semibold">{r["name"]}</p>
+                </li>
+              ))}
+            </ul>
+          ) : <OrgList items={items} />}
           <a href="/about/partners" className="mt-10 inline-flex items-center gap-2 font-display text-sm font-semibold uppercase text-brand-blue hover:text-brand-orange">
             <ArrowLeft className="size-4" /> Back to Partners
           </a>
