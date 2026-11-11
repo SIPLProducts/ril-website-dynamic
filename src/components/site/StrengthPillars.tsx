@@ -1,14 +1,8 @@
+import { STRENGTH_DEFAULTS } from "@/lib/strength-defaults";
 import { useQuery } from "@tanstack/react-query";
 import { pageListQuery } from "@/lib/page-lists.functions";
 
-const D = {
-  pillarsTitle: "Pillars of Ramky Infrastructure",
-  introTitle: "Strengths & Strategies",
-  introTagline: "PROVEN CAPABILITIES. INTEGRATED RESOURCES. SUSTAINABLE EXECUTION.",
-  introSubtitle: "Our Strengths. Our Strategic Advantage.",
-  introBody:
-    "At Ramky Infrastructure Limited, our strength lies in the ability to bring together the critical resources and capabilities required to develop and deliver complex infrastructure projects. Built on decades of engineering and execution experience, our integrated capabilities across people, materials, machinery, methodology and financial resources enable us to undertake projects across diverse sectors and geographies.\n\nOur 5M framework represents the foundation of our execution capabilities and our commitment to quality, timely delivery, operational excellence and sustainable growth.",
-};
+const D = STRENGTH_DEFAULTS;
 
 function Line({ text }: { text: string }) {
   const m = /^(strategic focus:)(.*)$/i.exec(text);
@@ -27,11 +21,11 @@ export function StrengthPillars({ extra }: { extra: Record<string, string> }) {
         <div>
           <h2 className="text-2xl font-bold sm:text-3xl">{x("pillarsTitle")}</h2>
           <ul className="mt-8 divide-y divide-border border-y border-border">
-            {pillars.map((p, i) => (
+            {pillars.map((p) => (
               <li key={p.id} className="grid gap-5 py-7 sm:grid-cols-[11rem_1fr] sm:gap-8">
                 {p["image_url"] && <img src={p["image_url"]} alt={p["title"] ?? ""} loading="lazy" className="aspect-square w-full max-w-[11rem] rounded-lg object-cover" />}
                 <div className={p["image_url"] ? "" : "sm:col-span-2"}>
-                  <h3 className="font-display text-lg font-semibold"><span className="mr-2 text-brand-orange">{String(i + 1).padStart(2, "0")}.</span>{p["title"]}</h3>
+                  <h3 className="font-display text-lg font-semibold">{p["title"]}</h3>
                   <div className="mt-3 space-y-2 leading-relaxed text-muted-foreground">
                     {(p["body"] ?? "").split(/\\n|\r?\n/).map((l) => l.trim()).filter(Boolean).map((l, j) => <Line key={j} text={l} />)}
                   </div>

@@ -1,3 +1,4 @@
+import { STRENGTH_DEFAULTS } from "@/lib/strength-defaults";
 import { safeRandomUUID } from "@/lib/uuid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -63,7 +64,7 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
   const [bannerFile, setBannerFile] = useState<File | null>(null);
   const [imgFile, setImgFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, subtitle: data.subtitle, statement: data.statement, banner_image_url: data.banner_image_url, image_url: data.image_url, extra: (data.extra && typeof data.extra === "object" && !Array.isArray(data.extra) ? data.extra : {}) as Record<string, string> }); }, [data]);
+  useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, subtitle: data.subtitle, statement: data.statement, banner_image_url: data.banner_image_url, image_url: data.image_url, extra: withDefaults(slug, (data.extra && typeof data.extra === "object" && !Array.isArray(data.extra) ? data.extra : {}) as Record<string, string>) }); }, [data]);
 
   async function save() {
     const err = imageFileError(bannerFile, false) ?? imageFileError(imgFile, false);
@@ -138,4 +139,11 @@ function ExtraFields({ f, set, items }: { f: Record<string, string>; set: (v: Re
       ))}
     </div>
   );
+}
+
+function withDefaults(slug: string, extra: Record<string, string>): Record<string, string> {
+  if (slug !== "strength-strategies") return extra;
+  const out = { ...extra };
+  for (const [k, v] of Object.entries(STRENGTH_DEFAULTS)) if (!(out[k] ?? "").trim()) out[k] = v;
+  return out;
 }
