@@ -38,15 +38,29 @@ function SubsidiariesPage() {
         </section>
         <section className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10 lg:py-20">
           {withLogos ? (
-            <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {withLogos.map((r) => (
-                <li key={r.id} className="flex flex-col items-center border border-border bg-card p-5 text-center transition-shadow hover:shadow-lg">
-                  <div className="grid h-32 w-full place-items-center bg-background">
-                    {r["image_url"] ? <img src={r["image_url"]} alt={`${r["name"] ?? ""} logo`} loading="lazy" className="max-h-28 max-w-full object-contain" /> : <span className="font-display text-lg font-bold text-brand-blue">{r["name"]}</span>}
-                  </div>
-                  <p className="mt-4 font-display text-sm font-semibold">{r["name"]}</p>
-                </li>
-              ))}
+            <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+              {withLogos.map((r) => {
+                const name = r["name"] ?? "";
+                const initials = name.split(/\s+/).filter((w) => /^[A-Za-z]/.test(w) && !/^(limited|private|pvt|ltd)$/i.test(w)).slice(0, 2).map((w) => w[0]!.toUpperCase()).join("");
+                return (
+                  <li key={r.id} className="group relative overflow-hidden border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
+                    <span className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-orange transition-transform duration-300 group-hover:scale-x-100" aria-hidden="true" />
+                    {r["image_url"] ? (
+                      <div className="flex h-full flex-col">
+                        <div className="grid h-24 place-items-center px-4 py-3">
+                          <img src={r["image_url"]} alt={`${name} logo`} loading="lazy" className="max-h-20 max-w-full object-contain" />
+                        </div>
+                        <p className="border-t border-border px-4 py-2.5 text-center font-display text-xs font-semibold leading-snug">{name}</p>
+                      </div>
+                    ) : (
+                      <div className="flex h-full min-h-20 items-center gap-3 p-4">
+                        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-blue/10 font-display text-sm font-bold text-brand-blue">{initials}</span>
+                        <p className="font-display text-sm font-semibold leading-snug text-brand-blue">{name}</p>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           ) : <OrgList items={items} />}
           <a href="/about/partners" className="mt-10 inline-flex items-center gap-2 font-display text-sm font-semibold uppercase text-brand-blue hover:text-brand-orange">
