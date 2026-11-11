@@ -115,10 +115,10 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
         </FormSection>
       </>)}
       {slug === "strength-strategies" && (<>
-        <FormSection title="Pillars section">
+        <FormSection title="Card 1 — Pillars section heading (pillar cards are managed in the Pillars list below)">
           <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["pillarsTitle", "Section heading"]]} />
         </FormSection>
-        <FormSection title="Intro section (shown below the pillars)">
+        <FormSection title="Card 2 — Strengths & Strategies (shown below the pillar cards)">
           <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (blank line between paragraphs)", true]]} />
         </FormSection>
       </>)}
