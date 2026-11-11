@@ -4,7 +4,7 @@ import { z } from "zod";
 import { publishedFileUrl } from "@/lib/file-url";
 
 /** Admin-editable lists shown on public pages. */
-export const PAGE_LIST_TABLES = ["history_milestones", "subsidiaries", "management_system_items", "careers_landing_cards"] as const;
+export const PAGE_LIST_TABLES = ["history_milestones", "subsidiaries", "management_system_items", "careers_landing_cards", "strength_pillars"] as const;
 export type PageListTable = (typeof PAGE_LIST_TABLES)[number];
 export type PageListRow = Record<string, string | null> & { id: string };
 

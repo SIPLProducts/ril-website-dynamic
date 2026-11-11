@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowUpRight, Building2, Globe2, Handshake, ShieldCheck, Tre
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ABOUT_SECTIONS, getAboutSection } from "@/lib/about-sections";
+import { StrengthPillars } from "@/components/site/StrengthPillars";
 import { ManagementSystems } from "@/components/site/ManagementSystems";
 import { aboutDataQuery, type ClientItem } from "@/lib/about-data.functions";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/about/$slug")({
     await Promise.all([
       context.queryClient.ensureQueryData(aboutDataQuery(section.slug)).catch(() => null),
       section.slug === "management-systems" ? context.queryClient.ensureQueryData(pageListQuery("management_system_items")).catch(() => null) : null,
+      section.slug === "strength-strategies" ? context.queryClient.ensureQueryData(pageListQuery("strength_pillars")).catch(() => null) : null,
     ]);
     return section;
   },
@@ -121,6 +123,7 @@ function AboutSectionPage() {
           </div>
         </section>
         {section.slug === "management-systems" && <ManagementSystems />}
+        {section.slug === "strength-strategies" && <StrengthPillars extra={c?.extra ?? {}} />}
         {section.slug === "clientele" && (
           <section className="mx-auto max-w-[1400px] px-5 pb-16 lg:px-10 lg:pb-24">
             <h2 className="mb-8 text-3xl font-bold">Our Clientele</h2>

@@ -141,6 +141,13 @@
       "when": 1794379733730,
       "tag": "0019_subsidiary_images_mgmt_headings",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1794384907492,
+      "tag": "0020_strength_pillars",
+      "breakpoints": true
     }
   ]
 }

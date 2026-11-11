@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { refreshHome, removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
-type Table = "home_hero_slides" | "home_stats" | "home_journey_milestones" | "history_milestones" | "subsidiaries" | "management_system_items" | "careers_landing_cards";
+type Table = "home_hero_slides" | "home_stats" | "home_journey_milestones" | "history_milestones" | "subsidiaries" | "management_system_items" | "careers_landing_cards" | "strength_pillars";
 export type Field = { key: string; label: string; required?: boolean; long?: boolean; max?: number; placeholder?: string; options?: { value: string; label: string }[] };
 /** Optional extra file (e.g. a PDF) saved as "storage:" in `key`. */
 export type DocField = { key: string; label: string; accept: string; hint: string };

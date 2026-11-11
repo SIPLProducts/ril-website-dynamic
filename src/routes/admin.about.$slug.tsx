@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import { FileText, ShieldCheck } from "lucide-react";
+import { FileText, Layers, ShieldCheck } from "lucide-react";
 import { getStaff } from "@/lib/admin-auth";
 import { getAboutSection } from "@/lib/about-sections";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -51,6 +51,14 @@ function Page() {
               { key: "summary", label: "Summary", long: true, max: 1200 },
             ]} />
         </>)}
+        {slug === "strength-strategies" && (
+          <HomeListEditor table="strength_pillars" title="Pillars" itemName="Pillar" icon={Layers} withImage imageOptional
+            help="Each card shows an optional image, a heading and a description. Start a line with 'Strategic focus:' to highlight it."
+            fields={[
+              { key: "title", label: "Heading", required: true, max: 160 },
+              { key: "body", label: "Description (one paragraph per line)", long: true, max: 4000 },
+            ]} />
+        )}
       </div>
     </AdminShell>
   );

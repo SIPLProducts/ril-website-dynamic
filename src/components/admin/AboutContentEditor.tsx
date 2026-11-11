@@ -114,6 +114,14 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
           <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["commitEyebrow", "Small heading"], ["commitTitle", "Main heading"], ["commitIntro", "Intro paragraph", true], ["tagline", "Bottom line"]]} />
         </FormSection>
       </>)}
+      {slug === "strength-strategies" && (<>
+        <FormSection title="Pillars section">
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["pillarsTitle", "Section heading"]]} />
+        </FormSection>
+        <FormSection title="Intro section (shown below the pillars)">
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (blank line between paragraphs)", true]]} />
+        </FormSection>
+      </>)}
     </section>
   );
 }
