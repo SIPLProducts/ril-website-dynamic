@@ -185,6 +185,7 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   const current = usePreview(row?.logo_url ?? null);
+  const [clearLogo, setClearLogo] = useState(false);
   async function save() {
     if (!name.trim()) { toast.error("Company name is required"); return; }
     if (url.trim() && !/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(url.trim())) { toast.error("Website must be a full link starting with https://"); return; }
@@ -192,12 +193,13 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
     try {
       let logo_url = row?.logo_url ?? null;
       if (file) logo_url = await uploadLogo(file);
+      else if (clearLogo) logo_url = null;
       const payload = { name: name.trim(), url: url.trim() || null, published, logo_url, show_logo: showLogo, show_name: showName, show_link: showLink };
       const { error } = row
         ? await supabase.from("group_companies").update(payload).eq("id", row.id)
         : await supabase.from("group_companies").insert({ ...payload, sort_order: nextOrder });
       if (error) throw new Error(error.message);
-      if (file && row?.logo_url) await removeStored(row.logo_url);
+      if ((file || clearLogo) && row?.logo_url) await removeStored(row.logo_url);
       toast.success(published ? "Saved — now live on the website footer" : "Saved as hidden");
       onSaved();
     } catch (e) { toast.error((e as Error).message); } finally { setSaving(false); }
@@ -214,8 +216,14 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
         <div className="space-y-2"><p className="text-xs font-semibold uppercase tracking-widest text-brand-blue">Display on website</p><div className="flex flex-wrap gap-6"><label className="flex items-center gap-2 text-sm"><Switch checked={showLogo} onCheckedChange={setShowLogo} /> Show logo</label><label className="flex items-center gap-2 text-sm"><Switch checked={showName} onCheckedChange={setShowName} /> Show company name</label><label className="flex items-center gap-2 text-sm"><Switch checked={showLink} onCheckedChange={setShowLink} /> Link to website</label></div></div>
       </FormSection>
       <FormSection title={row ? "Logo (upload a new one to replace)" : "Logo"}>
-        {current && !file && <img src={current} alt="Current logo" className="h-16 max-w-[200px] rounded border border-border bg-background object-contain p-2" />}
-        <FileDropzone file={file} onFile={setFile} accept="image/png,image/jpeg,image/svg+xml,image/webp" hint="PNG, JPG, SVG or WEBP — a transparent background looks best" />
+        {current && !file && !clearLogo && (
+          <div className="flex items-center gap-3">
+            <img src={current} alt="Current logo" className="h-16 max-w-[200px] rounded border border-border bg-background object-contain p-2" />
+            <Button type="button" variant="outline" size="sm" onClick={() => setClearLogo(true)}>Remove logo</Button>
+          </div>
+        )}
+        {clearLogo && !file && <p className="text-sm text-muted-foreground">Logo will be removed when you save. <button type="button" className="underline" onClick={() => setClearLogo(false)}>Undo</button></p>}
+        <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearLogo(false); }} accept="image/png,image/jpeg,image/svg+xml,image/webp" hint="PNG, JPG, SVG or WEBP — a transparent background looks best" />
       </FormSection>
     </AdminDialog>
   );

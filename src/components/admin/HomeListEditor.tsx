@@ -109,6 +109,7 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
   const [published, setPublished] = useState(row?.published ?? true);
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
+  const [clearImage, setClearImage] = useState(false);
   const current = useHomePreview(row?.image_url);
   async function save() {
     const missing = fields.find((x) => x.required && !f[x.key]?.trim());
@@ -118,12 +119,13 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
     try {
       const payload: Record<string, unknown> = { published, ...Object.fromEntries(fields.map((x) => [x.key, f[x.key]!.trim()])) };
       if (withImage && file) payload["image_url"] = await uploadHomeFile(table, file);
+      else if (withImage && imageOptional && clearImage && row?.image_url) payload["image_url"] = null;
       if (doc && docFile) payload[doc.key] = await uploadHomeFile(table, docFile);
       const { error } = row
         ? await supabase.from(table).update(payload as never).eq("id", row.id)
         : await supabase.from(table).insert({ ...defaults, ...payload, sort_order: nextOrder } as never);
       if (error) throw new Error(error.message);
-      if (file && row?.image_url) await removeHomeFile(row.image_url);
+      if ((file || (imageOptional && clearImage)) && row?.image_url) await removeHomeFile(row.image_url);
       if (doc && docFile && row) await removeHomeFile(row[doc.key] as string | null);
       toast.success(published ? "Saved — now live on the website" : "Saved as hidden");
       onSaved();
@@ -150,8 +152,14 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
       </FormSection>
       {withImage && (
         <FormSection title={row ? "Photo (upload a new one to replace)" : imageOptional ? "Photo (optional)" : "Photo *"}>
-          {current && !file && <img src={current} alt="Current" className="h-24 max-w-[260px] rounded border border-border object-cover" />}
-          <FileDropzone file={file} onFile={setFile} accept="image/png,image/jpeg,image/webp" hint="Wide landscape photo (1920×1080) looks best" />
+          {current && !file && !clearImage && (
+            <div className="flex items-center gap-3">
+              <img src={current} alt="Current" className="h-24 max-w-[260px] rounded border border-border object-contain" />
+              {imageOptional && <Button type="button" variant="outline" size="sm" onClick={() => setClearImage(true)}><Trash2 className="size-4" /> Remove photo</Button>}
+            </div>
+          )}
+          {clearImage && !file && <p className="text-sm text-muted-foreground">Photo will be removed when you save. <button type="button" className="underline" onClick={() => setClearImage(false)}>Undo</button></p>}
+          <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept="image/png,image/jpeg,image/webp" hint="Wide landscape photo (1920×1080) looks best" />
         </FormSection>
       )}
       {doc && (
