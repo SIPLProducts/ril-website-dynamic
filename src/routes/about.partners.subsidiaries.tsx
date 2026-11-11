@@ -44,7 +44,7 @@ function SubsidiariesPage() {
                 const initials = name.split(/\s+/).filter((w) => /^[A-Za-z]/.test(w) && !/^(limited|private|pvt|ltd)$/i.test(w)).slice(0, 2).map((w) => w[0]!.toUpperCase()).join("");
                 return (
                   <li key={r.id} className="group relative overflow-hidden border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-                    <span className="absolute inset-x-0 top-0 h-0.5 origin-left scale-x-0 bg-brand-orange transition-transform duration-300 group-hover:scale-x-100" aria-hidden="true" />
+                    <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-brand-orange to-brand-green transition-transform duration-300 group-hover:scale-x-100" aria-hidden="true" />
                     {r["image_url"] ? (
                       <div className="flex h-full flex-col">
                         <div className="grid h-24 place-items-center px-4 py-3">
@@ -55,7 +55,7 @@ function SubsidiariesPage() {
                     ) : (
                       <div className="flex h-full min-h-20 items-center gap-3 p-4">
                         <span className="grid size-11 shrink-0 place-items-center rounded-full bg-brand-blue/10 font-display text-sm font-bold text-brand-blue">{initials}</span>
-                        <p className="font-display text-sm font-semibold leading-snug text-brand-blue">{name}</p>
+                        <p className="font-display text-sm font-semibold leading-snug text-foreground">{name}</p>
                       </div>
                     )}
                   </li>
