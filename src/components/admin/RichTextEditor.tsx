@@ -7,7 +7,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Highlight from "@tiptap/extension-highlight";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Highlighter, Italic, Link2, List, ListOrdered, Minus, Redo2, Strikethrough, Subscript as SubI, Superscript as SupI, Underline as U, Undo2 } from "lucide-react";
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Highlighter, Italic, Link2, List, ListOrdered, Minus, Redo2, Strikethrough, Subscript as SubI, Superscript as SupI, Underline as U, Undo2, PaintBucket, Square, IndentIncrease, IndentDecrease } from "lucide-react";
 import { FONT_FAMILIES, FONT_SIZES } from "@/lib/strength-style";
 
 /** Adds a font-weight attribute to text-style marks. */
@@ -19,6 +19,25 @@ const FontWeight = Extension.create({
       parseHTML: (el) => (el as HTMLElement).style.fontWeight || null,
       renderHTML: (a) => (a["fontWeight"] ? { style: `font-weight: ${a["fontWeight"]}` } : {}),
     } } }];
+  },
+});
+
+/** Excel-style paragraph formatting: cell fill, border, line spacing, indent, spacing. */
+const PARA_ATTRS: Record<string, string> = { pBg: "background-color", pBorder: "border", pLh: "line-height", pIndent: "margin-left", pBefore: "margin-top", pAfter: "margin-bottom" };
+const ParaStyle = Extension.create({
+  name: "paraStyle",
+  addGlobalAttributes() {
+    const attrs: Record<string, any> = {};
+    for (const [k, css] of Object.entries(PARA_ATTRS)) attrs[k] = {
+      default: null,
+      parseHTML: (el: HTMLElement) => el.style.getPropertyValue(css) || null,
+      renderHTML: (a: Record<string, any>) => {
+        if (!a[k]) return {};
+        const extra = k === "pBg" || k === "pBorder" ? "; padding: 4px 8px" : "";
+        return { style: `${css}: ${a[k]}${extra}` };
+      },
+    };
+    return [{ types: ["paragraph"], attributes: attrs }];
   },
 });
 
@@ -51,7 +70,7 @@ function ColorPick({ title, icon, value, onPick, onClear }: { title: string; ico
 export function RichTextEditor({ value, onChange, compact }: { value: string; onChange: (html: string) => void; compact?: boolean }) {
   const editor = useEditor({
     immediatelyRender: false,
-    extensions: [StarterKit.configure({ heading: false, codeBlock: false, code: false }), TextStyle, Color, FontFamily, FontSize, FontWeight, TextAlign.configure({ types: ["paragraph"] }), Highlight.configure({ multicolor: true }), Subscript, Superscript],
+    extensions: [StarterKit.configure({ heading: false, codeBlock: false, code: false }), TextStyle, Color, FontFamily, FontSize, FontWeight, TextAlign.configure({ types: ["paragraph"] }), Highlight.configure({ multicolor: true }), Subscript, Superscript, ParaStyle],
     content: textToHtml(value),
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: { attributes: { class: `${compact ? "min-h-16" : "min-h-40"} rounded-b-md border border-t-0 border-border bg-background p-3 text-sm focus:outline-none [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 space-y-2 [&_a]:text-primary [&_a]:underline [&_mark]:rounded-sm [&_mark]:px-0.5` } },
@@ -62,6 +81,10 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
   if (!editor) return <div className="min-h-40 rounded-md border border-border" />;
   const c = () => editor.chain().focus();
   const ts = editor.getAttributes("textStyle");
+  const pa = editor.getAttributes("paragraph");
+  const setP = (k: string, v: string | null) => c().updateAttributes("paragraph", { [k]: v }).run();
+  const indent = (d: number) => { const cur = parseInt(pa["pIndent"] ?? "0", 10) || 0; const n = Math.max(0, Math.min(200, cur + d)); setP("pIndent", n ? `${n}px` : null); };
+  const sel = "h-8 rounded border border-border bg-background px-1 text-xs";
   return (
     <div>
       <div className="flex flex-wrap items-center gap-1 rounded-t-md border border-border bg-surface p-1.5">
@@ -89,9 +112,19 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
         <button type="button" title="Bullets" className={btn(editor.isActive("bulletList"))} onClick={() => c().toggleBulletList().run()}><List className="size-4" /></button>
         <button type="button" title="Numbered list" className={btn(editor.isActive("orderedList"))} onClick={() => c().toggleOrderedList().run()}><ListOrdered className="size-4" /></button>
         {!compact && <button type="button" title="Horizontal line" className={btn(false)} onClick={() => c().setHorizontalRule().run()}><Minus className="size-4" /></button>}
+        <ColorPick title="Cell fill (paragraph background)" icon={<PaintBucket className="size-4" />} value={pa["pBg"]} onPick={(v) => setP("pBg", v)} onClear={() => setP("pBg", null)} />
+        <ColorPick title="Border around paragraph" icon={<Square className="size-4" />} value={pa["pBorder"]?.split(" ")[2]} onPick={(v) => setP("pBorder", `1px solid ${v}`)} onClear={() => setP("pBorder", null)} />
+        <select title="Line spacing" className={sel} value={pa["pLh"] ?? ""} onChange={(e) => setP("pLh", e.target.value || null)}>
+          <option value="">Line spacing</option>{["1", "1.15", "1.5", "2"].map((v) => <option key={v} value={v}>{v}</option>)}
+        </select>
+        <select title="Paragraph spacing (before / after)" className={sel} value={pa["pAfter"] ?? ""} onChange={(e) => { const v = e.target.value || null; c().updateAttributes("paragraph", { pBefore: v, pAfter: v }).run(); }}>
+          <option value="">Para spacing</option>{["0px", "6px", "12px", "18px", "24px"].map((v) => <option key={v} value={v}>{v}</option>)}
+        </select>
+        <button type="button" title="Decrease indent" className={btn(false)} onClick={() => indent(-24)}><IndentDecrease className="size-4" /></button>
+        <button type="button" title="Increase indent" className={btn(false)} onClick={() => indent(24)}><IndentIncrease className="size-4" /></button>
         <button type="button" title="Undo" className={btn(false)} onClick={() => c().undo().run()}><Undo2 className="size-4" /></button>
         <button type="button" title="Redo" className={btn(false)} onClick={() => c().redo().run()}><Redo2 className="size-4" /></button>
-        <button type="button" className="ml-auto h-8 rounded border border-border bg-background px-2 text-xs" onClick={() => c().unsetAllMarks().clearNodes().run()}>Clear format</button>
+        <button type="button" className="ml-auto h-8 rounded border border-border bg-background px-2 text-xs" onClick={() => c().unsetAllMarks().clearNodes().resetAttributes("paragraph", Object.keys(PARA_ATTRS)).run()}>Clear format</button>
       </div>
       <EditorContent editor={editor} />
     </div>

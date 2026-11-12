@@ -92,6 +92,8 @@ export function cleanHtml(html: string): string {
         padding: [/^\d{1,2}px$/],
         "line-height": [/^[0-3](\.\d{1,2})?$/],
         "margin-left": [/^\d{1,3}px$/],
+        "margin-top": [/^\d{1,2}px$/],
+        "margin-bottom": [/^\d{1,2}px$/],
       },
     },
   });
