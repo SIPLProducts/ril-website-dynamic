@@ -98,7 +98,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 }
 
 export function RichTextEditor({ value, onChange, compact }: { value: string; onChange: (html: string) => void; compact?: boolean }) {
-  const [tab, setTab] = useState<"home" | "insert" | "table">("home");
+  const [tab, setTab] = useState<"home" | "table">("home");
   const [rows, setRows] = useState(3);
   const [cols, setCols] = useState(3);
   const [hdr, setHdr] = useState(true);
@@ -128,7 +128,7 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
   );
   return (
     <div>
-      <div className="flex gap-1">{tabBtn("home", "Home")}{tabBtn("insert", "Insert")}{tabBtn("table", "Table")}
+      <div className="flex gap-1">{tabBtn("home", "Home")}{tabBtn("table", "Table")}
         <div className="ml-auto flex gap-1 pb-1"><Tb label="Undo" icon={<Undo2 className="size-4" />} onClick={() => c().undo().run()} /><Tb label="Redo" icon={<Redo2 className="size-4" />} onClick={() => c().redo().run()} /></div>
       </div>
       <div className="flex flex-wrap items-stretch gap-1.5 rounded-t-md border border-border bg-surface p-1.5">
@@ -178,16 +178,17 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
             <Tb label="Heading 4" icon={<Heading4 className="size-4" />} on={editor.isActive("heading", { level: 4 })} onClick={() => c().toggleHeading({ level: 4 }).run()} />
           </Group>
         </>}
-        {tab === "insert" && <>
-          <Group title="Table">
+        {tab === "table" && <>
+          <Group title="Insert table">
             <span className="text-xs">Rows</span><input type="number" min={1} max={20} value={rows} onChange={(e) => setRows(Math.max(1, Math.min(20, Number(e.target.value) || 1)))} className="h-8 w-14 rounded border border-border bg-background px-1 text-xs" />
             <span className="text-xs">Columns</span><input type="number" min={1} max={10} value={cols} onChange={(e) => setCols(Math.max(1, Math.min(10, Number(e.target.value) || 1)))} className="h-8 w-14 rounded border border-border bg-background px-1 text-xs" />
             <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={hdr} onChange={(e) => setHdr(e.target.checked)} /> Header row</label>
-            <Tb label="Insert table" icon={<Table2 className="size-4" />} onClick={() => { c().insertTable({ rows, cols, withHeaderRow: hdr }).run(); setTab("table"); }} />
+            <Tb label="Insert table" icon={<Table2 className="size-4" />} onClick={() => { c().insertTable({ rows, cols, withHeaderRow: hdr }).run(); }} />
           </Group>
+          {!inTable && <div className="p-2 text-xs text-muted-foreground">Click inside a table to see more table tools.</div>}
         </>}
         {tab === "table" && (!inTable
-          ? <div className="p-2 text-xs text-muted-foreground">Click inside a table to edit it, or use <b>Insert → Insert table</b>.</div>
+          ? null
           : <>
             <Group title="Rows & columns">
               <Tb label="Row above" onClick={() => c().addRowBefore().run()} />
