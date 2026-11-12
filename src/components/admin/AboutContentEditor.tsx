@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { StrengthStyleEditor } from "@/components/admin/StrengthStyleEditor";
 
 async function uploadImage(file: File, folder: string) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
@@ -120,7 +121,10 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
           <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["pillarsTitle", "Section heading"]]} />
         </FormSection>
         <FormSection title="Card 2 — Strengths & Strategies (shown below the pillar cards)">
-          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (blank line between paragraphs)", true]]} />
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (plain text — use Design & formatting below for rich formatting)", true]]} />
+        </FormSection>
+        <FormSection title="Design & formatting — colors, fonts, card headers, live preview">
+          <StrengthStyleEditor extra={f.extra} set={(extra) => setF({ ...f, extra })} />
         </FormSection>
       </>)}
     </section>
