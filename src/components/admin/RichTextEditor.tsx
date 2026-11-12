@@ -9,7 +9,7 @@ import { useState } from "react";
 import Highlight from "@tiptap/extension-highlight";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
-import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Highlighter, Italic, Link2, List, ListOrdered, Minus, Redo2, Strikethrough, Subscript as SubI, Superscript as SupI, Underline as U, Undo2, PaintBucket, Square, IndentIncrease, IndentDecrease, Table2, Quote, Heading3, Heading4, Trash2, Merge, Split, Baseline } from "lucide-react";
+import { AlignCenter, AlignJustify, AlignLeft, AlignRight, Bold, Highlighter, Italic, Link2, List, ListOrdered, Minus, Redo2, Strikethrough, Underline as U, Undo2, PaintBucket, Square, IndentIncrease, IndentDecrease, Table2, Quote, Heading3, Heading4, Trash2, Merge, Split, Baseline } from "lucide-react";
 import { FONT_FAMILIES, FONT_SIZES, TABLE_CSS } from "@/lib/strength-style";
 export { TABLE_CSS };
 
@@ -147,8 +147,6 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
             <button type="button" title="Italic" className={btn(editor.isActive("italic"))} onClick={() => c().toggleItalic().run()}><Italic className="size-4" /></button>
             <button type="button" title="Underline" className={btn(editor.isActive("underline"))} onClick={() => c().toggleUnderline().run()}><U className="size-4" /></button>
             <button type="button" title="Strikethrough" className={btn(editor.isActive("strike"))} onClick={() => c().toggleStrike().run()}><Strikethrough className="size-4" /></button>
-            <button type="button" title="Superscript" className={btn(editor.isActive("superscript"))} onClick={() => c().toggleSuperscript().run()}><SupI className="size-4" /></button>
-            <button type="button" title="Subscript" className={btn(editor.isActive("subscript"))} onClick={() => c().toggleSubscript().run()}><SubI className="size-4" /></button>
           </Group>
           <Group title="Colors">
             <ColorPick title="Text color" icon={<span className="flex items-center gap-1 text-xs"><Baseline className="size-4" />Text color</span>} value={ts["color"]} onPick={(v) => c().setColor(v).run()} onClear={() => c().unsetColor().run()} />
@@ -172,6 +170,13 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
             </select>
             <Tb label="Clear format" onClick={() => c().unsetAllMarks().clearNodes().resetAttributes("paragraph", Object.keys(PARA_ATTRS)).run()} />
           </Group>
+          <Group title="Insert">
+            <Tb label="Link" icon={<Link2 className="size-4" />} on={editor.isActive("link")} onClick={() => { const u = window.prompt("Link address (https://…), empty to remove", editor.getAttributes("link")["href"] ?? ""); if (u === null) return; u.trim() ? c().extendMarkRange("link").setLink({ href: u.trim() }).run() : c().unsetLink().run(); }} />
+            <Tb label="Line" icon={<Minus className="size-4" />} onClick={() => c().setHorizontalRule().run()} />
+            <Tb label="Quote box" icon={<Quote className="size-4" />} on={editor.isActive("blockquote")} onClick={() => c().toggleBlockquote().run()} />
+            <Tb label="Heading 3" icon={<Heading3 className="size-4" />} on={editor.isActive("heading", { level: 3 })} onClick={() => c().toggleHeading({ level: 3 }).run()} />
+            <Tb label="Heading 4" icon={<Heading4 className="size-4" />} on={editor.isActive("heading", { level: 4 })} onClick={() => c().toggleHeading({ level: 4 }).run()} />
+          </Group>
         </>}
         {tab === "insert" && <>
           <Group title="Table">
@@ -179,13 +184,6 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
             <span className="text-xs">Columns</span><input type="number" min={1} max={10} value={cols} onChange={(e) => setCols(Math.max(1, Math.min(10, Number(e.target.value) || 1)))} className="h-8 w-14 rounded border border-border bg-background px-1 text-xs" />
             <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={hdr} onChange={(e) => setHdr(e.target.checked)} /> Header row</label>
             <Tb label="Insert table" icon={<Table2 className="size-4" />} onClick={() => { c().insertTable({ rows, cols, withHeaderRow: hdr }).run(); setTab("table"); }} />
-          </Group>
-          <Group title="Other">
-            <Tb label="Link" icon={<Link2 className="size-4" />} on={editor.isActive("link")} onClick={() => { const u = window.prompt("Link address (https://…), empty to remove", editor.getAttributes("link")["href"] ?? ""); if (u === null) return; u.trim() ? c().extendMarkRange("link").setLink({ href: u.trim() }).run() : c().unsetLink().run(); }} />
-            <Tb label="Line" icon={<Minus className="size-4" />} onClick={() => c().setHorizontalRule().run()} />
-            <Tb label="Quote box" icon={<Quote className="size-4" />} on={editor.isActive("blockquote")} onClick={() => c().toggleBlockquote().run()} />
-            <Tb label="Heading 3" icon={<Heading3 className="size-4" />} on={editor.isActive("heading", { level: 3 })} onClick={() => c().toggleHeading({ level: 3 }).run()} />
-            <Tb label="Heading 4" icon={<Heading4 className="size-4" />} on={editor.isActive("heading", { level: 4 })} onClick={() => c().toggleHeading({ level: 4 }).run()} />
           </Group>
         </>}
         {tab === "table" && (!inTable
