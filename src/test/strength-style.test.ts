@@ -1,15 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { cleanHtml, merge, cardCss } from "@/lib/strength-style";
+import { cleanHtml, splitBox, wrapBox } from "@/lib/strength-style";
 
-describe("strength styles", () => {
-  it("strips scripts but keeps allowed formatting", () => {
-    const out = cleanHtml('<p style="text-align:center;color:#ff0000">Hi<script>alert(1)</script></p><img src=x onerror=1>');
-    expect(out).toBe('<p style="text-align:center;color:#ff0000">Hi</p>');
+describe("strength rich text", () => {
+  it("strips scripts, images and javascript links", () => {
+    const out = cleanHtml('<p>Hi<script>x</script><img src=x><a href="javascript:alert(1)">l</a></p>');
+    expect(out).not.toMatch(/script|img|javascript/);
   });
-  it("card values override page defaults", () => {
-    expect(merge({ cardBg: "#111111", radius: 4 }, { cardBg: "#222222" })).toEqual({ cardBg: "#222222", radius: 4 });
+  it("keeps fill color highlight and box border", () => {
+    const out = cleanHtml('<div data-box="1" style="border: 2px dashed #ff0000; padding: 8px"><p><mark style="background-color: #ffff00">x</mark></p></div>');
+    expect(out).toContain("background-color:#ffff00");
+    expect(out).toContain("border:2px dashed #ff0000");
   });
-  it("caps radius at 32px", () => {
-    expect(cardCss({ radius: 99 }).borderRadius).toBe(32);
+  it("box settings round-trip and radius caps at 32", () => {
+    const w = wrapBox("<p>a</p>", { bg: "#eeeeee", borderColor: "#000000", borderWidth: 2, radius: 99, padding: 10 });
+    const { inner, box } = splitBox(w);
+    expect(inner).toBe("<p>a</p>");
+    expect(box).toMatchObject({ bg: "#eeeeee", borderColor: "#000000", borderWidth: 2, radius: 32, padding: 10 });
   });
 });

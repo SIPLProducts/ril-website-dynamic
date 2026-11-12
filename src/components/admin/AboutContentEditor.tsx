@@ -1,4 +1,5 @@
 import { STRENGTH_DEFAULTS } from "@/lib/strength-defaults";
+import { RichField } from "@/components/admin/RichField";
 import { safeRandomUUID } from "@/lib/uuid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -12,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { StrengthStyleEditor } from "@/components/admin/StrengthStyleEditor";
 
 async function uploadImage(file: File, folder: string) {
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
@@ -118,13 +118,10 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
       </>)}
       {slug === "strength-strategies" && (<>
         <FormSection title="Card 1 — Pillars section heading (pillar cards are managed in the Pillars list below)">
-          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["pillarsTitle", "Section heading"]]} />
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} rich items={[["pillarsTitle", "Section heading"]]} />
         </FormSection>
         <FormSection title="Card 2 — Strengths & Strategies (shown below the pillar cards)">
-          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (plain text — use Design & formatting below for rich formatting)", true]]} />
-        </FormSection>
-        <FormSection title="Design & formatting — colors, fonts, card headers, live preview">
-          <StrengthStyleEditor extra={f.extra} set={(extra) => setF({ ...f, extra })} />
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} rich items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (one per line)", true]]} />
         </FormSection>
       </>)}
     </section>
@@ -132,10 +129,10 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
 }
 
 
-function ExtraFields({ f, set, items }: { f: Record<string, string>; set: (v: Record<string, string>) => void; items: [string, string, boolean?][] }) {
+function ExtraFields({ f, set, items, rich }: { f: Record<string, string>; set: (v: Record<string, string>) => void; items: [string, string, boolean?][]; rich?: boolean }) {
   return (
     <div className="grid gap-4">
-      {items.map(([k, label, long]) => (
+      {items.map(([k, label, long]) => rich ? <RichField key={k} label={label} long={!!long} max={long ? 1500 : 160} value={f[k] ?? ""} onChange={(v) => set({ ...f, [k]: v })} /> : (
         <div key={k}><Label>{label}</Label>
           {long ? <Textarea rows={3} maxLength={1500} value={f[k] ?? ""} onChange={(e) => set({ ...f, [k]: e.target.value })} />
             : <Input value={f[k] ?? ""} maxLength={160} onChange={(e) => set({ ...f, [k]: e.target.value })} />}

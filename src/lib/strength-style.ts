@@ -71,12 +71,14 @@ export const spacingCss = (s: CardStyle): CSSProperties => {
   return g !== undefined ? { marginTop: g } : {};
 };
 
-const okColor = [/^#[0-9a-f]{3,8}$/i, /^rgba?\([\d\s.,%]+\)$/i];
+const okColor = [/^#[0-9a-f]{3,8}$/i, /^rgba?\([\d\s.,%]+\)$/i, /^inherit$/];
 /** Allow-list cleaner for admin rich text — runs wherever the HTML is shown. */
 export function cleanHtml(html: string): string {
   return sanitizeHtml(html, {
-    allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "s", "span", "ul", "ol", "li", "h3", "h4", "blockquote"],
-    allowedAttributes: { "*": ["style"] },
+    allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "s", "span", "ul", "ol", "li", "h3", "h4", "blockquote", "mark", "sub", "sup", "a", "hr", "div"],
+    allowedAttributes: { "*": ["style"], a: ["href", "target", "rel", "style"], div: ["data-box", "style"] },
+    allowedSchemes: ["http", "https", "mailto"],
+    transformTags: { a: (tag, attribs) => ({ tagName: tag, attribs: { ...attribs, target: "_blank", rel: "noopener noreferrer" } }) },
     allowedStyles: {
       "*": {
         color: okColor,
@@ -84,8 +86,51 @@ export function cleanHtml(html: string): string {
         "font-size": [/^\d{1,2}(px|rem|em)$/],
         "font-weight": [/^(normal|bold|[1-9]00)$/],
         "text-align": [/^(left|right|center|justify)$/],
+        "background-color": okColor,
+        border: [/^\d{1,2}px (solid|dashed|dotted|double) (#[0-9a-f]{3,8}|rgba?\([\d\s.,%]+\))$/i],
+        "border-radius": [/^\d{1,2}px$/],
+        padding: [/^\d{1,2}px$/],
+        "line-height": [/^[0-3](\.\d{1,2})?$/],
+        "margin-left": [/^\d{1,3}px$/],
       },
     },
   });
 }
-export const isHtml = (s: string) => /<\/?(p|ul|ol|li|strong|em|u|span|br)\b/i.test(s);
+export const isHtml = (s: string) => /<\/?(p|ul|ol|li|strong|em|u|s|span|br|div|mark|sub|sup|a|hr)\b/i.test(s);
+
+/** Whole-field "text box" look (Excel-like cell formatting), stored as a wrapping div. */
+export type Box = { bg?: string | undefined; borderColor?: string | undefined; borderWidth?: number | undefined; borderStyle?: "solid" | "dashed" | "dotted" | "double" | undefined; radius?: number | undefined; padding?: number | undefined; lineHeight?: number | undefined; indent?: number | undefined };
+
+export function boxCss(b: Box): string {
+  const out: string[] = [];
+  const c = color(b.bg); if (c) out.push(`background-color: ${c}`);
+  const bc = color(b.borderColor), bw = clamp(b.borderWidth, 0, 10) ?? (bc ? 1 : 0);
+  if (bc && bw) out.push(`border: ${bw}px ${b.borderStyle ?? "solid"} ${bc}`);
+  const r = clamp(b.radius, 0, 32); if (r) out.push(`border-radius: ${r}px`);
+  const p = clamp(b.padding, 0, 64); if (p) out.push(`padding: ${p}px`);
+  const lh = clamp(b.lineHeight, 1, 3); if (lh) out.push(`line-height: ${lh}`);
+  const ind = clamp(b.indent, 0, 200); if (ind) out.push(`margin-left: ${ind}px`);
+  return out.join("; ");
+}
+
+export function wrapBox(html: string, b: Box): string {
+  const css = boxCss(b);
+  return css ? `<div data-box="1" style="${css}">${html}</div>` : html;
+}
+
+/** Splits a saved field back into inner HTML + box settings. */
+export function splitBox(html: string): { inner: string; box: Box } {
+  const m = /^<div data-box="1" style="([^"]*)">([\s\S]*)<\/div>$/.exec(html.trim());
+  if (!m) return { inner: html, box: {} };
+  const css = m[1]!, box: Box = {};
+  const get = (k: string) => new RegExp(`(?:^|;)\\s*${k}:\\s*([^;]+)`).exec(css)?.[1]?.trim();
+  const bg = get("background-color"); if (bg) box.bg = bg;
+  const bd = get("border")?.split(" "); if (bd && bd.length === 3) { box.borderWidth = parseInt(bd[0]!); box.borderStyle = bd[1] as Box["borderStyle"]; box.borderColor = bd[2]!; }
+  const n = (k: string) => { const v = get(k); return v ? parseFloat(v) : undefined; };
+  const r = n("border-radius"), p = n("padding"), lh = n("line-height"), ind = n("margin-left");
+  if (r) box.radius = r; if (p) box.padding = p; if (lh) box.lineHeight = lh; if (ind) box.indent = ind;
+  return { inner: m[2]!, box };
+}
+
+/** Plain text of a field (for admin lists / alt text). */
+export const plainText = (s: string) => s.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();

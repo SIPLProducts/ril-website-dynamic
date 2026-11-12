@@ -55,8 +55,8 @@ function Page() {
           <HomeListEditor table="strength_pillars" title="Pillars" itemName="Pillar" icon={Layers} withImage imageOptional
             help="Each card shows an optional image, a heading and a description. Start a line with 'Strategic focus:' to highlight it."
             fields={[
-              { key: "title", label: "Heading", required: true, max: 160 },
-              { key: "body", label: "Description (one paragraph per line)", long: true, max: 4000 },
+              { key: "title", label: "Heading", required: true, max: 160, rich: true },
+              { key: "body", label: "Description (one paragraph per line)", long: true, max: 4000, rich: true },
             ]} />
         )}
       </div>

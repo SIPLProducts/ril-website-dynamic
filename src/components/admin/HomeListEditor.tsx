@@ -10,10 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { RichField } from "@/components/admin/RichField";
+import { plainText } from "@/lib/strength-style";
 import { refreshHome, removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 type Table = "home_hero_slides" | "home_stats" | "home_journey_milestones" | "history_milestones" | "subsidiaries" | "management_system_items" | "careers_landing_cards" | "strength_pillars";
-export type Field = { key: string; label: string; required?: boolean; long?: boolean; max?: number; placeholder?: string; options?: { value: string; label: string }[] };
+export type Field = { key: string; label: string; required?: boolean; long?: boolean; max?: number; placeholder?: string; options?: { value: string; label: string }[]; rich?: boolean };
 /** Optional extra file (e.g. a PDF) saved as "storage:" in `key`. */
 export type DocField = { key: string; label: string; accept: string; hint: string };
 type Row = Record<string, unknown> & { id: string; published: boolean; sort_order: number; image_url?: string | null };
@@ -46,7 +48,7 @@ export function HomeListEditor({ table, title, help, itemName, icon, fields, wit
     if (r1.error || r2.error) toast.error((r1.error ?? r2.error)!.message); else refresh();
   }
   async function remove(r: Row) {
-    if (!(await confirmDelete(`Delete "${String(r[fields[0]!.key] ?? "")}"?`))) return;
+    if (!(await confirmDelete(`Delete "${plainText(String(r[fields[0]!.key] ?? ""))}"?`))) return;
     const { error } = await supabase.from(table).delete().eq("id", r.id);
     if (error) { toast.error(error.message); return; }
     await removeHomeFile(r.image_url);
@@ -77,7 +79,7 @@ export function HomeListEditor({ table, title, help, itemName, icon, fields, wit
                 </div>
               </td>
               {withImage && <td className="px-4 py-2"><Thumb url={r.image_url ?? null} /></td>}
-              {cols.map((c) => <td key={c.key} className="px-4 py-2"><p className="line-clamp-2">{String(r[c.key] ?? "")}</p></td>)}
+              {cols.map((c) => <td key={c.key} className="px-4 py-2"><p className="line-clamp-2">{plainText(String(r[c.key] ?? ""))}</p></td>)}
               <td className="px-4 py-2"><Switch checked={r.published} onCheckedChange={() => toggle(r)} aria-label="Live" /></td>
               <td className="px-4 py-2">
                 <div className="flex justify-end gap-2">
@@ -141,11 +143,11 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
               <select className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })}>
                 {x.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select></div>
-          ) : (
+          ) : x.rich ? <div key={x.key} className="sm:col-span-2"><RichField label={`${x.label}${x.required ? " *" : ""}`} max={x.max ?? 200} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /></div> : (
             <div key={x.key}><Label>{x.label}{x.required ? " *" : ""}</Label><Input maxLength={x.max ?? 200} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
           ))}
         </div>
-        {fields.filter((x) => x.long).map((x) => (
+        {fields.filter((x) => x.long).map((x) => x.rich ? <RichField key={x.key} long label={`${x.label}${x.required ? " *" : ""}`} max={x.max ?? 800} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /> : (
           <div key={x.key}><Label>{x.label}{x.required ? " *" : ""}</Label><Textarea rows={3} maxLength={x.max ?? 800} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
         ))}
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Live on website</label>
