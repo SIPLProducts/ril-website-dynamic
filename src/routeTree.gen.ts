@@ -27,6 +27,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
+import { Route as AdminVisibilityRouteImport } from './routes/admin.visibility'
 import { Route as BoardOfDirectorsSlugRouteImport } from './routes/board-of-directors.$slug'
 import { Route as BusinessesSlugRouteImport } from './routes/businesses.$slug'
 import { Route as EsgSlugRouteImport } from './routes/esg.$slug'
@@ -147,6 +148,11 @@ const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
 const AdminUsersRoute = AdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminVisibilityRoute = AdminVisibilityRouteImport.update({
+  id: '/visibility',
+  path: '/visibility',
   getParentRoute: () => AdminRoute,
 } as any)
 const BoardOfDirectorsSlugRoute = BoardOfDirectorsSlugRouteImport.update({
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/visibility': typeof AdminVisibilityRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
@@ -381,6 +388,7 @@ export interface FileRoutesByTo {
   '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/visibility': typeof AdminVisibilityRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
@@ -433,6 +441,7 @@ export interface FileRoutesById {
   '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
   '/admin/users': typeof AdminUsersRoute
+  '/admin/visibility': typeof AdminVisibilityRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
   '/businesses/$slug': typeof BusinessesSlugRoute
   '/esg/$slug': typeof EsgSlugRoute
@@ -486,6 +495,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/reset-password'
     | '/admin/users'
+    | '/admin/visibility'
     | '/board-of-directors/$slug'
     | '/businesses/$slug'
     | '/esg/$slug'
@@ -536,6 +546,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/reset-password'
     | '/admin/users'
+    | '/admin/visibility'
     | '/board-of-directors/$slug'
     | '/businesses/$slug'
     | '/esg/$slug'
@@ -587,6 +598,7 @@ export interface FileRouteTypes {
     | '/admin/media'
     | '/admin/reset-password'
     | '/admin/users'
+    | '/admin/visibility'
     | '/board-of-directors/$slug'
     | '/businesses/$slug'
     | '/esg/$slug'
@@ -767,6 +779,13 @@ declare module '@tanstack/react-router' {
       path: '/users'
       fullPath: '/admin/users'
       preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/visibility': {
+      id: '/admin/visibility'
+      path: '/visibility'
+      fullPath: '/admin/visibility'
+      preLoaderRoute: typeof AdminVisibilityRouteImport
       parentRoute: typeof AdminRoute
     }
     '/board-of-directors/$slug': {
@@ -996,6 +1015,7 @@ interface AdminRouteChildren {
   AdminMediaRoute: typeof AdminMediaRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
   AdminUsersRoute: typeof AdminUsersRoute
+  AdminVisibilityRoute: typeof AdminVisibilityRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminAboutSlugRoute: typeof AdminAboutSlugRoute
   AdminAboutClienteleRoute: typeof AdminAboutClienteleRoute
@@ -1031,6 +1051,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminMediaRoute: AdminMediaRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
   AdminUsersRoute: AdminUsersRoute,
+  AdminVisibilityRoute: AdminVisibilityRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminAboutSlugRoute: AdminAboutSlugRoute,
   AdminAboutClienteleRoute: AdminAboutClienteleRoute,

@@ -1463,6 +1463,24 @@ export type Database = {
         }
         Relationships: []
       }
+      page_visibility: {
+        Row: {
+          key: string
+          published: boolean
+          updated_at: string
+        }
+        Insert: {
+          key: string
+          published?: boolean
+          updated_at?: string
+        }
+        Update: {
+          key?: string
+          published?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       strength_pillars: {
         Row: {
           body: string

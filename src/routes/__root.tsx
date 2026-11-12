@@ -13,6 +13,10 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { footerQuery } from "../lib/footer.functions";
+import { hiddenPagesQuery } from "../lib/page-visibility.functions";
+import { hiddenLinksCss, isUrlHidden } from "../lib/page-visibility";
+import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "@tanstack/react-router";
 
 function NotFoundComponent() {
   return (
@@ -109,7 +113,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
   }),
   loader: async ({ context }) => {
-    try { await context.queryClient.ensureQueryData(footerQuery()); } catch { /* footer falls back to built-in text */ }
+    await Promise.all([
+      context.queryClient.ensureQueryData(footerQuery()).catch(() => undefined), // footer falls back to built-in text
+      context.queryClient.ensureQueryData(hiddenPagesQuery()).catch(() => undefined),
+    ]);
   },
   shellComponent: RootShell,
   component: RootComponent,
@@ -137,7 +144,23 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <VisibilityGate />
     </QueryClientProvider>
+  );
+}
+
+function VisibilityGate() {
+  const { data: hidden = [] } = useQuery(hiddenPagesQuery());
+  const loc = useLocation();
+  const isAdmin = loc.pathname.startsWith("/admin");
+  if (isAdmin || hidden.length === 0) return <Outlet />;
+  const search = typeof loc.searchStr === "string" ? loc.searchStr : "";
+  if (isUrlHidden(hidden, loc.pathname, search)) return <NotFoundComponent />;
+  const css = hiddenLinksCss(hidden);
+  return (
+    <>
+      {css && <style>{css}</style>}
+      <Outlet />
+    </>
   );
 }

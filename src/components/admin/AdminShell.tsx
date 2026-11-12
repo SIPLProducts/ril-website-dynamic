@@ -7,6 +7,9 @@ import type { Staff } from "@/lib/admin-auth";
 import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGroups, isModuleReady, isLiveHost, LIVE_LOCKED, type AdminPage } from "@/lib/admin-modules";
 
 const Soon = () => <span className="ml-2 rounded-full border border-primary-foreground/15 px-2 py-0.5 text-[9px] uppercase tracking-wider">Soon</span>;
+import { PublishToggle, useAdminVisibility } from "@/components/admin/PublishToggle";
+import { visibilityKey, visibilityPage } from "@/lib/page-visibility";
+import { EyeOff } from "lucide-react";
 import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub,
@@ -14,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" } | { kind: "email" } | { kind: "about"; section: string } | { kind: "module"; module: string; section: string };
+type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" } | { kind: "visibility" } | { kind: "email" } | { kind: "about"; section: string } | { kind: "module"; module: string; section: string };
 type Layout = "vertical" | "horizontal";
 const LAYOUT_KEY = "ril-admin-layout";
 
@@ -26,6 +29,8 @@ const iconWrap = (on: boolean) => `grid size-7 shrink-0 place-items-center round
 const hItem = (on: boolean) =>
   `inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md px-3 text-sm font-medium transition-colors ${on ? "bg-primary-foreground/15 text-primary-foreground shadow-[inset_0_-3px_0_var(--brand-orange)]" : "text-[var(--admin-nav-foreground)]/85 hover:bg-primary-foreground/10 hover:text-primary-foreground"}`;
 
+const modOf = (key: string) => ADMIN_MODULES.find((m) => (m.children ?? []).some((c) => c.key === key || (c.children ?? []).some((cc) => cc.key === key)))?.key;
+
 export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; active: Active; crumbs: string[]; children: ReactNode }) {
   const [layout, setLayout] = useState<Layout>("horizontal");
   const [collapsed, setCollapsed] = useState(false);
@@ -34,10 +39,15 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const activeModule = active.kind === "about" ? "about" : active.kind === "module" ? active.module : undefined;
   const activePage = active.kind === "about" || active.kind === "module" ? active.section : undefined;
   const [modOpen, setModOpen] = useState<Record<string, boolean>>({});
+  const vis = useAdminVisibility();
+  const hiddenTag = (mod: string | undefined, key: string) => {
+    const k = mod === "about" ? `about/${key}` : `${mod}/${key}`;
+    return visibilityPage(k) && !vis.isLive(k) ? <span className="ml-1.5 rounded-full bg-primary-foreground/10 px-1.5 py-0.5 text-[9px] uppercase tracking-wider">Hidden</span> : null;
+  };
   const SidePage = ({ p, depth }: { p: AdminPage; depth: number }): ReactNode => (
     <>
       {p.to ? (
-        <Link to={p.to} className={`${subCls(activeModule !== undefined && activePage === p.key)} ${depth ? "pl-6" : ""}`}>{p.label}</Link>
+        <Link to={p.to} className={`${subCls(activeModule !== undefined && activePage === p.key)} ${depth ? "pl-6" : ""}`}>{p.label}{hiddenTag(modOf(p.key), p.key)}</Link>
       ) : (
         <div className={`flex cursor-not-allowed items-center gap-2 rounded-md px-3 py-1.5 text-[13px] text-[var(--admin-nav-foreground)]/50 ${depth ? "pl-6" : ""}`} aria-disabled>
           <span className="flex-1 truncate">{depth ? "└ " : ""}{p.label}</span><Soon />
@@ -59,6 +69,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
     </>
   );
   const groups = investorGroups();
+  const pubKey = visibilityPage(visibilityKey(active as { kind: string; module?: string; section?: string })) ? visibilityKey(active as { kind: string; module?: string; section?: string }) : undefined;
   const activeGroup = active.kind === "investors" ? groups.find((g) => g.items.some((i) => i.key === active.section))?.label : undefined;
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(activeGroup ? { [activeGroup]: true } : {});
   const navigate = useNavigate();
@@ -92,6 +103,9 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
       <nav className="thin-scroll thin-scroll-dark min-h-0 flex-1 space-y-1 overflow-y-auto px-3 py-4">
         <Tip label="Dashboard">
           <Link to="/admin" search={{}} className={itemCls(active.kind === "dashboard")}><span className={iconWrap(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /></span>{!collapsed && "Dashboard"}</Link>
+        </Tip>
+        <Tip label="Page visibility">
+          <Link to="/admin/visibility" className={itemCls(active.kind === "visibility")}><span className={iconWrap(active.kind === "visibility")}><EyeOff className="size-4" /></span>{!collapsed && "Page visibility"}</Link>
         </Tip>
         {ADMIN_MODULES.map((m) => {
           const ready = isModuleReady(m);
@@ -174,6 +188,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
   const horizontalNav = (
     <nav className="hidden shrink-0 items-center gap-1 overflow-x-auto admin-nav border-t border-primary-foreground/10 px-4 py-1.5 thin-scroll thin-scroll-dark md:flex md:px-6">
       <Link to="/admin" search={{}} className={hItem(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /> Dashboard</Link>
+      <Link to="/admin/visibility" className={hItem(active.kind === "visibility")}><EyeOff className="size-4" /> Page visibility</Link>
       {ADMIN_MODULES.map((m) => {
         if (!isModuleReady(m)) return (
           <span key={m.key} title={`${m.label} — coming soon`} className={`${hItem(false)} cursor-not-allowed opacity-55`} aria-disabled>{m.label}<Soon /></span>
@@ -283,7 +298,14 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
               {isSuper && <option value="users">User Management</option>}
             </select>
           </div>
-          <main className="thin-scroll flex min-h-0 flex-1 flex-col overflow-y-auto p-4 md:px-7 md:py-5">{children}</main>
+          <main className="thin-scroll flex min-h-0 flex-1 flex-col overflow-y-auto p-4 md:px-7 md:py-5">
+            {pubKey && (
+              <div className="mb-3 flex flex-wrap items-center justify-end gap-2 text-xs text-muted-foreground">
+                <span>Show this page on the website</span><PublishToggle pageKey={pubKey} />
+              </div>
+            )}
+            {children}
+          </main>
         </div>
       </div>
     </TooltipProvider>
