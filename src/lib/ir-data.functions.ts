@@ -21,7 +21,8 @@ export const getIrData = createServerFn({ method: "GET" }).handler(async () => {
   });
   const [docsRes, contactsRes] = await Promise.all([
     sb.from("ir_documents").select("id,section_key,title,doc_type,doc_date,fy_year,quarter,disclosure_category,version,description,url,published,sort_order").eq("published", true).order("doc_date", { ascending: false }),
-    sb.from("ir_contacts").select("heading,lines,sort_order").order("sort_order"),
+    // Contacts are no longer anonymously readable; read them with the server-only client.
+    import("@/integrations/supabase/client.server").then(({ supabaseAdmin }) => supabaseAdmin.from("ir_contacts").select("heading,lines,sort_order").order("sort_order")),
   ]);
   if (docsRes.error) throw new Error(docsRes.error.message);
   if (contactsRes.error) throw new Error(contactsRes.error.message);
