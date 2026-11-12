@@ -19,7 +19,7 @@ Replace plain text boxes with this editor for:
 - Pillars: Section heading
 - Card 2: Heading, Tagline, Sub heading, Paragraphs
 - Each pillar's Title and Description (in the pillar edit form)
-Headings use a compact one-line version of the toolbar; paragraphs get the full one. Old plain text keeps showing as before until edited. A small live preview remains under each field.
+How it works: each field keeps its normal text box, with a "Format" button beside it. Clicking it opens a popup with the full Excel-style editor and live preview; "Apply" puts the formatted text back into the field (Cancel discards). The page Save button then saves it to the website. Old plain text shows as before until formatted. The separate Design & formatting section is removed.
 
 ## Technical details
 - Tiptap extensions: @tiptap/extension-highlight (multicolor), subscript, superscript, link, horizontal rule; line-height and box styles as a custom attribute on a wrapping div stored in the HTML.
