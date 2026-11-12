@@ -18,3 +18,11 @@ describe("strength rich text", () => {
     expect(box).toMatchObject({ bg: "#eeeeee", borderColor: "#000000", borderWidth: 2, radius: 32, padding: 10 });
   });
 });
+
+
+it("tables with cell colors survive cleaning, scripts do not", () => {
+  const out = cleanHtml('<table><tbody><tr><td colspan="2" style="background-color: #ff0000; border-color: #00ff00">A</td></tr></tbody></table><script>x</script>');
+  expect(out).toContain('<td colspan="2"');
+  expect(out).toContain("background-color:#ff0000");
+  expect(out).not.toContain("script");
+});

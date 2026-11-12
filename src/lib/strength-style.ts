@@ -75,8 +75,8 @@ const okColor = [/^#[0-9a-f]{3,8}$/i, /^rgba?\([\d\s.,%]+\)$/i, /^inherit$/];
 /** Allow-list cleaner for admin rich text — runs wherever the HTML is shown. */
 export function cleanHtml(html: string): string {
   return sanitizeHtml(html, {
-    allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "s", "span", "ul", "ol", "li", "h3", "h4", "blockquote", "mark", "sub", "sup", "a", "hr", "div"],
-    allowedAttributes: { "*": ["style"], a: ["href", "target", "rel", "style"], div: ["data-box", "style"] },
+    allowedTags: ["p", "br", "strong", "b", "em", "i", "u", "s", "span", "ul", "ol", "li", "h3", "h4", "blockquote", "mark", "sub", "sup", "a", "hr", "div", "table", "thead", "tbody", "tr", "th", "td", "colgroup", "col"],
+    allowedAttributes: { "*": ["style"], a: ["href", "target", "rel", "style"], div: ["data-box", "style"], td: ["colspan", "rowspan", "colwidth", "style"], th: ["colspan", "rowspan", "colwidth", "style"] },
     allowedSchemes: ["http", "https", "mailto"],
     transformTags: { a: (tag, attribs) => ({ tagName: tag, attribs: { ...attribs, target: "_blank", rel: "noopener noreferrer" } }) },
     allowedStyles: {
@@ -92,13 +92,17 @@ export function cleanHtml(html: string): string {
         padding: [/^\d{1,2}px$/],
         "line-height": [/^[0-3](\.\d{1,2})?$/],
         "margin-left": [/^\d{1,3}px$/],
+        "border-color": okColor,
+        "vertical-align": [/^(top|middle|bottom)$/],
+        "min-width": [/^\d{1,4}px$/],
+        width: [/^\d{1,4}(px|%)$/],
         "margin-top": [/^\d{1,2}px$/],
         "margin-bottom": [/^\d{1,2}px$/],
       },
     },
   });
 }
-export const isHtml = (s: string) => /<\/?(p|ul|ol|li|strong|em|u|s|span|br|div|mark|sub|sup|a|hr)\b/i.test(s);
+export const isHtml = (s: string) => /<\/?(p|ul|ol|li|strong|em|u|s|span|br|div|mark|sub|sup|a|hr|table|h3|h4|blockquote)\b/i.test(s);
 
 /** Whole-field "text box" look (Excel-like cell formatting), stored as a wrapping div. */
 export type Box = { bg?: string | undefined; borderColor?: string | undefined; borderWidth?: number | undefined; borderStyle?: "solid" | "dashed" | "dotted" | "double" | undefined; radius?: number | undefined; padding?: number | undefined; lineHeight?: number | undefined; indent?: number | undefined };
@@ -136,3 +140,6 @@ export function splitBox(html: string): { inner: string; box: Box } {
 
 /** Plain text of a field (for admin lists / alt text). */
 export const plainText = (s: string) => s.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/\s+/g, " ").trim();
+
+/** Shared look for tables, headings and quotes in admin rich text. */
+export const TABLE_CSS = "[&_table]:my-2 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:p-2 [&_td]:align-top [&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:p-2 [&_th]:text-left [&_th]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold [&_h4]:text-base [&_h4]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-3 [&_blockquote]:italic";

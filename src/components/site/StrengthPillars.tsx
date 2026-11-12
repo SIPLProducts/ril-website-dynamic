@@ -1,10 +1,10 @@
 import { STRENGTH_DEFAULTS } from "@/lib/strength-defaults";
 import { useQuery } from "@tanstack/react-query";
 import { pageListQuery } from "@/lib/page-lists.functions";
-import { cleanHtml, isHtml, parseStyles, plainText } from "@/lib/strength-style";
+import { cleanHtml, isHtml, parseStyles, plainText, TABLE_CSS } from "@/lib/strength-style";
 
 const D = STRENGTH_DEFAULTS;
-const RICH = "space-y-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_a]:text-primary [&_a]:underline [&_hr]:my-3 [&_mark]:rounded-sm [&_mark]:px-0.5";
+const RICH = TABLE_CSS + " overflow-x-auto space-y-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_a]:text-primary [&_a]:underline [&_hr]:my-3 [&_mark]:rounded-sm [&_mark]:px-0.5";
 const html = (s: string) => ({ __html: cleanHtml(s) });
 
 function Line({ text }: { text: string }) {

@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { Paintbrush, Type } from "lucide-react";
 import { AdminDialog, FormSection } from "@/components/admin/AdminDialog";
-import { RichTextEditor, textToHtml } from "@/components/admin/RichTextEditor";
+import { RichTextEditor, textToHtml, TABLE_CSS } from "@/components/admin/RichTextEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cleanHtml, isHtml, plainText, splitBox } from "@/lib/strength-style";
 
-const RICH = "space-y-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_a]:text-primary [&_a]:underline [&_hr]:my-3";
+const RICH = "overflow-x-auto space-y-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_a]:text-primary [&_a]:underline [&_hr]:my-3";
 
 /** Shows saved formatted HTML safely. */
 export function RichView({ html, className = "" }: { html: string; className?: string }) {
-  return <div className={`${RICH} ${className}`} dangerouslySetInnerHTML={{ __html: cleanHtml(html) }} />;
+  return <div className={`${RICH} ${TABLE_CSS} ${className}`} dangerouslySetInnerHTML={{ __html: cleanHtml(html) }} />;
 }
 
 /** A normal text box with a "Format" button that opens an Excel-style editor popup. */
