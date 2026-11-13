@@ -154,9 +154,9 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
       </FormSection>
       {withImage && (
         <FormSection title={row ? "Photo (upload a new one to replace)" : imageOptional ? "Photo (optional)" : "Photo *"}>
-          {current && !file && !clearImage && (
+          {row?.image_url && !file && !clearImage && (
             <div className="flex items-center gap-3">
-              <img src={current} alt="Current" className="h-24 max-w-[260px] rounded border border-border object-contain" />
+              {current ? <img src={current} alt="Current" className="h-24 max-w-[260px] rounded border border-border object-contain" /> : <span className="text-sm text-muted-foreground">A photo is saved.</span>}
               {imageOptional && <Button type="button" variant="outline" size="sm" onClick={() => setClearImage(true)}><Trash2 className="size-4" /> Remove photo</Button>}
             </div>
           )}

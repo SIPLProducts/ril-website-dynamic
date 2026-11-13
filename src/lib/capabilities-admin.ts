@@ -1,3 +1,4 @@
+import { publishedFileUrl } from "@/lib/file-url";
 import { safeRandomUUID } from "@/lib/uuid";
 import { useEffect, useState } from "react";
 import type { useQueryClient } from "@tanstack/react-query";
@@ -35,7 +36,7 @@ export function useStoredPreview(url: string | null) {
   useEffect(() => {
     if (!url) { setSrc(null); return; }
     if (!url.startsWith(STORAGE_PREFIX)) { setSrc(url); return; }
-    supabase.storage.from(IR_BUCKET).createSignedUrl(url.slice(STORAGE_PREFIX.length), 3600).then(({ data }) => setSrc(data?.signedUrl ?? null));
+    supabase.storage.from(IR_BUCKET).createSignedUrl(url.slice(STORAGE_PREFIX.length), 3600).then(({ data }) => setSrc(data?.signedUrl ?? publishedFileUrl(url)), () => setSrc(publishedFileUrl(url)));
   }, [url]);
   return src;
 }
