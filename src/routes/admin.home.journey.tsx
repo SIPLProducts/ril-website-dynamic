@@ -22,12 +22,13 @@ function Page() {
     <AdminShell staff={staff} active={{ kind: "module", module: "home", section: "journey" }} crumbs={["Home Page", "Our Journey"]}>
       <div className="space-y-6">
         <HomeTopHeading eyebrowKey="journey_eyebrow" titleKey="journey_title" anchor="journey" help="The heading above the milestone cards." />
-        <HomeListEditor table="home_journey_milestones" title="Milestones" itemName="Milestone" icon={History}
-          help="Each card shows a year, a title and a short text"
+        <HomeListEditor table="home_journey_milestones" title="Milestones" itemName="Milestone" icon={History} withImage imageOptional
+          help="Each card shows a photo, a year band, a title and a short text"
           fields={[
             { key: "year", label: "Year", required: true, max: 20, placeholder: "1994" },
             { key: "title", label: "Title", required: true, max: 100 },
             { key: "text", label: "Text", long: true, max: 400 },
+            { key: "icon", label: "Icon", options: [{ value: "", label: "Automatic" }, { value: "flag", label: "Flag" }, { value: "leaf", label: "Leaf" }, { value: "route", label: "Route" }, { value: "chart", label: "Growth chart" }, { value: "globe", label: "Globe" }, { value: "rocket", label: "Rocket" }] },
           ]} />
       </div>
     </AdminShell>

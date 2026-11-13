@@ -994,7 +994,9 @@ export type Database = {
       }
       home_journey_milestones: {
         Row: {
+          icon: string | null
           id: string
+          image_url: string | null
           published: boolean
           sort_order: number
           text: string
@@ -1002,7 +1004,9 @@ export type Database = {
           year: string
         }
         Insert: {
+          icon?: string | null
           id?: string
+          image_url?: string | null
           published?: boolean
           sort_order?: number
           text?: string
@@ -1010,7 +1014,9 @@ export type Database = {
           year: string
         }
         Update: {
+          icon?: string | null
           id?: string
+          image_url?: string | null
           published?: boolean
           sort_order?: number
           text?: string

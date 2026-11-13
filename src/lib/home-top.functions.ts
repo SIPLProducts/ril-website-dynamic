@@ -9,7 +9,7 @@ export type HomeTop = {
   slides: { id: string; project: string; headline: string; sub: string; alt: string; image: string | null }[];
   stats: { id: string; value: string; label: string }[];
   about: { eyebrow: string; title: string; paragraphs: string[]; highlights: { t: string; d: string }[]; images: HomeImage[] };
-  journey: { eyebrow: string; title: string; milestones: { id: string; year: string; title: string; text: string }[] };
+  journey: { eyebrow: string; title: string; milestones: { id: string; year: string; title: string; text: string; image: string | null; icon: string }[] };
 };
 
 function publicClient() {
@@ -50,7 +50,7 @@ export const getHomeTop = createServerFn({ method: "GET" }).handler(async (): Pr
     },
     journey: {
       eyebrow: t.data?.journey_eyebrow ?? "Our Journey", title: t.data?.journey_title ?? "",
-      milestones: (j.data ?? []).map((r) => ({ id: r.id, year: r.year, title: r.title, text: r.text })),
+      milestones: (j.data ?? []).map((r) => ({ id: r.id, year: r.year, title: r.title, text: r.text, image: res(r.image_url), icon: r.icon ?? "" })),
     },
   };
 });

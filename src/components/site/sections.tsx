@@ -3,7 +3,7 @@ import { csrQuery, mediaQuery } from "@/lib/site-content.functions";
 import { managementQuery } from "@/lib/management.functions";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink, Leaf, Pause, Play, ShieldCheck, Waves } from "lucide-react";
+import { ArrowRight, ExternalLink, Flag, Globe, Leaf, Pause, Play, Rocket, Route as RouteIcon, ShieldCheck, TrendingUp, Waves, type LucideIcon } from "lucide-react";
 import { capabilitiesQuery } from "@/lib/capabilities.functions";
 import { homeHighlightsQuery } from "@/lib/home-highlights.functions";
 import { resolveHomeAsset } from "@/lib/home-assets";
@@ -528,7 +528,7 @@ function CsrCard() {
   );
 }
 
-const JOURNEY_MILESTONES = [
+const JOURNEY_MILESTONES: { year: string; title: string; text: string; image?: string | null; icon?: string }[] = [
   { year: "1994", title: "Founded", text: "Ramky begins as a civil contracting firm in Hyderabad." },
   { year: "2000", title: "Environment entry", text: "Pioneering integrated waste management facilities in India." },
   { year: "2005", title: "National scale", text: "Water, irrigation and highway EPC contracts across multiple states." },
@@ -537,10 +537,17 @@ const JOURNEY_MILESTONES = [
   { year: "2024", title: "Next decade", text: "HAM highways, smart-city works and large lift irrigation schemes." },
 ];
 
+const JOURNEY_ICONS: Record<string, LucideIcon> = { flag: Flag, leaf: Leaf, route: RouteIcon, chart: TrendingUp, globe: Globe, rocket: Rocket };
+const JOURNEY_ICON_ORDER = ["flag", "leaf", "route", "chart", "globe", "rocket"];
+const JOURNEY_BANDS = ["bg-brand-orange", "bg-brand-green", "bg-brand-blue"];
+/** Staircase offsets (desktop only): each card sits a little higher than the one before. */
+const JOURNEY_STEPS = ["lg:mt-24", "lg:mt-[4.75rem]", "lg:mt-[3.25rem]", "lg:mt-8", "lg:mt-4", "lg:mt-0"];
+
 export function Journey() {
   const { data: top } = useQuery(homeTopQuery());
   const j = top?.journey;
   const milestones = j ? j.milestones : JOURNEY_MILESTONES;
+  const n = milestones.length;
   return (
     <section id="journey" className="scroll-mt-24 bg-surface py-20 lg:py-28">
       <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
@@ -550,15 +557,24 @@ export function Journey() {
             {j?.title || "Three decades of building, milestone by milestone."}
           </h2>
         </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {milestones.map((milestone, i) => (
-            <article key={i} className="border border-border bg-card p-7 shadow-sm">
-              <p className="font-display text-3xl font-bold text-brand-orange">{milestone.year}</p>
-              <div className="mt-3 h-px w-14 bg-brand-green" />
-              <h3 className="mt-5 font-display text-lg font-semibold">{milestone.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{milestone.text}</p>
-            </article>
-          ))}
+        <div className="mt-12 grid items-start gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+          {milestones.map((m, i) => {
+            const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6]!]!;
+            const step = JOURNEY_STEPS[Math.max(0, 6 - n) + i] ?? "lg:mt-0";
+            return (
+              <article key={i} className={`overflow-hidden bg-card shadow-md transition-transform duration-300 hover:-translate-y-1 ${step}`}>
+                {m.image && <img src={m.image} alt={m.title} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
+                <div className={`flex items-center justify-between px-5 py-3 text-primary-foreground ${JOURNEY_BANDS[i % 3]}`}>
+                  <span className="font-display text-2xl font-bold">{m.year}</span>
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <div className="px-5 py-5">
+                  <h3 className="font-display text-base font-semibold">{m.title}</h3>
+                  {m.text && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{m.text}</p>}
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
