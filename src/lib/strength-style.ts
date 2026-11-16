@@ -143,3 +143,10 @@ export const plainText = (s: string) => s.replace(/<[^>]+>/g, " ").replace(/&nbs
 
 /** Shared look for tables, headings and quotes in admin rich text. */
 export const TABLE_CSS = "[&_table]:my-2 [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-border [&_td]:p-2 [&_td]:align-top [&_th]:border [&_th]:border-border [&_th]:bg-muted [&_th]:p-2 [&_th]:text-left [&_th]:font-semibold [&_h3]:text-lg [&_h3]:font-semibold [&_h4]:text-base [&_h4]:font-semibold [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:pl-3 [&_blockquote]:italic";
+
+/** Removes tables whose cells are all blank, and trailing empty paragraphs. */
+export function stripEmptyTables(html: string): string {
+  return html
+    .replace(/<table\b[\s\S]*?<\/table>/gi, (t) => (t.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim() ? t : ""))
+    .replace(/(?:<p>(?:\s|<br\s*\/?>)*<\/p>\s*)+$/i, "");
+}

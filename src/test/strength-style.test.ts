@@ -26,3 +26,14 @@ it("tables with cell colors survive cleaning, scripts do not", () => {
   expect(out).toContain("background-color:#ff0000");
   expect(out).not.toContain("script");
 });
+
+import { stripEmptyTables } from "@/lib/strength-style";
+describe("stripEmptyTables", () => {
+  it("removes an empty table and trailing empty lines", () => {
+    expect(stripEmptyTables('<h3>Pillars</h3><table><tbody><tr><td><p></p></td></tr></tbody></table><p></p>')).toBe("<h3>Pillars</h3>");
+  });
+  it("keeps a table that has text", () => {
+    const t = "<table><tbody><tr><td><p>A</p></td></tr></tbody></table>";
+    expect(stripEmptyTables(t)).toBe(t);
+  });
+});

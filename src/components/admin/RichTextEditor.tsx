@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import type React from "react";
 import { EditorContent, useEditor, Extension } from "@tiptap/react";
@@ -128,9 +129,10 @@ export function RichTextEditor({ value, onChange, compact }: { value: string; on
   );
   return (
     <div>
-      <div className="flex gap-1">{tabBtn("home", "Home")}{tabBtn("table", "Table")}
+      <div className="flex gap-1">{tabBtn("home", "Home")}{(!compact || inTable) && tabBtn("table", "Table")}
         <div className="ml-auto flex gap-1 pb-1"><Tb label="Undo" icon={<Undo2 className="size-4" />} onClick={() => c().undo().run()} /><Tb label="Redo" icon={<Redo2 className="size-4" />} onClick={() => c().redo().run()} /></div>
       </div>
+      {inTable && <div className="flex justify-end pb-1"><Button type="button" size="sm" variant="destructive" onClick={() => c().deleteTable().run()}><Trash2 className="size-4" /> Delete table</Button></div>}
       <div className="flex flex-wrap items-stretch gap-1.5 rounded-t-md border border-border bg-surface p-1.5">
         {tab === "home" && <>
           <Group title="Font">

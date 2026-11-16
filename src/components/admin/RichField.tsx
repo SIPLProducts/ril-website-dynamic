@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { cleanHtml, isHtml, plainText, splitBox } from "@/lib/strength-style";
+import { cleanHtml, isHtml, plainText, splitBox, stripEmptyTables } from "@/lib/strength-style";
 
 const RICH = "overflow-x-auto space-y-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_a]:text-primary [&_a]:underline [&_hr]:my-3";
 
@@ -43,7 +43,7 @@ function FormatDialog({ label, value, compact, onClose, onApply }: { label: stri
   const result = html;
   return (
     <AdminDialog icon={Paintbrush} xwide title={`Format: ${label}`} subtitle="Select text and use the toolbar, then Save" onClose={onClose}
-      footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button className="neu-btn-gradient border-0" onClick={() => onApply(plainText(html) ? result : "")}>Apply</Button></>}>
+      footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button className="neu-btn-gradient border-0" onClick={() => { const v = stripEmptyTables(result); onApply(plainText(v) ? v : ""); }}>Apply</Button></>}>
       <FormSection title="Text">
         <RichTextEditor value={html} onChange={setHtml} compact={compact} />
       </FormSection>
