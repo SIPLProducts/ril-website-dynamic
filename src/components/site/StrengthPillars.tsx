@@ -1,5 +1,6 @@
 import { STRENGTH_DEFAULTS } from "@/lib/strength-defaults";
 import { useQuery } from "@tanstack/react-query";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { pageListQuery } from "@/lib/page-lists.functions";
 import { cleanHtml, isHtml, parseStyles, plainText, TABLE_CSS } from "@/lib/strength-style";
 
@@ -32,9 +33,21 @@ export type Pillar = { id: string; title: string; body: string; image_url: strin
 export function PillarCard({ p, n, legacyBody }: { p: Pillar; n: number; legacyBody?: string | undefined }) {
   const title = isHtml(p.title) ? p.title : (p.title || "").replace(/^\s*\d+\s*[.)\-–:]?\s*/, "");
   return (
-    <li className="grid gap-5 py-7 sm:grid-cols-[11rem_1fr] sm:gap-8">
-      {p.image_url && <img src={p.image_url} alt={plainText(p.title)} loading="lazy" className="aspect-square w-full max-w-[11rem] rounded-lg object-cover" />}
-      <div className={p.image_url ? "min-w-0" : "min-w-0 sm:col-span-2"}>
+    <li className={p.image_url ? "grid items-start gap-6 py-7 lg:grid-cols-2 lg:gap-10" : "py-7"}>
+      {p.image_url && (
+        <Dialog>
+          <DialogTrigger asChild>
+            <button type="button" aria-label="Enlarge image" className="block w-full cursor-zoom-in overflow-hidden rounded-lg border border-border">
+              <img src={p.image_url} alt={plainText(p.title)} loading="lazy" className="h-auto w-full object-contain" />
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-w-[95vw] p-2 sm:max-w-[95vw]">
+            <DialogTitle className="sr-only">{plainText(p.title)}</DialogTitle>
+            <img src={p.image_url} alt={plainText(p.title)} className="mx-auto max-h-[88vh] w-auto max-w-full object-contain" />
+          </DialogContent>
+        </Dialog>
+      )}
+      <div className="min-w-0">
         <h3 className="flex gap-2 font-display text-lg font-semibold">
           <span className="text-primary">{n}.</span><Inline text={title} className="min-w-0 flex-1" />
         </h3>
