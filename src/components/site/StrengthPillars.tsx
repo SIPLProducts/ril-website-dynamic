@@ -64,14 +64,9 @@ export function StrengthPillars({ extra }: { extra: Record<string, string> }) {
       <div className="max-w-4xl">
         <h2 className="text-2xl font-bold sm:text-3xl"><Inline text={x("introTitle")} /></h2>
         <div className="eyebrow mt-3"><Inline text={x("introTagline")} /></div>
-        <div className="mt-6 font-display text-lg font-semibold"><Inline text={x("introSubtitle")} /></div>
-        {isHtml(x("introBody")) ? <div className={`mt-4 leading-relaxed text-muted-foreground ${RICH}`} dangerouslySetInnerHTML={html(x("introBody"))} />
-          : <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">
-            {x("introBody").split(/\\n|\r?\n/).map((p) => p.trim()).filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}
-          </div>}
       </div>
       {items.length > 0 && (
-        <ul className="-mt-8 divide-y divide-border border-y border-border">
+        <ul className="-mt-10 divide-y divide-border border-y border-border">
           {items.map((p, i) => <PillarCard key={p.id} p={p} n={i + 1} />)}
         </ul>
       )}

@@ -122,7 +122,7 @@ export function AboutContentEditor({ slug, label, card1, card2 }: { slug: string
           {card1}
         </FormSection>
         <FormSection title="Card 2 — Strengths & Strategies (shown below the pillar cards)">
-          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} rich items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (one per line)", true]]} />
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} rich items={[["introTitle", "Heading"], ["introTagline", "Tagline"]]} />
           {card2}
         </FormSection>
       </>)}
@@ -147,6 +147,6 @@ function ExtraFields({ f, set, items, rich }: { f: Record<string, string>; set: 
 function withDefaults(slug: string, extra: Record<string, string>): Record<string, string> {
   if (slug !== "strength-strategies") return extra;
   const out = { ...extra };
-  for (const [k, v] of Object.entries(STRENGTH_DEFAULTS)) if (!(out[k] ?? "").trim()) out[k] = v;
+  for (const [k, v] of Object.entries(STRENGTH_DEFAULTS).filter(([k]) => k !== "introSubtitle" && k !== "introBody")) if (!(out[k] ?? "").trim()) out[k] = v;
   return out;
 }
