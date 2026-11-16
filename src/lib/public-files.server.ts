@@ -29,6 +29,7 @@ export async function isPublishedFile(sb: SupabaseClient<Database>, path: string
     sb.from("careers_landing_cards").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("home_journey_milestones").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("strength_pillars").select("id").eq("image_url", ref).eq("published", true).limit(1),
+    sb.from("strength_items").select("id").eq("image_url", ref).eq("published", true).limit(1),
     sb.from("about_content").select("slug").eq("banner_image_url", ref).limit(1),
     sb.from("about_content").select("slug").eq("image_url", ref).limit(1),
     sb.from("esg_pages").select("slug").eq("banner_image_url", ref).limit(1),

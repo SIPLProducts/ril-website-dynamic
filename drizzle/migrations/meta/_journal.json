@@ -169,6 +169,13 @@
       "when": 1794549644127,
       "tag": "0023_journey_images",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1794800097744,
+      "tag": "0024_strength_items",
+      "breakpoints": true
     }
   ]
 }

@@ -1487,6 +1487,39 @@ export type Database = {
         }
         Relationships: []
       }
+      strength_items: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          image_url: string | null
+          published: boolean
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       strength_pillars: {
         Row: {
           body: string

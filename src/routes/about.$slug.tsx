@@ -17,6 +17,7 @@ export const Route = createFileRoute("/about/$slug")({
       context.queryClient.ensureQueryData(aboutDataQuery(section.slug)).catch(() => null),
       section.slug === "management-systems" ? context.queryClient.ensureQueryData(pageListQuery("management_system_items")).catch(() => null) : null,
       section.slug === "strength-strategies" ? context.queryClient.ensureQueryData(pageListQuery("strength_pillars")).catch(() => null) : null,
+      section.slug === "strength-strategies" ? context.queryClient.ensureQueryData(pageListQuery("strength_items")).catch(() => null) : null,
     ]);
     return section;
   },

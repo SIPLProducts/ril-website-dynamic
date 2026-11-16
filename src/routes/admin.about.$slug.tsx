@@ -30,7 +30,9 @@ function Page() {
   return (
     <AdminShell staff={staff} active={{ kind: "about", section: slug }} crumbs={["About Ramky", title]}>
       <div className="space-y-6">
-        <AboutContentEditor key={slug} slug={slug} label={title} />
+        <AboutContentEditor key={slug} slug={slug} label={title}
+          card1={slug === "strength-strategies" ? <ListOf table="strength_pillars" title="Pillars" itemName="Pillar" /> : undefined}
+          card2={slug === "strength-strategies" ? <ListOf table="strength_items" title="Strengths & Strategies cards" itemName="Card" /> : undefined} />
         {slug === "management-systems" && (<>
           <HomeListEditor table="management_system_items" filter={{ key: "kind", value: "certificate" }} title="ISO Certificates" itemName="Certificate" icon={ShieldCheck}
             help="Each card shows the standard, title, summary, focus areas and a certificate to view" doc={PDF}
@@ -51,15 +53,18 @@ function Page() {
               { key: "summary", label: "Summary", long: true, max: 1200 },
             ]} />
         </>)}
-        {slug === "strength-strategies" && (
-          <HomeListEditor table="strength_pillars" title="Pillars" itemName="Pillar" icon={Layers} withImage imageOptional
-            help="Each card shows an optional image, a heading and a description. Start a line with 'Strategic focus:' to highlight it."
-            fields={[
-              { key: "title", label: "Heading", required: true, max: 160, rich: true },
-              { key: "body", label: "Description (one paragraph per line)", long: true, max: 4000, rich: true },
-            ]} />
-        )}
       </div>
     </AdminShell>
+  );
+}
+
+function ListOf({ table, title, itemName }: { table: "strength_pillars" | "strength_items"; title: string; itemName: string }) {
+  return (
+    <HomeListEditor table={table} title={title} itemName={itemName} icon={Layers} withImage imageOptional
+      help="Each card shows an optional image, a heading and a description. Start a line with 'Strategic focus:' to highlight it."
+      fields={[
+        { key: "title", label: "Heading", required: true, max: 160, rich: true },
+        { key: "body", label: "Description (one paragraph per line)", long: true, max: 4000, rich: true },
+      ]} />
   );
 }

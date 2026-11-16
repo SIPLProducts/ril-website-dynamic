@@ -54,7 +54,7 @@ function ImageField({ label, url, file, onFile, onRemove }: { label: string; url
   );
 }
 
-export function AboutContentEditor({ slug, label }: { slug: string; label: string }) {
+export function AboutContentEditor({ slug, label, card1, card2 }: { slug: string; label: string; card1?: React.ReactNode; card2?: React.ReactNode }) {
   const qc = useQueryClient();
   const { data } = useQuery({ queryKey: ["admin-about", slug], queryFn: async () => {
     const { data, error } = await supabase.from("about_content").select("*").eq("slug", slug).maybeSingle();
@@ -117,11 +117,13 @@ export function AboutContentEditor({ slug, label }: { slug: string; label: strin
         </FormSection>
       </>)}
       {slug === "strength-strategies" && (<>
-        <FormSection title="Card 1 — Pillars section heading (pillar cards are managed in the Pillars list below)">
-          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} rich items={[["pillarsTitle", "Section heading"]]} />
+        <FormSection title="Card 1 — Heading and Pillars">
+          <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} rich items={[["pillarsTitle", "Heading"]]} />
+          {card1}
         </FormSection>
         <FormSection title="Card 2 — Strengths & Strategies (shown below the pillar cards)">
           <ExtraFields f={f.extra} set={(extra) => setF({ ...f, extra })} rich items={[["introTitle", "Heading"], ["introTagline", "Tagline"], ["introSubtitle", "Sub heading"], ["introBody", "Paragraphs (one per line)", true]]} />
+          {card2}
         </FormSection>
       </>)}
     </section>

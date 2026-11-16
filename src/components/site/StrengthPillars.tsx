@@ -49,6 +49,8 @@ export function StrengthPillars({ extra }: { extra: Record<string, string> }) {
   const x = (k: keyof typeof D) => (extra[k] ?? "").trim() || D[k];
   const legacy = parseStyles(extra["styles"]).pillars ?? {};
   const pillars = (rows ?? []) as unknown as Pillar[];
+  const { data: itemRows } = useQuery(pageListQuery("strength_items"));
+  const items = (itemRows ?? []) as unknown as Pillar[];
   return (
     <section className="mx-auto max-w-[1400px] space-y-16 px-5 pb-16 lg:px-10 lg:pb-24">
       {pillars.length > 0 && (
@@ -68,6 +70,11 @@ export function StrengthPillars({ extra }: { extra: Record<string, string> }) {
             {x("introBody").split(/\\n|\r?\n/).map((p) => p.trim()).filter(Boolean).map((p, i) => <p key={i}>{p}</p>)}
           </div>}
       </div>
+      {items.length > 0 && (
+        <ul className="-mt-8 divide-y divide-border border-y border-border">
+          {items.map((p, i) => <PillarCard key={p.id} p={p} n={i + 1} />)}
+        </ul>
+      )}
     </section>
   );
 }
