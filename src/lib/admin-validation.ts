@@ -41,7 +41,10 @@ export function imageFileError(file: { type: string; size: number } | null, requ
   return null;
 }
 
-/** A client entry must keep an image: either an existing one or a newly chosen file. */
-export function clientImageError(file: { type: string; size: number } | null, existingImage: string | null): string | null {
-  return imageFileError(file, !existingImage);
+/** A client needs a logo or a description; the logo itself is optional. */
+export function clientImageError(file: { type: string; size: number } | null, existingImage: string | null, description = ""): string | null {
+  const fileErr = imageFileError(file, false);
+  if (fileErr) return fileErr;
+  if (!file && !existingImage && !description.trim()) return "Add a logo or a description";
+  return null;
 }

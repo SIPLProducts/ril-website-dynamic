@@ -105,7 +105,7 @@ function ClientList() {
       <div className="flex items-center justify-between gap-3 border-b border-border p-5">
         <div>
           <h2 className="font-display text-xl font-bold">Our Clientele</h2>
-          <p className="text-sm text-muted-foreground">{rows.length} clients · image required, description optional</p>
+          <p className="text-sm text-muted-foreground">{rows.length} clients · logo and description optional (at least one)</p>
         </div>
         <Button onClick={() => setEditing("new")} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add Client</Button>
       </div>
@@ -147,21 +147,23 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
   const [published, setPublished] = useState(row?.published ?? true);
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [removeImg, setRemoveImg] = useState(false);
+  const existing = removeImg ? null : (row?.image_url ?? null);
   const preview = usePreview(row?.image_url ?? null);
 
   async function save() {
-    const e = clientImageError(file, row?.image_url ?? null);
+    const e = clientImageError(file, existing, description);
     setErr(e);
     if (e) return;
     setSaving(true);
     try {
-      const image_url = file ? await uploadImage(file, "clients") : row!.image_url;
+      const image_url = file ? await uploadImage(file, "clients") : existing;
       const payload = { image_url, description: description.trim(), published };
       const { error } = row
         ? await supabase.from("clientele").update(payload).eq("id", row.id)
         : await supabase.from("clientele").insert({ ...payload, sort_order: nextOrder });
       if (error) throw new Error(error.message);
-      if (file && row?.image_url) await removeStored(row.image_url);
+      if ((file || removeImg) && row?.image_url) await removeStored(row.image_url);
       toast.success(published ? "Saved — now live on the website" : "Saved as draft");
       onSaved();
     } catch (x) { toast.error(x instanceof Error ? x.message : "Save failed"); } finally { setSaving(false); }
@@ -171,8 +173,13 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
     <AdminDialog icon={Building2} title={row ? "Edit client" : "Add client"} subtitle="Shown in Our Clientele on the website" onClose={onClose}
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add client"}</Button></>}>
       <FormSection title="Client logo">
-        {preview && !file && <img src={preview} alt="" className="h-20 w-auto rounded border border-border bg-background object-contain p-2" />}
-        <FileDropzone file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, JPG, WebP or SVG, up to 5 MB${row?.image_url ? " — leave empty to keep current" : " — required"}`} />
+        {preview && !file && !removeImg && (
+          <div className="flex items-center gap-3">
+            <img src={preview} alt="" className="h-20 w-auto rounded border border-border bg-background object-contain p-2" />
+            <Button type="button" variant="outline" size="sm" onClick={() => { setRemoveImg(true); setErr(null); }}>Remove logo</Button>
+          </div>
+        )}
+        <FileDropzone file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, JPG, WebP or SVG, up to 5 MB${existing ? " — leave empty to keep current" : " — optional"}`} />
         <FieldError msg={err ?? undefined} />
       </FormSection>
       <FormSection title="Details">
