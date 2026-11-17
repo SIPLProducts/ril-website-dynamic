@@ -11,7 +11,6 @@ import { imageFileError } from "@/lib/admin-validation";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection } from "@/components/admin/AdminDialog";
-import { EsgCommitteeEditor } from "@/components/admin/EsgCommitteeEditor";
 import { confirmDelete } from "@/components/admin/ConfirmDelete";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,7 +78,6 @@ function Page() {
     <AdminShell staff={staff} active={{ kind: "module", module: "sustainability", section: slug }} crumbs={["Sustainability", label]}>
       <div key={slug} className="space-y-6">
         <PageEditor slug={slug} label={label} />
-        {slug === "governance" && <EsgCommitteeEditor />}
         {kinds.map((k) => <ItemList key={k} slug={slug} kind={k} grouped={k === "metric"} />)}
       </div>
     </AdminShell>
@@ -313,8 +311,8 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
           <div className={kind === "metric" || kind === "report" ? "" : "sm:col-span-2"}><Label>{kind === "metric" ? "Label" : "Title"}</Label><Input value={f.title} maxLength={160} onChange={(e) => setF({ ...f, title: e.target.value })} /><FieldError msg={errs.title} /></div>
           {grouped && <GroupPicker value={f.group_title} groups={groups} onChange={(v) => setF({ ...f, group_title: v })} />}
         </div>
-        {(kind === "accordion" || kind === "report") && (
-          <div><Label>Description {kind === "report" && <span className="text-muted-foreground">(optional)</span>}</Label><Textarea rows={4} maxLength={2000} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} /><FieldError msg={errs.body} /></div>
+        {(kind === "accordion" || kind === "report" || kind === "governance_item") && (
+          <div><Label>Description {kind !== "accordion" && <span className="text-muted-foreground">(optional{kind === "governance_item" ? " — when filled, the card expands on click. Start a line with \"Chair:\" or \"Members:\" to bold the label" : ""})</span>}</Label><Textarea rows={4} maxLength={2000} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} /><FieldError msg={errs.body} /></div>
         )}
         <label className="flex items-center gap-3 text-sm"><Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} /> Live on website</label>
       </FormSection>

@@ -41,7 +41,9 @@ export const getEsgPage = createServerFn({ method: "GET" })
       if (!g) groups.push((g = { title: m.group_title!, metrics: [] }));
       g.metrics.push({ value: m.value, label: m.title });
     }
-    const govItems = items.filter((i) => i.kind === "governance_item").map((i) => i.title);
+    const govRows = items.filter((i) => i.kind === "governance_item");
+    const govItems = govRows.map((i) => i.title);
+    const govDetails = Object.fromEntries(govRows.filter((i) => i.body.trim()).map((i) => [i.title, i.body]));
     const reports = items.filter((i) => i.kind === "report").map((r) => ({ title: r.title, description: r.body, year: r.year, url: resolve(r.url) }));
     const committee = parseCommittee(page.committee);
     return {
@@ -54,7 +56,7 @@ export const getEsgPage = createServerFn({ method: "GET" })
       metrics: metrics.filter((m) => !m.group_title).map((m) => ({ value: m.value, label: m.title })),
       metricGroups: groups.length ? groups : undefined,
       governance: page.highlight_value || govItems.length
-        ? { highlight: { title: page.highlight_title, value: page.highlight_value, label: page.highlight_label }, items: govItems }
+        ? { highlight: { title: page.highlight_title, value: page.highlight_value, label: page.highlight_label }, items: govItems, details: govDetails }
         : undefined,
       accordions: items.filter((i) => i.kind === "accordion").map((a) => ({ title: a.title, body: a.body })),
       reports: reports.length || data.slug === "esg-reporting" ? reports : undefined,

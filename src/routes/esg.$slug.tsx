@@ -7,7 +7,6 @@ import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import { getMetricTrend } from "@/lib/esg-metric-trends";
-import { EsgCommitteeAccordion } from "@/components/esg/EsgCommitteeAccordion";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import socialImage from "@/assets/esg-social-workplace.jpg.asset.json";
@@ -228,18 +227,11 @@ function EsgPage() {
               </div>
               <ul className="grid gap-4 sm:grid-cols-2">
                 {section.governance.items.map((item) => (
-                  <li
-                    key={item}
-                    className="flex items-center gap-3 rounded-sm border border-border bg-surface p-5 transition-shadow hover:shadow-lg"
-                  >
-                    <Scale className="size-5 shrink-0 text-emerald-700" aria-hidden="true" />
-                    <span className="font-display text-base font-semibold text-foreground">{item}</span>
-                  </li>
+                  <GovernanceCard key={item} title={item} details={section.governance?.details?.[item]} />
                 ))}
               </ul>
             </div>
           )}
-          {section.slug === "governance" && section.committee && <EsgCommitteeAccordion committee={section.committee} />}
         </section>
         )}
 
@@ -391,5 +383,34 @@ function ReportViewer({ doc, onClose }: { doc: { title: string; url: string }; o
         <PdfCanvasViewer url={doc.url} />
       </div>
     </div>
+  );
+}
+
+function GovernanceCard({ title, details }: { title: string; details?: string | undefined }) {
+  const [open, setOpen] = useState(false);
+  if (!details) {
+    return (
+      <li className="flex items-center gap-3 rounded-sm border border-border bg-surface p-5 transition-shadow hover:shadow-lg">
+        <Scale className="size-5 shrink-0 text-emerald-700" aria-hidden="true" />
+        <span className="font-display text-base font-semibold text-foreground">{title}</span>
+      </li>
+    );
+  }
+  return (
+    <li className={`rounded-sm border bg-surface transition-shadow hover:shadow-lg ${open ? "border-emerald-700/40 sm:col-span-2" : "border-border"}`}>
+      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-5 text-left">
+        <Scale className="size-5 shrink-0 text-emerald-700" aria-hidden="true" />
+        <span className="flex-1 font-display text-base font-semibold text-foreground">{title}</span>
+        <ChevronDown className={`size-5 shrink-0 text-emerald-700 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="space-y-2 border-t border-border px-5 pb-5 pt-4 text-sm leading-relaxed text-muted-foreground">
+          {details.split(/\n+/).map((line, i) => {
+            const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
+            return m ? <p key={i}><span className="font-semibold text-foreground">{m[1]}:</span> {m[2]}</p> : <p key={i}>{line}</p>;
+          })}
+        </div>
+      )}
+    </li>
   );
 }

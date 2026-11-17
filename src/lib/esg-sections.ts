@@ -23,6 +23,8 @@ export interface EsgMetricGroup {
 export interface EsgGovernance {
   highlight: { title: string; value: string; label: string };
   items: string[];
+  /** Optional expandable text per item title, shown when the card is clicked. */
+  details?: Record<string, string> | undefined;
 }
 
 export interface EsgSection {
