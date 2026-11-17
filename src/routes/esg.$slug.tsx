@@ -156,7 +156,7 @@ function EsgPage() {
         {hasMetrics && (
         <section className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
           <p className="eyebrow">
-            Key Metrics
+            {section.slug === "esg-reporting" ? "Frameworks" : "Key Metrics"}
             {section.metricsPeriod && (
               <span className="font-normal normal-case tracking-normal text-muted-foreground">
                 {" "}| {section.metricsPeriod}
@@ -274,7 +274,7 @@ function EsgPage() {
           <section className="border-t border-border">
             <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
               <p className="eyebrow">Downloads</p>
-              <h2 className="mt-4 font-display text-3xl font-bold">Reports &amp; Frameworks</h2>
+              <h2 className="mt-4 font-display text-3xl font-bold">Reports</h2>
               <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {section.reports.map((report) => (
                   <div
