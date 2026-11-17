@@ -338,8 +338,7 @@ function EsgPage() {
         {/* Back link */}
         <div className="mx-auto max-w-[1400px] px-5 py-10 lg:px-10">
           <Link
-            to="/esg/$slug"
-            params={{ slug: "policies" }}
+            to="/sustainability"
             className="inline-flex items-center gap-2 font-display text-sm font-semibold uppercase text-brand-blue transition-colors hover:text-brand-orange"
           >
             <ArrowLeft className="size-4" /> Back to Sustainability
@@ -360,8 +359,7 @@ function EsgNotFound() {
           <p className="eyebrow">ESG</p>
           <h1 className="mt-4 text-4xl font-bold">Section not found</h1>
           <Link
-            to="/esg/$slug"
-            params={{ slug: "policies" }}
+            to="/sustainability"
             className="mt-7 inline-flex items-center gap-2 font-display text-sm font-semibold text-brand-blue"
           >
             <ArrowLeft className="size-4" /> Back to Sustainability

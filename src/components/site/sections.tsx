@@ -371,16 +371,17 @@ export function Projects() {
   );
 }
 
-export function Sustainability() {
+export function Sustainability({ standalone = false }: { standalone?: boolean }) {
   const { data } = useQuery(homeHighlightsQuery());
   if (!data) return null;
   const s = data.sustainability;
+  const Heading = standalone ? "h1" : "h2";
   return (
-    <section id="sustainability" className="sustainability-panel">
+    <section id="sustainability" className={`sustainability-panel ${standalone ? "pb-16" : ""}`}>
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-20 lg:grid-cols-2 lg:items-center lg:px-10 lg:py-28">
         <div>
           <p className="eyebrow">{s.eyebrow}</p>
-          <h2 className="mt-4 text-[1.2rem] font-bold leading-tight text-sustainability-foreground sm:text-[1.9rem] xl:text-[2.5rem]">{s.title}</h2>
+          <Heading className="mt-4 text-[1.2rem] font-bold leading-tight text-sustainability-foreground sm:text-[1.9rem] xl:text-[2.5rem]">{s.title}</Heading>
           {s.body && <p className="mt-6 text-base leading-relaxed text-sustainability-muted">{s.body}</p>}
           {s.sideStats.length > 0 && (
           <div className="mt-9 grid max-w-xl grid-cols-2 gap-6 sm:gap-10">

@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { isSustainabilityPage } from "@/lib/sustainability-navigation";
 
 describe("Sustainability navigation scope", () => {
+  it("locks navigation on the Sustainability overview itself", () => {
+    expect(isSustainabilityPage("/sustainability")).toBe(true);
+  });
   it("locks navigation on every Sustainability subpage", () => {
     for (const slug of ["policies", "environmental", "social", "governance", "esg-reporting"]) {
       expect(isSustainabilityPage(`/esg/${slug}`)).toBe(true);

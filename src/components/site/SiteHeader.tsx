@@ -120,8 +120,7 @@ export function SiteHeader() {
           ))}
           <div className="group relative">
             <Link
-              to="/esg/$slug"
-              params={{ slug: "policies" }}
+              to="/sustainability"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
             >
               Sustainability <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
@@ -246,7 +245,7 @@ export function SiteHeader() {
             </a>
           ))}
           <div className="border-b border-border bg-surface px-4 py-2">
-            <Link to="/esg/$slug" params={{ slug: "policies" }} onClick={() => setOpen(false)} className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
+            <Link to="/sustainability" onClick={() => setOpen(false)} className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
               Sustainability
             </Link>
             {ESG_SECTIONS.map((section) => (

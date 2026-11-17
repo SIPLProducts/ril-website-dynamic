@@ -19,6 +19,7 @@ import { Route as InvestorsRouteImport } from './routes/investors'
 import { Route as LifeAtRamkyRouteImport } from './routes/life-at-ramky'
 import { Route as MediaRouteImport } from './routes/media'
 import { Route as SeniorManagementRouteImport } from './routes/senior-management'
+import { Route as SustainabilityRouteImport } from './routes/sustainability'
 import { Route as AboutSlugRouteImport } from './routes/about.$slug'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminAccoladesRouteImport } from './routes/admin.accolades'
@@ -108,6 +109,11 @@ const MediaRoute = MediaRouteImport.update({
 const SeniorManagementRoute = SeniorManagementRouteImport.update({
   id: '/senior-management',
   path: '/senior-management',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SustainabilityRoute = SustainabilityRouteImport.update({
+  id: '/sustainability',
+  path: '/sustainability',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutSlugRoute = AboutSlugRouteImport.update({
@@ -330,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/life-at-ramky': typeof LifeAtRamkyRoute
   '/media': typeof MediaRoute
   '/senior-management': typeof SeniorManagementRoute
+  '/sustainability': typeof SustainabilityRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/accolades': typeof AdminAccoladesRoute
   '/admin/email-settings': typeof AdminEmailSettingsRoute
@@ -381,6 +388,7 @@ export interface FileRoutesByTo {
   '/life-at-ramky': typeof LifeAtRamkyRoute
   '/media': typeof MediaRoute
   '/senior-management': typeof SeniorManagementRoute
+  '/sustainability': typeof SustainabilityRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/accolades': typeof AdminAccoladesRoute
   '/admin/email-settings': typeof AdminEmailSettingsRoute
@@ -434,6 +442,7 @@ export interface FileRoutesById {
   '/life-at-ramky': typeof LifeAtRamkyRoute
   '/media': typeof MediaRoute
   '/senior-management': typeof SeniorManagementRoute
+  '/sustainability': typeof SustainabilityRoute
   '/about/$slug': typeof AboutSlugRoute
   '/admin/accolades': typeof AdminAccoladesRoute
   '/admin/email-settings': typeof AdminEmailSettingsRoute
@@ -488,6 +497,7 @@ export interface FileRouteTypes {
     | '/life-at-ramky'
     | '/media'
     | '/senior-management'
+    | '/sustainability'
     | '/about/$slug'
     | '/admin/accolades'
     | '/admin/email-settings'
@@ -539,6 +549,7 @@ export interface FileRouteTypes {
     | '/life-at-ramky'
     | '/media'
     | '/senior-management'
+    | '/sustainability'
     | '/about/$slug'
     | '/admin/accolades'
     | '/admin/email-settings'
@@ -591,6 +602,7 @@ export interface FileRouteTypes {
     | '/life-at-ramky'
     | '/media'
     | '/senior-management'
+    | '/sustainability'
     | '/about/$slug'
     | '/admin/accolades'
     | '/admin/email-settings'
@@ -644,6 +656,7 @@ export interface RootRouteChildren {
   LifeAtRamkyRoute: typeof LifeAtRamkyRoute
   MediaRoute: typeof MediaRoute
   SeniorManagementRoute: typeof SeniorManagementRoute
+  SustainabilityRoute: typeof SustainabilityRoute
   AboutSlugRoute: typeof AboutSlugRoute
   BoardOfDirectorsSlugRoute: typeof BoardOfDirectorsSlugRoute
   BusinessesSlugRoute: typeof BusinessesSlugRoute
@@ -723,6 +736,13 @@ declare module '@tanstack/react-router' {
       path: '/senior-management'
       fullPath: '/senior-management'
       preLoaderRoute: typeof SeniorManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sustainability': {
+      id: '/sustainability'
+      path: '/sustainability'
+      fullPath: '/sustainability'
+      preLoaderRoute: typeof SustainabilityRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about/$slug': {
@@ -1093,6 +1113,7 @@ const rootRouteChildren: RootRouteChildren = {
   LifeAtRamkyRoute: LifeAtRamkyRoute,
   MediaRoute: MediaRoute,
   SeniorManagementRoute: SeniorManagementRoute,
+  SustainabilityRoute: SustainabilityRoute,
   AboutSlugRoute: AboutSlugRoute,
   BoardOfDirectorsSlugRoute: BoardOfDirectorsSlugRoute,
   BusinessesSlugRoute: BusinessesSlugRoute,
