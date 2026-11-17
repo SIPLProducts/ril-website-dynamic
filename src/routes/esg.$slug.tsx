@@ -1,6 +1,6 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Download, Leaf, Mail, Scale, FileText, Globe2, ScrollText, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Leaf, Mail, Scale, FileText, Globe2, ScrollText, Users } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
@@ -297,7 +297,7 @@ function EsgPage() {
                         rel="noopener noreferrer"
                         className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
                       >
-                        <Download className="size-4" /> Download PDF
+                        <ArrowUpRight className="size-4" /> Explore
                       </a>
                     ) : (
                       <span className="mt-5 inline-flex items-center justify-center rounded-sm border border-border px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
