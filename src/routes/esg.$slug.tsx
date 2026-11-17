@@ -1,6 +1,6 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ArrowUpRight, ChevronDown, Download, Leaf, Mail, Scale, FileText, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Download, Leaf, Mail, Scale, FileText, Globe2, Users } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
@@ -50,6 +50,13 @@ const ICONS = {
   social: Users,
   governance: Scale,
   "esg-reporting": FileText,
+} as const;
+
+const REPORTING_METRIC_ICONS = {
+  "2026": CalendarDays,
+  BRSR: ClipboardCheck,
+  GRI: Globe2,
+  SASB: BarChart3,
 } as const;
 
 function EsgPage() {
@@ -152,17 +159,29 @@ function EsgPage() {
             <div
               className={`mt-8 grid gap-5 sm:grid-cols-2 ${section.metrics.length === 5 ? "lg:grid-cols-3 xl:grid-cols-5" : "lg:grid-cols-4"}`}
             >
-              {section.metrics.map((metric) => (
-                <div
-                  key={metric.label}
-                  className="rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
-                >
-                  <p className="font-display text-4xl font-bold text-emerald-700 lg:text-5xl">
-                    {metric.value}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
-                </div>
-              ))}
+              {section.metrics.map((metric) => {
+                const MetricIcon = section.slug === "esg-reporting"
+                  ? REPORTING_METRIC_ICONS[metric.value as keyof typeof REPORTING_METRIC_ICONS]
+                  : undefined;
+                return (
+                  <div
+                    key={metric.label}
+                    className="rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
+                  >
+                    {MetricIcon && (
+                      <div className="mb-5 flex size-11 items-center justify-center rounded-sm bg-emerald-700/10 text-emerald-700">
+                        <MetricIcon className="size-6" strokeWidth={1.7} aria-hidden="true" />
+                      </div>
+                    )}
+                    <p className="font-display text-4xl font-bold text-emerald-700 lg:text-5xl">
+                      {metric.value}
+                    </p>
+                    {metric.label && metric.value !== "2026" && (
+                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
           {section.metricGroups?.map((group) => (
