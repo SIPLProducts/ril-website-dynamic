@@ -82,11 +82,18 @@ function EsgPage() {
               </p>
             </div>
             {SIDE_IMAGES[section.slug] ? (
-              <div className="relative w-full overflow-hidden rounded-lg border border-emerald-400/40 shadow-2xl">
-                <img src={SIDE_IMAGES[section.slug]} alt={`${section.title} at Ramky Infrastructure`} width={1200} height={912} className="aspect-[4/3] w-full object-cover" />
-                <span className="absolute left-3 top-3 inline-flex size-10 items-center justify-center rounded-full bg-[#0d2b1f]/80">
-                  <Icon className="size-5 text-emerald-300" aria-hidden="true" />
-                </span>
+              <div className="relative -my-10 w-full lg:-mr-10">
+                <img
+                  src={SIDE_IMAGES[section.slug]}
+                  alt={`${section.title} at Ramky Infrastructure`}
+                  width={1200}
+                  height={912}
+                  className="aspect-[4/3] w-full object-cover opacity-90"
+                  style={{
+                    maskImage: "radial-gradient(ellipse 70% 70% at 55% 50%, #000 45%, transparent 100%)",
+                    WebkitMaskImage: "radial-gradient(ellipse 70% 70% at 55% 50%, #000 45%, transparent 100%)",
+                  }}
+                />
               </div>
             ) : (
               <div className="flex justify-start lg:justify-end">
