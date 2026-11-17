@@ -7,8 +7,15 @@ import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import socialImage from "@/assets/esg-social-workplace.jpg.asset.json";
+import governanceImage from "@/assets/esg-governance.jpg";
+import reportingImage from "@/assets/esg-reporting.jpg";
 
-const SIDE_IMAGES: Record<string, string> = { environmental: envImage.url, social: socialImage.url };
+const SIDE_IMAGES: Record<string, string> = {
+  environmental: envImage.url,
+  social: socialImage.url,
+  governance: governanceImage,
+  "esg-reporting": reportingImage,
+};
 
 export const Route = createFileRoute("/esg/$slug")({
   loader: async ({ params }) => {
