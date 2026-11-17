@@ -5,6 +5,9 @@ import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
+import envImage from "@/assets/esg-environmental.jpg.asset.json";
+
+const SIDE_IMAGES: Record<string, string> = { environmental: envImage.url };
 
 export const Route = createFileRoute("/esg/$slug")({
   loader: async ({ params }) => {
@@ -66,7 +69,7 @@ function EsgPage() {
                 "radial-gradient(circle at 20% 30%, #34d399 0, transparent 40%), radial-gradient(circle at 80% 70%, #34d399 0, transparent 40%)",
             }}
           />
-          <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_18rem] lg:items-end lg:px-10">
+          <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_30rem] lg:items-center lg:px-10">
             <div className="max-w-4xl">
               <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">
                 ESG · {section.eyebrow}
@@ -78,9 +81,18 @@ function EsgPage() {
                 {section.hero}
               </p>
             </div>
-            <div className="flex justify-start lg:justify-end">
-              <Icon className="size-28 text-emerald-400" strokeWidth={1} aria-hidden="true" />
-            </div>
+            {SIDE_IMAGES[section.slug] ? (
+              <div className="relative w-full overflow-hidden rounded-lg border border-emerald-400/40 shadow-2xl">
+                <img src={SIDE_IMAGES[section.slug]} alt={`${section.title} at Ramky Infrastructure`} width={1200} height={912} className="aspect-[4/3] w-full object-cover" />
+                <span className="absolute left-3 top-3 inline-flex size-10 items-center justify-center rounded-full bg-[#0d2b1f]/80">
+                  <Icon className="size-5 text-emerald-300" aria-hidden="true" />
+                </span>
+              </div>
+            ) : (
+              <div className="flex justify-start lg:justify-end">
+                <Icon className="size-28 text-emerald-400" strokeWidth={1} aria-hidden="true" />
+              </div>
+            )}
           </div>
         </section>
 
