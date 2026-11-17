@@ -70,7 +70,7 @@ export type TrendDirection = "improved" | "worsened" | "unchanged" | "changed" |
 export interface TrendChange {
   direction: TrendDirection;
   delta?: number;
-  pct?: number;
+  pct?: number | undefined;
   text: string;
 }
 
