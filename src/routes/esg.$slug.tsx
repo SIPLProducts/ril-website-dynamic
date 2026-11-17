@@ -6,7 +6,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
-import socialImage from "@/assets/esg-social.jpg.asset.json";
+import socialImage from "@/assets/esg-social-workplace.jpg.asset.json";
 
 const SIDE_IMAGES: Record<string, string> = { environmental: envImage.url, social: socialImage.url };
 
@@ -86,7 +86,7 @@ function EsgPage() {
               <div className={`relative w-full lg:-my-16 lg:-mr-16 ${section.slug === "social" ? "my-0" : "-my-20"}`}>
                 <img
                   src={SIDE_IMAGES[section.slug]}
-                  alt={section.slug === "social" ? "Illustration of community education: a teacher learning with schoolchildren" : `${section.title} at Ramky Infrastructure`}
+                  alt={section.slug === "social" ? "Illustration of an infrastructure team reviewing site plans in safety gear" : `${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
                   className="aspect-[4/3] w-full object-cover"
