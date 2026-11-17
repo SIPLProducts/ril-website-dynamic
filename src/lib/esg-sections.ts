@@ -37,6 +37,7 @@ export interface EsgSection {
   accordions: EsgAccordion[];
   reports?: EsgReport[] | undefined;
   bannerImage?: string | null;
+  committee?: import("@/lib/esg-committee").EsgCommittee | undefined;
 }
 
 export const ESG_SECTIONS: EsgSection[] = [

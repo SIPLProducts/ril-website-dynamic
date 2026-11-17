@@ -11,6 +11,7 @@ import { imageFileError } from "@/lib/admin-validation";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection } from "@/components/admin/AdminDialog";
+import { EsgCommitteeEditor } from "@/components/admin/EsgCommitteeEditor";
 import { confirmDelete } from "@/components/admin/ConfirmDelete";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,6 +79,7 @@ function Page() {
     <AdminShell staff={staff} active={{ kind: "module", module: "sustainability", section: slug }} crumbs={["Sustainability", label]}>
       <div key={slug} className="space-y-6">
         <PageEditor slug={slug} label={label} />
+        {slug === "governance" && <EsgCommitteeEditor />}
         {kinds.map((k) => <ItemList key={k} slug={slug} kind={k} grouped={k === "metric"} />)}
       </div>
     </AdminShell>

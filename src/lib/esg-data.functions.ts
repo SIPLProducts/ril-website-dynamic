@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import type { Database } from "@/integrations/supabase/types";
+import { hasCommittee, parseCommittee } from "@/lib/esg-committee";
 import type { EsgMetricGroup, EsgSection } from "@/lib/esg-sections";
 
 /** Public read of one Sustainability (ESG) page with its live items; returns null for unknown pages. */
@@ -42,7 +43,9 @@ export const getEsgPage = createServerFn({ method: "GET" })
     }
     const govItems = items.filter((i) => i.kind === "governance_item").map((i) => i.title);
     const reports = items.filter((i) => i.kind === "report").map((r) => ({ title: r.title, description: r.body, year: r.year, url: resolve(r.url) }));
+    const committee = parseCommittee(page.committee);
     return {
+      committee: hasCommittee(committee) ? committee : undefined,
       slug: page.slug,
       title: page.title,
       eyebrow: page.eyebrow,

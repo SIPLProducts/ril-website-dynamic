@@ -176,6 +176,13 @@
       "when": 1794800097744,
       "tag": "0024_strength_items",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1794913382565,
+      "tag": "0025_esg_committee",
+      "breakpoints": true
     }
   ]
 }

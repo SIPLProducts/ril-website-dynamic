@@ -735,6 +735,7 @@ export type Database = {
       esg_pages: {
         Row: {
           banner_image_url: string | null
+          committee: Json
           eyebrow: string
           hero: string
           highlight_label: string
@@ -747,6 +748,7 @@ export type Database = {
         }
         Insert: {
           banner_image_url?: string | null
+          committee?: Json
           eyebrow?: string
           hero?: string
           highlight_label?: string
@@ -759,6 +761,7 @@ export type Database = {
         }
         Update: {
           banner_image_url?: string | null
+          committee?: Json
           eyebrow?: string
           hero?: string
           highlight_label?: string

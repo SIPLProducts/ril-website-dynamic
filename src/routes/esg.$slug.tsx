@@ -7,6 +7,7 @@ import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import { getMetricTrend } from "@/lib/esg-metric-trends";
+import { EsgCommitteeAccordion } from "@/components/esg/EsgCommitteeAccordion";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import socialImage from "@/assets/esg-social-workplace.jpg.asset.json";
@@ -238,6 +239,7 @@ function EsgPage() {
               </ul>
             </div>
           )}
+          {section.slug === "governance" && section.committee && <EsgCommitteeAccordion committee={section.committee} />}
         </section>
         )}
 
