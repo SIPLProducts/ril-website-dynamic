@@ -2,7 +2,7 @@
 // null = not disclosed / not tracked in that year. FY 2023-24 is not in the sheet.
 export type Polarity = "lower" | "higher" | "neutral";
 export type YearKey = "FY 2023–24" | "FY 2024–25" | "FY 2025–26";
-export const TREND_YEARS: YearKey[] = ["FY 2023–24", "FY 2024–25", "FY 2025–26"];
+export const TREND_YEARS: YearKey[] = ["FY 2024–25", "FY 2025–26"];
 
 export interface YearPoint {
   value: number | null;
