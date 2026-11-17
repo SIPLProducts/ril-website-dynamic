@@ -40,6 +40,13 @@ const KIND_INFO: Record<Kind, { heading: string; hint: string; noun: string }> =
   report: { heading: "Reports", hint: "Download cards — upload a PDF or add a link", noun: "report" },
 };
 
+function kindInfo(slug: string, kind: Kind) {
+  if (slug === "policies" && kind === "accordion") {
+    return { heading: "Policies", hint: "Expandable policy summaries shown on the Policies page", noun: "policy" };
+  }
+  return KIND_INFO[kind];
+}
+
 const MAX_PDF = 50 * 1024 * 1024;
 
 async function upload(file: File, folder: string) {
@@ -66,7 +73,7 @@ function Page() {
   const { staff } = Route.useRouteContext();
   const { slug } = Route.useParams();
   const label = ESG_SECTIONS.find((s) => s.slug === slug)?.title ?? slug;
-  const kinds: Kind[] = slug === "governance" ? ["governance_item", "accordion"] : slug === "esg-reporting" ? ["metric", "accordion", "report"] : ["metric", "accordion"];
+  const kinds: Kind[] = slug === "governance" ? ["governance_item", "accordion"] : slug === "esg-reporting" ? ["metric", "accordion", "report"] : slug === "policies" ? ["accordion"] : ["metric", "accordion"];
   return (
     <AdminShell staff={staff} active={{ kind: "module", module: "sustainability", section: slug }} crumbs={["Sustainability", label]}>
       <div key={slug} className="space-y-6">
@@ -114,15 +121,15 @@ function PageEditor({ slug, label }: { slug: string; label: string }) {
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
           <h2 className="font-display text-xl font-bold">{label} page content</h2>
-          <p className="text-sm text-muted-foreground">Top banner{slug === "governance" ? " and the board highlight box" : " and key figures period"}.</p>
+          <p className="text-sm text-muted-foreground">Top banner{slug === "governance" ? " and the board highlight box" : slug === "policies" ? "" : " and key figures period"}.</p>
         </div>
         <Button onClick={save} disabled={saving} className="neu-btn-gradient border-0"><Save className="size-4" /> {saving ? "Saving…" : "Save"}</Button>
       </div>
       <FormSection title="Top banner">
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className={`grid gap-4 ${slug === "policies" ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}>
           <div><Label>Small heading</Label><Input value={f.eyebrow} maxLength={80} onChange={(e) => setF({ ...f, eyebrow: e.target.value })} /></div>
           <div><Label>Title</Label><Input value={f.title} maxLength={80} onChange={(e) => setF({ ...f, title: e.target.value })} /></div>
-          <div><Label>Key figures period <span className="text-muted-foreground">(optional)</span></Label><Input value={f.metrics_period} maxLength={80} placeholder="e.g. FY 2025–26" onChange={(e) => setF({ ...f, metrics_period: e.target.value })} /></div>
+          {slug !== "policies" && <div><Label>Key figures period <span className="text-muted-foreground">(optional)</span></Label><Input value={f.metrics_period} maxLength={80} placeholder="e.g. FY 2025–26" onChange={(e) => setF({ ...f, metrics_period: e.target.value })} /></div>}
         </div>
         <div><Label>Intro text</Label><Textarea rows={3} maxLength={400} value={f.hero} onChange={(e) => setF({ ...f, hero: e.target.value })} /></div>
         <div>
@@ -153,7 +160,7 @@ function PageEditor({ slug, label }: { slug: string; label: string }) {
 
 function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: boolean }) {
   const qc = useQueryClient();
-  const info = KIND_INFO[kind];
+  const info = kindInfo(slug, kind);
   const [editing, setEditing] = useState<Item | "new" | null>(null);
   const qk = ["admin-esg-items", slug, kind];
   const { data: rows = [] } = useQuery({ queryKey: qk, queryFn: async () => {
@@ -257,7 +264,7 @@ function FileLink({ url }: { url: string }) {
 }
 
 function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSaved }: { slug: string; kind: Kind; grouped: boolean; groups: string[]; row: Item | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
-  const info = KIND_INFO[kind];
+  const info = kindInfo(slug, kind);
   const [f, setF] = useState({ title: row?.title ?? "", value: row?.value ?? "", body: row?.body ?? "", year: row?.year ?? "", group_title: row?.group_title ?? (groups[0] ?? ""), published: row?.published ?? true });
   const isLink = !!row?.url && !row.url.startsWith(STORAGE_PREFIX);
   const [mode, setMode] = useState<"file" | "link">(isLink ? "link" : "file");

@@ -217,6 +217,39 @@ export const ESG_SECTIONS: EsgSection[] = [
       },
     ],
   },
+  {
+    slug: "policies",
+    title: "Policies",
+    eyebrow: "Responsible Business",
+    hero: "Clear principles and accountable practices that guide our people, partners and projects — supporting ethical conduct, safe workplaces and responsible growth.",
+    metrics: [],
+    accordions: [
+      {
+        title: "Environmental & Sustainability Policy",
+        body: "We are committed to responsible environmental management across our operations and projects. Our approach covers regulatory compliance, resource efficiency, emissions reduction, water stewardship, waste management and continual improvement.",
+      },
+      {
+        title: "Occupational Health, Safety & Environment Policy",
+        body: "We work to provide safe and healthy workplaces through hazard identification, risk controls, training and active employee participation. Our project teams and partners are expected to follow established safety systems and prevent incidents.",
+      },
+      {
+        title: "Code of Conduct & Business Ethics",
+        body: "Our Code of Conduct guides employees, directors and business partners in acting with integrity. It addresses legal compliance, fair competition, conflicts of interest, respectful conduct and responsible use of company resources.",
+      },
+      {
+        title: "Anti-Bribery & Anti-Corruption Policy",
+        body: "We prohibit bribery, corruption, facilitation payments and improper inducements in every form. Employees and representatives must maintain accurate records and conduct all business relationships transparently and lawfully.",
+      },
+      {
+        title: "Human Rights & Labour Policy",
+        body: "We support equal opportunity, dignity and respect across our workforce and value chain. We do not tolerate discrimination, child labour, forced labour or harassment, and we promote fair and responsible employment practices.",
+      },
+      {
+        title: "Whistle Blower & Grievance Policy",
+        body: "We provide channels for employees, vendors and other stakeholders to raise concerns in good faith. Reports are handled confidentially and reviewed through established processes, with protection against retaliation.",
+      },
+    ],
+  },
 ];
 
 export function getEsgSection(slug: string) {

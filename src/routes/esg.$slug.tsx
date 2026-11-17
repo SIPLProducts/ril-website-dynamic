@@ -1,6 +1,6 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Download, Leaf, Mail, Scale, FileText, Globe2, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Download, Leaf, Mail, Scale, FileText, Globe2, ScrollText, Users } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
@@ -50,6 +50,7 @@ const ICONS = {
   social: Users,
   governance: Scale,
   "esg-reporting": FileText,
+  policies: ScrollText,
 } as const;
 
 const REPORTING_METRIC_ICONS = {
@@ -63,6 +64,7 @@ function EsgPage() {
   const section = Route.useLoaderData();
   const Icon = ICONS[section.slug as keyof typeof ICONS] ?? Leaf;
   const [openIndex, setOpenIndex] = useState<number>(0);
+  const hasMetrics = section.metrics.length > 0 || Boolean(section.metricGroups?.length) || Boolean(section.governance);
 
   return (
     <div className="min-h-screen bg-background">
@@ -146,6 +148,7 @@ function EsgPage() {
         </nav>
 
         {/* Metrics */}
+        {hasMetrics && (
         <section className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
           <p className="eyebrow">
             Key Metrics
@@ -229,11 +232,12 @@ function EsgPage() {
             </div>
           )}
         </section>
+        )}
 
         {/* Accordions */}
         <section className="border-t border-border bg-surface">
           <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
-            <p className="eyebrow">In Detail</p>
+            <p className="eyebrow">{section.slug === "policies" ? "Company Policies" : "In Detail"}</p>
             <div className="mt-8 max-w-4xl divide-y divide-border border-y border-border">
               {section.accordions.map((item, index) => {
                 const open = openIndex === index;
