@@ -215,7 +215,7 @@ export const ESG_SECTIONS: EsgSection[] = [
     eyebrow: "Transparency In Action",
     hero: "Formal disclosures, frameworks and reports — download our latest ESG publications and track our performance year over year.",
     metrics: [
-      { value: "2026", label: "Reporting Year" },
+      { value: "2026", label: "Integrated Report with Sustainability Disclosures" },
       { value: "BRSR", label: "Business Responsibility and Sustainability Reporting" },
       { value: "GRI", label: "Global Reporting Initiative" },
       { value: "SASB", label: "Sustainability Accounting Standards Board" },

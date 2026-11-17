@@ -184,7 +184,7 @@ function EsgPage() {
                     <p className="font-display text-4xl font-bold text-emerald-700 lg:text-5xl">
                       {metric.value}
                     </p>
-                    {metric.label && metric.value !== "2026" && (
+                    {metric.label && (
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
                     )}
                     {section.slug === "environmental" && (() => { const tr = getMetricTrend(metric.label); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
