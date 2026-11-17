@@ -1,3 +1,7 @@
+import framework2026 from "@/assets/framework-2026.jpg";
+import frameworkBrsr from "@/assets/framework-brsr.jpg";
+import frameworkGri from "@/assets/framework-gri.jpg";
+import frameworkSasb from "@/assets/framework-sasb.jpg";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Leaf, Mail, Scale, FileText, Download, Globe2, ScrollText, Users, X } from "lucide-react";
@@ -55,6 +59,13 @@ const ICONS = {
   "esg-reporting": FileText,
   policies: ScrollText,
 } as const;
+
+const REPORTING_METRIC_IMAGES: Record<string, string> = {
+  "2026": framework2026,
+  BRSR: frameworkBrsr,
+  GRI: frameworkGri,
+  SASB: frameworkSasb,
+};
 
 const REPORTING_METRIC_ICONS = {
   "2026": CalendarDays,
@@ -174,9 +185,13 @@ function EsgPage() {
                 return (
                   <div
                     key={metric.label}
-                    className="rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
+                    className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
-                    {MetricIcon && (
+                    {section.slug === "esg-reporting" && REPORTING_METRIC_IMAGES[metric.value] ? (
+                      <div className="-mx-6 -mt-6 mb-5 overflow-hidden">
+                        <img src={REPORTING_METRIC_IMAGES[metric.value]} alt={metric.label || metric.value} loading="lazy" width={1024} height={640} className="aspect-[16/10] w-full object-cover" />
+                      </div>
+                    ) : MetricIcon && (
                       <div className="mb-5 flex size-11 items-center justify-center rounded-sm bg-emerald-700/10 text-emerald-700">
                         <MetricIcon className="size-6" strokeWidth={1.7} aria-hidden="true" />
                       </div>
@@ -202,7 +217,7 @@ function EsgPage() {
                 {group.metrics.map((metric) => (
                   <div
                     key={metric.label}
-                    className="rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
+                    className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
                     <p className="font-display text-4xl font-bold text-emerald-700">{metric.value}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
