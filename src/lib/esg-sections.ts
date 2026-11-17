@@ -181,8 +181,8 @@ export const ESG_SECTIONS: EsgSection[] = [
     metrics: [
       { value: "2026", label: "Latest sustainability report published" },
       { value: "GRI", label: "Reported with reference to global standards" },
-      { value: "SASB", label: "Sector-aligned disclosure framework" },
       { value: "BRSR", label: "SEBI-mandated responsibility reporting" },
+      { value: "SASB", label: "Sector-aligned disclosure framework" },
     ],
     accordions: [
       {
