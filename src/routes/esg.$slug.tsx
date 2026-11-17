@@ -1,6 +1,6 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Leaf, Mail, Scale, FileText, Globe2, ScrollText, Users, X } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Leaf, Mail, Scale, FileText, Download, Globe2, ScrollText, Users, X } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
@@ -378,6 +378,7 @@ function ReportViewer({ doc, onClose }: { doc: { title: string; url: string }; o
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <FileText className="size-5 shrink-0 text-emerald-700" />
           <p className="min-w-0 flex-1 truncate text-sm font-semibold">{doc.title}</p>
+          <a href={doc.url} download={`${doc.title.replace(/[^\w\- ]+/g, "").trim() || "report"}.pdf`} className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-surface"><Download className="size-4" /> Download Report</a>
           <button type="button" onClick={onClose} aria-label="Close viewer" className="rounded-sm p-1 hover:bg-surface"><X className="size-5" /></button>
         </div>
         <PdfCanvasViewer url={doc.url} />
