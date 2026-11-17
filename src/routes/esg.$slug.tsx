@@ -9,13 +9,13 @@ import { getEsgPage } from "@/lib/esg-data.functions";
 import { getMetricTrend } from "@/lib/esg-metric-trends";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
-import socialImage from "@/assets/esg-social-workplace.jpg.asset.json";
+import socialImage from "@/assets/esg-social-professional.jpg";
 import governanceImage from "@/assets/esg-governance.jpg";
 import reportingImage from "@/assets/esg-reporting.jpg";
 
 const SIDE_IMAGES: Record<string, string> = {
   environmental: envImage.url,
-  social: socialImage.url,
+  social: socialImage,
   governance: governanceImage,
   "esg-reporting": reportingImage,
 };
@@ -107,7 +107,7 @@ function EsgPage() {
               <div className={`relative w-full lg:-my-16 lg:-mr-16 ${section.slug === "social" ? "my-0" : "-my-20"}`}>
                 <img
                   src={SIDE_IMAGES[section.slug]}
-                  alt={section.slug === "social" ? "Illustration of an infrastructure team reviewing site plans in safety gear" : `${section.title} at Ramky Infrastructure`}
+                  alt={section.slug === "social" ? "Ramky engineer mentoring young engineers at a water treatment plant" : `${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
                   className="aspect-[4/3] w-full object-cover"
