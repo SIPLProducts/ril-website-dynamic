@@ -69,7 +69,7 @@ function EsgPage() {
                 "radial-gradient(circle at 20% 30%, #34d399 0, transparent 40%), radial-gradient(circle at 80% 70%, #34d399 0, transparent 40%)",
             }}
           />
-          <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_30rem] lg:items-center lg:px-10">
+          <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_36rem] lg:items-center lg:px-10">
             <div className="max-w-4xl">
               <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">
                 ESG · {section.eyebrow}
@@ -82,17 +82,24 @@ function EsgPage() {
               </p>
             </div>
             {SIDE_IMAGES[section.slug] ? (
-              <div className="relative -my-10 w-full lg:-mr-10">
+              <div className="relative -my-20 w-full lg:-my-16 lg:-mr-16">
                 <img
                   src={SIDE_IMAGES[section.slug]}
                   alt={`${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
-                  className="aspect-[4/3] w-full object-cover opacity-90"
+                  className="aspect-[4/3] w-full object-cover"
                   style={{
-                    maskImage: "radial-gradient(ellipse 70% 70% at 55% 50%, #000 45%, transparent 100%)",
-                    WebkitMaskImage: "radial-gradient(ellipse 70% 70% at 55% 50%, #000 45%, transparent 100%)",
+                    filter: "brightness(1.18) saturate(1.12) contrast(1.04)",
+                    maskImage:
+                      "radial-gradient(ellipse 88% 88% at 62% 50%, #000 62%, transparent 96%)",
+                    WebkitMaskImage:
+                      "radial-gradient(ellipse 88% 88% at 62% 50%, #000 62%, transparent 96%)",
                   }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#0d2b1f] to-transparent"
+                  aria-hidden="true"
                 />
               </div>
             ) : (
