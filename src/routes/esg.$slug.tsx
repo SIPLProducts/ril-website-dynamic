@@ -6,6 +6,8 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
+import { getMetricTrend } from "@/lib/esg-metric-trends";
+import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import socialImage from "@/assets/esg-social-workplace.jpg.asset.json";
 import governanceImage from "@/assets/esg-governance.jpg";
@@ -185,6 +187,7 @@ function EsgPage() {
                     {metric.label && metric.value !== "2026" && (
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
                     )}
+                    {section.slug === "environmental" && (() => { const tr = getMetricTrend(metric.label); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
                   </div>
                 );
               })}
@@ -203,6 +206,7 @@ function EsgPage() {
                   >
                     <p className="font-display text-4xl font-bold text-emerald-700">{metric.value}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
+                    {section.slug === "social" && (() => { const tr = getMetricTrend(metric.label); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
                   </div>
                 ))}
               </div>
