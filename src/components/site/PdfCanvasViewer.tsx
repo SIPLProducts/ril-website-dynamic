@@ -34,7 +34,7 @@ export function PdfCanvasViewer({ url }: { url: string }) {
           canvas.height = Math.floor(vp.height * ratio);
           canvas.style.width = `${Math.floor(vp.width)}px`;
           canvas.style.height = `${Math.floor(vp.height)}px`;
-          canvas.dataset.page = String(i);
+          canvas.dataset['page'] = String(i);
           canvas.className = "mx-auto mb-4 block bg-background shadow";
           el.appendChild(canvas);
           await page.render({ canvasContext: canvas.getContext("2d")!, viewport: vp, transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : undefined }).promise;
@@ -51,7 +51,7 @@ export function PdfCanvasViewer({ url }: { url: string }) {
     const mid = s.scrollTop + s.clientHeight / 3;
     for (const c of Array.from(s.querySelectorAll("canvas"))) {
       const cv = c as HTMLCanvasElement;
-      if (cv.offsetTop + cv.offsetHeight > mid) { setCurrent(Number(cv.dataset.page)); break; }
+      if (cv.offsetTop + cv.offsetHeight > mid) { setCurrent(Number(cv.dataset['page'])); break; }
     }
   };
 
