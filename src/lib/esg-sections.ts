@@ -180,8 +180,8 @@ export const ESG_SECTIONS: EsgSection[] = [
     hero: "Formal disclosures, frameworks and reports — download our latest ESG publications and track our performance year over year.",
     metrics: [
       { value: "2026", label: "Latest sustainability report published" },
-      { value: "GRI", label: "Reported with reference to global standards" },
       { value: "BRSR", label: "SEBI-mandated responsibility reporting" },
+      { value: "GRI", label: "Reported with reference to global standards" },
       { value: "SASB", label: "Sector-aligned disclosure framework" },
     ],
     accordions: [
