@@ -6,10 +6,7 @@ import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { IR_CATEGORIES } from "@/lib/investor-relations";
 const logo = logoAsset.url;
 
-const NAV = [
-  { label: "Capabilities", href: "/#businesses" },
-  { label: "Accolades", href: "/accolades" },
-];
+const NAV = [{ label: "Capabilities", href: "/#businesses" }];
 
 const INVESTOR_LINKS = IR_CATEGORIES.map((c) => ({
   label: c.label,
@@ -167,6 +164,12 @@ export function SiteHeader() {
             </div>
           </div>
           <a
+            href="/accolades"
+            className="font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
+          >
+            Accolades
+          </a>
+          <a
             href="/#contact"
             className="rounded-sm bg-brand-orange px-5 py-2.5 font-display text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-accent-foreground transition-opacity hover:opacity-90"
           >
@@ -284,6 +287,13 @@ export function SiteHeader() {
               ))}
             </div>
           )}
+          <a
+            href="/accolades"
+            onClick={() => setOpen(false)}
+            className="block border-b border-border py-3 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80"
+          >
+            Accolades
+          </a>
           <a
             href="/#contact"
             onClick={() => setOpen(false)}
