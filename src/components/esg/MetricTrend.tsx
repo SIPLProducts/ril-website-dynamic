@@ -1,5 +1,3 @@
-import { useId, useState } from "react";
-import { ChevronDown } from "lucide-react";
 import { TREND_YEARS, computeChange, formatTrendValue, type MetricTrend } from "@/lib/esg-metric-trends";
 
 const DIR_STYLE = {
@@ -11,8 +9,6 @@ const DIR_STYLE = {
 } as const;
 
 export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
-  const [open, setOpen] = useState(false);
-  const id = useId();
   const change = computeChange(trend);
   const values = TREND_YEARS.map((y) => trend.years[y].value).filter((v): v is number => v !== null);
   const max = trend.percent ? 100 : Math.max(...values, 0) || 1;
@@ -20,18 +16,9 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
 
   return (
     <div className="mt-4 border-t border-border pt-3">
-      <button
-        type="button"
-        aria-expanded={open}
-        aria-controls={id}
-        onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1 font-display text-xs font-bold uppercase tracking-[0.12em] text-emerald-700 hover:underline"
-      >
-        {open ? "Hide Trend" : "View Trend"}
-        <ChevronDown className={`size-4 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
-      </button>
-      {open && (
-        <div id={id} data-testid="metric-trend" className="mt-4">
+      <p className="font-display text-xs font-bold uppercase tracking-[0.12em] text-emerald-700">Trend</p>
+      {(
+        <div data-testid="metric-trend" className="mt-4">
           <div role="img" aria-label={`${trend.label} by financial year`} className="flex h-44 items-end gap-3 border-b border-l border-border pl-2">
             {TREND_YEARS.map((y, i) => {
               const p = trend.years[y];
