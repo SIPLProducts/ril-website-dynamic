@@ -1,4 +1,6 @@
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { useQuery } from "@tanstack/react-query";
 import { footerQuery } from "@/lib/footer.functions";
 import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
@@ -68,7 +70,7 @@ const FALLBACK_COMPANIES = [
   },
 ] as const;
 
-export function SiteFooter() {
+export function SiteFooter({ sustainabilityOnly = false }: { sustainabilityOnly?: boolean }) {
   const { data } = useQuery(footerQuery());
   const st = data?.settings;
   const COLUMNS = data ? data.columns : FALLBACK_COLUMNS.map((c) => ({ title: c.title, links: c.links.map((l) => ({ ...l, newTab: false })) }));
@@ -91,8 +93,9 @@ export function SiteFooter() {
               className="h-20 w-auto object-contain"
             />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              {description}
+              {sustainabilityOnly ? "Environmental, social and governance commitments at Ramky Infrastructure." : description}
             </p>
+            {!sustainabilityOnly && (
             <ul className="mt-6 space-y-3 text-sm text-foreground/80">
               {address && <li className="flex gap-3">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-brand-orange" />
@@ -107,10 +110,22 @@ export function SiteFooter() {
                 <a href={`mailto:${email}`} className="hover:text-footer-accent">{email}</a>
               </li>}
             </ul>
+            )}
           </div>
 
           <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_1fr_1.3fr]">
-            {COLUMNS.map((col) => (
+            {sustainabilityOnly ? (
+              <div className="sm:col-span-2 xl:col-span-4">
+                <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-footer-accent">Sustainability</h3>
+                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                  {ESG_SECTIONS.map((section) => (
+                    <li key={section.slug}>
+                      <Link to="/esg/$slug" params={{ slug: section.slug }} className="text-sm text-muted-foreground transition-colors hover:text-footer-accent">{section.title}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : COLUMNS.map((col) => (
               <div key={col.title + col.links.length}>
                 <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-footer-accent">
                   {col.title}
@@ -138,7 +153,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <hr className="footer-rule mt-14" aria-hidden="true" />
+        {!sustainabilityOnly && <><hr className="footer-rule mt-14" aria-hidden="true" />
         <section className="pt-10" aria-labelledby="group-companies-heading">
           <div className="flex items-end justify-between gap-4">
             <div>
@@ -165,6 +180,7 @@ export function SiteFooter() {
             })}
           </div>
         </section>
+        </>}
 
         <hr className="footer-rule mt-10" aria-hidden="true" />
         <div className="flex flex-col gap-3 pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">

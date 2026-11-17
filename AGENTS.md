@@ -21,6 +21,7 @@
 - Uploaded files stay in the private `investor-documents` bucket as `storage:<path>`; public reads use stable same-origin `/files/` URLs. The file handler verifies an exact public-content reference using anonymous RLS before privileged storage access, so unpublished uploads and resumes stay private and browser URLs never depend on storage hosts or expiring signatures.
 - Admin OTP and reset emails go through SMTP settings in `email_settings` (server-only, service role) via `worker-mailer`, falling back to built-in auth emails when SMTP is off/incomplete; codes/links come from `auth.admin.generateLink` so verification stays native.
 - Sustainability (ESG) page content lives in `esg_pages` + `esg_items` (kind = metric|accordion|governance_item|report); `src/lib/esg-sections.ts` keeps only the tab list and types so tabs stay code-controlled.
+- Scope public ESG navigation to ESG routes: the shared header makes unrelated desktop links inert and omits them on mobile, while the ESG footer and return links stay within the section, preserving the existing page design.
 - Management people (board/executive/senior) live in `management_people` with profile paragraphs in a `sections` jsonb; `src/lib/management.ts` keeps the group list and section headings so layouts stay code-controlled.
 
 ## Self-hosting

@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
+import { isSustainabilityPage } from "@/lib/sustainability-navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
@@ -17,6 +20,7 @@ const INVESTOR_LINKS = IR_CATEGORIES.map((c) => ({
 const investorHref = (cat: string, sub: string) => `/investors?cat=${cat}&sub=${sub}`;
 
 export function SiteHeader() {
+  const sustainabilityOnly = useRouterState({ select: (state) => isSustainabilityPage(state.location.pathname) });
   const [open, setOpen] = useState(false);
   const [investorsOpen, setInvestorsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -35,7 +39,7 @@ export function SiteHeader() {
       }`}
     >
       <div className="mx-auto flex max-w-[1400px] items-center gap-6 px-5 py-2 lg:px-10">
-        <a href="/#top" className="flex shrink-0 items-center" aria-label="Ramky Infrastructure home">
+        <a href="/#top" inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined} className="flex shrink-0 items-center" aria-label="Ramky Infrastructure home">
           <img
             src={logo}
             alt="Ramky Infrastructure — Towards sustainable growth"
@@ -48,7 +52,7 @@ export function SiteHeader() {
         </a>
 
         <nav className="ml-auto hidden items-center gap-7 lg:flex">
-          <div className="group relative">
+          <div className="group relative" inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
             <a
               href="/#about"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -85,7 +89,7 @@ export function SiteHeader() {
               </div>
             </div>
           </div>
-          <div className="group relative">
+          <div className="group relative" inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
             <a
               href="/#management"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -106,6 +110,8 @@ export function SiteHeader() {
           {NAV.map((item) => (
             <a
               key={item.label}
+              inert={sustainabilityOnly}
+              aria-disabled={sustainabilityOnly || undefined}
               href={item.href}
               className="font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
             >
@@ -113,27 +119,29 @@ export function SiteHeader() {
             </a>
           ))}
           <div className="group relative">
-            <a
-              href="/#sustainability"
+            <Link
+              to="/esg/$slug"
+              params={{ slug: "policies" }}
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
             >
               Sustainability <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
-            </a>
+            </Link>
             <div className="pointer-events-none absolute left-0 top-full pt-5 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
               <div className="w-60 rounded-sm border border-border bg-background p-4 shadow-xl">
                 {ESG_SECTIONS.map((section) => (
-                  <a
+                  <Link
                     key={section.slug}
-                    href={`/esg/${section.slug}`}
+                    to="/esg/$slug"
+                    params={{ slug: section.slug }}
                     className="block py-2 text-sm text-muted-foreground transition-colors hover:text-brand-orange"
                   >
                     {section.title}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
           </div>
-          <div className="group relative">
+          <div className="group relative" inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
             <a
               href="/investors"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -165,31 +173,37 @@ export function SiteHeader() {
           </div>
           <a
             href="/accolades"
+            inert={sustainabilityOnly}
+            aria-disabled={sustainabilityOnly || undefined}
             className="font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
           >
             Accolades
           </a>
           <a
             href="/#contact"
+            inert={sustainabilityOnly}
+            aria-disabled={sustainabilityOnly || undefined}
             className="rounded-sm bg-brand-orange px-5 py-2.5 font-display text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-accent-foreground transition-opacity hover:opacity-90"
           >
             Contact
           </a>
         </nav>
 
-        <button
+        <Button
+          variant="outline"
+          size="icon"
           type="button"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? "Close menu" : "Open menu"}
           className="ml-auto inline-flex size-10 items-center justify-center rounded-sm border border-border text-foreground lg:hidden"
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        </Button>
       </div>
 
       {open && (
         <nav className="border-t border-border bg-background px-5 pb-5 lg:hidden">
-          <div className="border-b border-border bg-surface px-4 py-2">
+          {!sustainabilityOnly && <div className="border-b border-border bg-surface px-4 py-2">
             <p className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
               About Ramky
             </p>
@@ -220,8 +234,8 @@ export function SiteHeader() {
                 )}
               </div>
             ))}
-          </div>
-          {NAV.map((item) => (
+          </div>}
+          {!sustainabilityOnly && NAV.map((item) => (
             <a
               key={item.label}
               href={item.href}
@@ -232,21 +246,22 @@ export function SiteHeader() {
             </a>
           ))}
           <div className="border-b border-border bg-surface px-4 py-2">
-            <a href="/#sustainability" onClick={() => setOpen(false)} className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
+            <Link to="/esg/$slug" params={{ slug: "policies" }} onClick={() => setOpen(false)} className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
               Sustainability
-            </a>
+            </Link>
             {ESG_SECTIONS.map((section) => (
-              <a
+              <Link
                 key={section.slug}
-                href={`/esg/${section.slug}`}
+                to="/esg/$slug"
+                params={{ slug: section.slug }}
                 onClick={() => setOpen(false)}
                 className="block py-2 text-sm text-muted-foreground"
               >
                 {section.title}
-              </a>
+              </Link>
             ))}
           </div>
-          <div className="border-b border-border bg-surface px-4 py-2">
+          {!sustainabilityOnly && <><div className="border-b border-border bg-surface px-4 py-2">
             <a href="/#management" onClick={() => setOpen(false)} className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
               Management
             </a>
@@ -301,6 +316,7 @@ export function SiteHeader() {
           >
             Contact
           </a>
+          </>}
         </nav>
       )}
       <div className="h-[3px] w-full bg-gradient-to-r from-brand-orange via-brand-green to-brand-blue" />
