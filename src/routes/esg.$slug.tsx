@@ -1,6 +1,6 @@
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Leaf, Mail, Scale, FileText, Globe2, ScrollText, Users } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Download, Leaf, Mail, Scale, FileText, Globe2, ScrollText, Users, X } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
@@ -64,11 +64,13 @@ function EsgPage() {
   const section = Route.useLoaderData();
   const Icon = ICONS[section.slug as keyof typeof ICONS] ?? Leaf;
   const [openIndex, setOpenIndex] = useState<number>(0);
+  const [viewer, setViewer] = useState<{ title: string; url: string } | null>(null);
   const hasMetrics = section.metrics.length > 0 || Boolean(section.metricGroups?.length) || Boolean(section.governance);
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
+      {viewer && <ReportViewer doc={viewer} onClose={() => setViewer(null)} />}
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden bg-[#0d2b1f] pb-20 pt-36 text-white lg:pb-28 lg:pt-44">
@@ -291,14 +293,13 @@ function EsgPage() {
                       {report.description}
                     </p>
                     {report.url ? (
-                      <a
-                        href={report.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        type="button"
+                        onClick={() => setViewer({ title: report.title, url: report.url! })}
                         className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
                       >
                         <ArrowUpRight className="size-4" /> Explore
-                      </a>
+                      </button>
                     ) : (
                       <span className="mt-5 inline-flex items-center justify-center rounded-sm border border-border px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
                         Coming soon
@@ -367,6 +368,23 @@ function EsgNotFound() {
         </div>
       </main>
       <SiteFooter sustainabilityOnly />
+    </div>
+  );
+}
+
+function ReportViewer({ doc, onClose }: { doc: { title: string; url: string }; onClose: () => void }) {
+  const download = doc.url.startsWith("/files/") ? doc.url + "?download" : doc.url;
+  return (
+    <div role="dialog" aria-modal="true" aria-label={doc.title} className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/60 p-3 sm:p-8" onClick={onClose}>
+      <div className="flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-sm bg-background shadow-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-3 border-b border-border px-4 py-3">
+          <FileText className="size-5 shrink-0 text-emerald-700" />
+          <p className="min-w-0 flex-1 truncate text-sm font-semibold">{doc.title}</p>
+          <a href={download} download className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 hover:underline"><Download className="size-3.5" /> Download PDF</a>
+          <button type="button" onClick={onClose} aria-label="Close viewer" className="rounded-sm p-1 hover:bg-surface"><X className="size-5" /></button>
+        </div>
+        <iframe src={doc.url} title={doc.title} className="flex-1 bg-surface" />
+      </div>
     </div>
   );
 }
