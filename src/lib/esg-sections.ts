@@ -230,7 +230,7 @@ export const ESG_SECTIONS: EsgSection[] = [
     reports: [
       {
         title: "Sustainability Report 2026",
-        description: "Integrated Report with Sustainability Disclosures",
+        description: "Our flagship annual report covering strategy, performance and targets across environmental, social and governance themes.",
         year: "2026",
       },
       {
