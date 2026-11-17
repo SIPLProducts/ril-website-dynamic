@@ -4,7 +4,7 @@
 -- navigation labels keep reading "ESG Reporting" because those come from code.
 
 update public.esg_pages
-   set title = 'Sustainability (ESG) Reporting'
+   set title = 'Sustainability (ESG) Reports'
  where slug = 'esg-reporting';
 
 -- Check the result:
