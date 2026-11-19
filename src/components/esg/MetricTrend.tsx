@@ -1,4 +1,4 @@
-import { TREND_YEARS, computeChange, formatTrendValue, type MetricTrend } from "@/lib/esg-metric-trends";
+import { computeChange, formatTrendValue, type MetricTrend } from "@/lib/esg-metric-trends";
 
 const DIR_STYLE = {
   improved: "text-emerald-700 bg-emerald-700/10",
@@ -10,7 +10,7 @@ const DIR_STYLE = {
 
 export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
   const change = computeChange(trend);
-  const values = TREND_YEARS.map((y) => trend.years[y].value).filter((v): v is number => v !== null);
+  const values = trend.years.map((p) => p.value).filter((v): v is number => v !== null);
   const max = trend.percent ? 100 : Math.max(...values, 0) || 1;
   const barColor = change.direction === "worsened" ? "bg-destructive/80" : change.direction === "improved" ? "bg-emerald-600" : "bg-muted-foreground/60";
 
@@ -20,9 +20,9 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
       {(
         <div data-testid="metric-trend" className="mt-4">
           <div role="img" aria-label={`${trend.label} by financial year`} className="flex h-44 items-end gap-3 border-b border-l border-border pl-2">
-            {TREND_YEARS.map((y, i) => {
-              const p = trend.years[y];
-              const last = i === TREND_YEARS.length - 1;
+            {trend.years.map((p, i) => {
+              const y = p.year;
+              const last = i === trend.years.length - 1;
               if (p.value === null) {
                 return (
                   <div key={y} className="flex h-full flex-1 flex-col justify-end">
@@ -44,7 +44,7 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
             })}
           </div>
           <div className="mt-1 flex gap-3 pl-2">
-            {TREND_YEARS.map((y) => (
+            {trend.years.map(({ year: y }) => (
               <p key={y} className="flex-1 text-center text-[10px] font-semibold text-muted-foreground">{y}</p>
             ))}
           </div>

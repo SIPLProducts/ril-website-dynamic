@@ -23,9 +23,32 @@ describe("ESG metric trends", () => {
   });
   it("missing prior year is not treated as zero", () => {
     expect(computeChange(getMetricTrend("Lives Impacted")!).direction).toBe("unavailable");
-    expect(getMetricTrend("Lives Impacted")!.years["FY 2024–25"].value).toBeNull();
+    expect(getMetricTrend("Lives Impacted")!.years.find((y) => y.year === "FY 2024–25")!.value).toBeNull();
   });
-  it("FY 2023-24 is unavailable everywhere", () => {
-    for (const m of METRIC_TRENDS) expect(m.years["FY 2023–24"].value).toBeNull();
+  it("charts compare FY 2024–25 with FY 2025–26 only", () => {
+    for (const m of METRIC_TRENDS) expect(m.years.map((y) => y.year)).toEqual(["FY 2024–25", "FY 2025–26"]);
+  });
+  it("a newly added year is compared with the year before it", () => {
+    const m = getMetricTrend("Procurement from MSMEs")!;
+    const c = computeChange({ ...m, years: [...m.years, { year: "FY 2026–27", value: 12.9 }] });
+    expect(c.direction).toBe("worsened");
+    expect(c.text).toContain("vs FY 2025–26");
+  });
+});
+
+import { orderSustainability, parseSettings } from "@/lib/site-settings";
+describe("admin website settings", () => {
+  it("menu order from admin is applied and missing items are appended", () => {
+    const s = parseSettings([{ key: "main_menu", value: ["accolades", "about"] }]);
+    expect(s.mainMenu.slice(0, 3)).toEqual(["accolades", "about", "management"]);
+    expect(s.mainMenu).toHaveLength(7);
+  });
+  it("sustainability tabs follow admin order and renamed labels", () => {
+    const out = orderSustainability([{ slug: "policies", title: "Policies" }, { slug: "social", title: "Social" }], [{ slug: "social", label: "People" }]);
+    expect(out.map((o) => o.title)).toEqual(["People", "Policies"]);
+  });
+  it("download can be switched off", () => {
+    expect(parseSettings([{ key: "pdf_viewer", value: { allowDownload: false } }]).pdfViewer.allowDownload).toBe(false);
+    expect(parseSettings([]).pdfViewer.allowDownload).toBe(true);
   });
 });

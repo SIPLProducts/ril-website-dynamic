@@ -11,6 +11,9 @@ import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import { getMetricTrend } from "@/lib/esg-metric-trends";
+import { useSiteSettings } from "@/lib/site-settings.functions";
+import { orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
+import { publishedFileUrl } from "@/lib/file-url";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import socialImage from "@/assets/esg-social-professional-v2.jpg";
@@ -79,12 +82,16 @@ function EsgPage() {
   const Icon = ICONS[section.slug as keyof typeof ICONS] ?? Leaf;
   const [openIndex, setOpenIndex] = useState<number>(0);
   const [viewer, setViewer] = useState<{ title: string; url: string } | null>(null);
+  const settings = useSiteSettings();
+  const slotImg = (slot: string, fallback: string | undefined) => (settings.images[slot] ? publishedFileUrl(settings.images[slot]) ?? fallback : fallback);
+  const sideImage = slotImg(`hero:${section.slug}`, SIDE_IMAGES[section.slug]);
+  const frameworkImg = (k: string) => slotImg(`framework:${k}`, REPORTING_METRIC_IMAGES[k]);
   const hasMetrics = section.metrics.length > 0 || Boolean(section.metricGroups?.length) || Boolean(section.governance);
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
-      {viewer && <ReportViewer doc={viewer} onClose={() => setViewer(null)} />}
+      {viewer && <ReportViewer doc={viewer} pdf={settings.pdfViewer} onClose={() => setViewer(null)} />}
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden bg-[#0d2b1f] pb-20 pt-36 text-white lg:pb-28 lg:pt-44">
@@ -114,10 +121,10 @@ function EsgPage() {
                 {section.hero}
               </p>
             </div>
-            {SIDE_IMAGES[section.slug] ? (
+            {sideImage ? (
               <div className={`relative w-full lg:-my-16 lg:-mr-16 ${section.slug === "social" ? "my-0" : "-my-20"}`}>
                 <img
-                  src={SIDE_IMAGES[section.slug]}
+                  src={sideImage}
                   alt={section.slug === "social" ? "Ramky leader mentoring young engineers in the office" : `${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
@@ -149,7 +156,7 @@ function EsgPage() {
           className="sticky top-[76px] z-40 border-b border-border bg-background/95 backdrop-blur"
         >
           <div className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-5 lg:px-10">
-            {ESG_SECTIONS.map((item) => (
+            {orderSustainability(ESG_SECTIONS, settings.sustainabilityNav).map((item) => (
               <Link
                 key={item.slug}
                 to="/esg/$slug"
@@ -187,9 +194,9 @@ function EsgPage() {
                     key={metric.label}
                     className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
-                    {section.slug === "esg-reporting" && REPORTING_METRIC_IMAGES[metric.value] ? (
+                    {section.slug === "esg-reporting" && frameworkImg(metric.value) ? (
                       <div className="-mx-6 -mt-6 mb-5 overflow-hidden">
-                        <img src={REPORTING_METRIC_IMAGES[metric.value]} alt={metric.label || metric.value} loading="lazy" width={1024} height={640} className="aspect-[16/10] w-full object-cover" />
+                        <img src={frameworkImg(metric.value)} alt={metric.label || metric.value} loading="lazy" width={1024} height={640} className="aspect-[16/10] w-full object-cover" />
                       </div>
                     ) : MetricIcon && (
                       <div className="mb-5 flex size-11 items-center justify-center rounded-sm bg-emerald-700/10 text-emerald-700">
@@ -202,7 +209,7 @@ function EsgPage() {
                     {metric.label && (
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
                     )}
-                    {section.slug === "environmental" && (() => { const tr = getMetricTrend(metric.label); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
+                    {section.slug === "environmental" && (() => { const tr = getMetricTrend(metric.label, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
                   </div>
                 );
               })}
@@ -221,7 +228,7 @@ function EsgPage() {
                   >
                     <p className="font-display text-4xl font-bold text-emerald-700">{metric.value}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
-                    {section.slug === "social" && (() => { const tr = getMetricTrend(metric.label); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
+                    {section.slug === "social" && (() => { const tr = getMetricTrend(metric.label, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
                   </div>
                 ))}
               </div>
@@ -312,7 +319,7 @@ function EsgPage() {
                         onClick={() => setViewer({ title: report.title, url: report.url! })}
                         className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
                       >
-                        <ArrowUpRight className="size-4" /> Explore
+                        <ArrowUpRight className="size-4" /> {settings.pdfViewer.exploreLabel || "Explore"}
                       </button>
                     ) : (
                       <span className="mt-5 inline-flex items-center justify-center rounded-sm border border-border px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
@@ -386,14 +393,14 @@ function EsgNotFound() {
   );
 }
 
-function ReportViewer({ doc, onClose }: { doc: { title: string; url: string }; onClose: () => void }) {
+function ReportViewer({ doc, pdf, onClose }: { doc: { title: string; url: string }; pdf: PdfViewerSettings; onClose: () => void }) {
   return (
     <div role="dialog" aria-modal="true" aria-label={doc.title} className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/60 p-3 sm:p-8" onClick={onClose}>
       <div className="flex h-full w-full max-w-5xl flex-col overflow-hidden rounded-sm bg-background shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-3 border-b border-border px-4 py-3">
           <FileText className="size-5 shrink-0 text-emerald-700" />
           <p className="min-w-0 flex-1 truncate text-sm font-semibold">{doc.title}</p>
-          <a href={doc.url} download={`${doc.title.replace(/[^\w\- ]+/g, "").trim() || "report"}.pdf`} className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-surface"><Download className="size-4" /> Download Report</a>
+          {pdf.allowDownload && <a href={doc.url} download={`${doc.title.replace(/[^\w\- ]+/g, "").trim() || "report"}.pdf`} className="inline-flex items-center gap-1.5 rounded-sm border border-border px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-surface"><Download className="size-4" /> {pdf.downloadLabel || "Download Report"}</a>}
           <button type="button" onClick={onClose} aria-label="Close viewer" className="rounded-sm p-1 hover:bg-surface"><X className="size-5" /></button>
         </div>
         <PdfCanvasViewer url={doc.url} />

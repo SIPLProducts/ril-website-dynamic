@@ -36,6 +36,7 @@ export async function isPublishedFile(sb: SupabaseClient<Database>, path: string
     sb.from("home_sustainability").select("id").eq("id", 1).eq("video_url", ref).limit(1),
     sb.from("home_sustainability").select("id").eq("id", 1).eq("poster_url", ref).limit(1),
     sb.from("home_top").select("id").eq("id", 1).contains("about_images", [{ url: ref }]).limit(1),
+    sb.from("site_settings").select("key").eq("key", "esg_images").contains("value", [{ url: ref }]).limit(1),
   ]);
   return matches.some((result) => !result.error && (result.data?.length ?? 0) > 0);
 }

@@ -1,3 +1,4 @@
+import { siteSettingsQuery } from "@/lib/site-settings.functions";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -116,6 +117,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     await Promise.all([
       context.queryClient.ensureQueryData(footerQuery()).catch(() => undefined), // footer falls back to built-in text
       context.queryClient.ensureQueryData(hiddenPagesQuery()).catch(() => undefined),
+      context.queryClient.ensureQueryData(siteSettingsQuery()).catch(() => undefined),
     ]);
   },
   shellComponent: RootShell,

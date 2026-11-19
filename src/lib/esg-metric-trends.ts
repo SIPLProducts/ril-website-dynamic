@@ -1,10 +1,8 @@
 // Values copied verbatim from RIL_ESG_Comparison_FY24-25_vs_FY25-26_3.xlsx (sheet "ESG Data").
 // null = not disclosed / not tracked in that year. FY 2023-24 is not in the sheet.
 export type Polarity = "lower" | "higher" | "neutral";
-export type YearKey = "FY 2023–24" | "FY 2024–25" | "FY 2025–26";
-export const TREND_YEARS: YearKey[] = ["FY 2024–25", "FY 2025–26"];
-
 export interface YearPoint {
+  year: string;
   value: number | null;
   /** Shown instead of value when null, or alongside it when approximate. */
   note?: string;
@@ -16,17 +14,19 @@ export interface MetricTrend {
   unit: string;
   polarity: Polarity;
   percent?: boolean;
-  years: Record<YearKey, YearPoint>;
+  /** Ordered oldest → newest; the last two are compared. */
+  years: YearPoint[];
   summary: string;
   source: string;
 }
 
-const ND: YearPoint = { value: null, note: "Not disclosed" };
-const NT: YearPoint = { value: null, note: "Not tracked" };
+type Pt = Omit<YearPoint, "year">;
+const ND: Pt = { value: null, note: "Not disclosed" };
+const NT: Pt = { value: null, note: "Not tracked" };
 
-function t(label: string, unit: string, polarity: Polarity, fy25: YearPoint | number, fy26: YearPoint | number, summary: string, source: string, percent = false): MetricTrend {
-  const p = (v: YearPoint | number): YearPoint => (typeof v === "number" ? { value: v } : v);
-  return { label, unit, polarity, percent, summary, source, years: { "FY 2023–24": ND, "FY 2024–25": p(fy25), "FY 2025–26": p(fy26) } };
+function t(label: string, unit: string, polarity: Polarity, fy25: Pt | number, fy26: Pt | number, summary: string, source: string, percent = false): MetricTrend {
+  const p = (year: string, v: Pt | number): YearPoint => (typeof v === "number" ? { year, value: v } : { year, ...v });
+  return { label, unit, polarity, percent, summary, source, years: [p("FY 2024–25", fy25), p("FY 2025–26", fy26)] };
 }
 
 export const METRIC_TRENDS: MetricTrend[] = [
@@ -54,9 +54,9 @@ export const METRIC_TRENDS: MetricTrend[] = [
 ];
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
-export function getMetricTrend(label: string) {
+export function getMetricTrend(label: string, list: MetricTrend[] = METRIC_TRENDS) {
   const k = norm(label);
-  return METRIC_TRENDS.find((m) => norm(m.label) === k);
+  return list.find((m) => norm(m.label) === k);
 }
 
 export function formatTrendValue(m: MetricTrend, v: number) {
@@ -74,13 +74,15 @@ export interface TrendChange {
   text: string;
 }
 
-/** FY 2024–25 → FY 2025–26 change. Never computed from missing or approximate values. */
+/** Change between the last two years. Never computed from missing or approximate values. */
 export function computeChange(m: MetricTrend): TrendChange {
-  const a = m.years["FY 2024–25"], b = m.years["FY 2025–26"];
+  const a = m.years[m.years.length - 2], b = m.years[m.years.length - 1];
+  if (!a || !b) return { direction: "unavailable", text: "Comparison unavailable – only one year of data" };
+  const vs = `vs ${a.year}`;
   if (a.value === null || b.value === null) return { direction: "unavailable", text: "Comparison unavailable – prior-year data not disclosed" };
   if (a.approximate || b.approximate) return { direction: "unavailable", text: "Exact change not calculated – approximate figure reported" };
   const delta = b.value - a.value;
-  if (Math.abs(delta) < 1e-9) return { direction: "unchanged", delta: 0, pct: 0, text: "No change vs FY 2024–25" };
+  if (Math.abs(delta) < 1e-9) return { direction: "unchanged", delta: 0, pct: 0, text: `No change ${vs}` };
   const pct = a.value === 0 ? undefined : (delta / a.value) * 100;
   const up = delta > 0;
   const direction: TrendDirection = m.polarity === "neutral" ? "changed" : (up === (m.polarity === "higher") ? "improved" : "worsened");
@@ -88,5 +90,5 @@ export function computeChange(m: MetricTrend): TrendChange {
   const mag = m.percent
     ? `${Math.abs(delta).toFixed(1)} pp`
     : `${pct === undefined ? "" : Math.abs(pct).toFixed(1) + "% "}(${up ? "+" : "−"}${formatTrendValue(m, Math.abs(delta))})`;
-  return { direction, delta, pct, text: `${arrow} ${up ? "Increase" : "Decrease"} of ${mag} vs FY 2024–25` };
+  return { direction, delta, pct, text: `${arrow} ${up ? "Increase" : "Decrease"} of ${mag} ${vs}` };
 }

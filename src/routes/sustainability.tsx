@@ -4,6 +4,8 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { Sustainability } from "@/components/site/sections";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
+import { useSiteSettings } from "@/lib/site-settings.functions";
+import { orderSustainability } from "@/lib/site-settings";
 import { homeHighlightsQuery } from "@/lib/home-highlights.functions";
 
 const title = "Sustainability | Ramky Infrastructure";
@@ -35,7 +37,7 @@ function SustainabilityOverview() {
         <Sustainability standalone />
         <nav aria-label="ESG sections" className="border-b border-border bg-background">
           <div className="mx-auto flex max-w-[1400px] gap-1 overflow-x-auto px-5 lg:px-10">
-            {ESG_SECTIONS.map((section) => (
+            {orderSustainability(ESG_SECTIONS, useSiteSettings().sustainabilityNav).map((section) => (
               <Link key={section.slug} to="/esg/$slug" params={{ slug: section.slug }} className="whitespace-nowrap border-b-2 border-transparent px-4 py-4 font-display text-sm font-semibold uppercase text-muted-foreground transition-colors hover:text-foreground">
                 {section.title}
               </Link>

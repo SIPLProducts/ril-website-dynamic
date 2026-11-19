@@ -9,7 +9,7 @@ import { ADMIN_MODULES, DASHBOARD_ICON, INVESTORS_ICON, USERS_ICON, investorGrou
 const Soon = () => <span className="ml-2 rounded-full border border-primary-foreground/15 px-2 py-0.5 text-[9px] uppercase tracking-wider">Soon</span>;
 import { PublishToggle, useAdminVisibility } from "@/components/admin/PublishToggle";
 import { visibilityKey, visibilityPage } from "@/lib/page-visibility";
-import { EyeOff } from "lucide-react";
+import { EyeOff, SlidersHorizontal } from "lucide-react";
 import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub,
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" } | { kind: "visibility" } | { kind: "email" } | { kind: "about"; section: string } | { kind: "module"; module: string; section: string };
+type Active = { kind: "dashboard" } | { kind: "investors"; section: string } | { kind: "users" } | { kind: "visibility" } | { kind: "settings" } | { kind: "email" } | { kind: "about"; section: string } | { kind: "module"; module: string; section: string };
 type Layout = "vertical" | "horizontal";
 const LAYOUT_KEY = "ril-admin-layout";
 
@@ -107,6 +107,9 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
         <Tip label="Page visibility">
           <Link to="/admin/visibility" className={itemCls(active.kind === "visibility")}><span className={iconWrap(active.kind === "visibility")}><EyeOff className="size-4" /></span>{!collapsed && "Page visibility"}</Link>
         </Tip>
+        <Tip label="Website settings">
+          <Link to="/admin/site-settings" className={itemCls(active.kind === "settings")}><span className={iconWrap(active.kind === "settings")}><SlidersHorizontal className="size-4" /></span>{!collapsed && "Website settings"}</Link>
+        </Tip>
         {ADMIN_MODULES.map((m) => {
           const ready = isModuleReady(m);
           const on = activeModule === m.key;
@@ -189,6 +192,7 @@ export function AdminShell({ staff, active, crumbs, children }: { staff: Staff; 
     <nav className="hidden shrink-0 items-center gap-1 overflow-x-auto admin-nav border-t border-primary-foreground/10 px-4 py-1.5 thin-scroll thin-scroll-dark md:flex md:px-6">
       <Link to="/admin" search={{}} className={hItem(active.kind === "dashboard")}><DASHBOARD_ICON className="size-4" /> Dashboard</Link>
       <Link to="/admin/visibility" className={hItem(active.kind === "visibility")}><EyeOff className="size-4" /> Page visibility</Link>
+      <Link to="/admin/site-settings" className={hItem(active.kind === "settings")}><SlidersHorizontal className="size-4" /> Website settings</Link>
       {ADMIN_MODULES.map((m) => {
         if (!isModuleReady(m)) return (
           <span key={m.key} title={`${m.label} — coming soon`} className={`${hItem(false)} cursor-not-allowed opacity-55`} aria-disabled>{m.label}<Soon /></span>

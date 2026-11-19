@@ -27,6 +27,7 @@ import { Route as AdminEmailSettingsRouteImport } from './routes/admin.email-set
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminResetPasswordRouteImport } from './routes/admin.reset-password'
+import { Route as AdminSiteSettingsRouteImport } from './routes/admin.site-settings'
 import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as AdminVisibilityRouteImport } from './routes/admin.visibility'
 import { Route as BoardOfDirectorsSlugRouteImport } from './routes/board-of-directors.$slug'
@@ -149,6 +150,11 @@ const AdminMediaRoute = AdminMediaRouteImport.update({
 const AdminResetPasswordRoute = AdminResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSiteSettingsRoute = AdminSiteSettingsRouteImport.update({
+  id: '/site-settings',
+  path: '/site-settings',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminUsersRoute = AdminUsersRouteImport.update({
@@ -343,6 +349,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/site-settings': typeof AdminSiteSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/visibility': typeof AdminVisibilityRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
@@ -395,6 +402,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/site-settings': typeof AdminSiteSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/visibility': typeof AdminVisibilityRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
@@ -449,6 +457,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/admin/media': typeof AdminMediaRoute
   '/admin/reset-password': typeof AdminResetPasswordRoute
+  '/admin/site-settings': typeof AdminSiteSettingsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/visibility': typeof AdminVisibilityRoute
   '/board-of-directors/$slug': typeof BoardOfDirectorsSlugRoute
@@ -504,6 +513,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/media'
     | '/admin/reset-password'
+    | '/admin/site-settings'
     | '/admin/users'
     | '/admin/visibility'
     | '/board-of-directors/$slug'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/media'
     | '/admin/reset-password'
+    | '/admin/site-settings'
     | '/admin/users'
     | '/admin/visibility'
     | '/board-of-directors/$slug'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/admin/media'
     | '/admin/reset-password'
+    | '/admin/site-settings'
     | '/admin/users'
     | '/admin/visibility'
     | '/board-of-directors/$slug'
@@ -792,6 +804,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/admin/reset-password'
       preLoaderRoute: typeof AdminResetPasswordRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/site-settings': {
+      id: '/admin/site-settings'
+      path: '/site-settings'
+      fullPath: '/admin/site-settings'
+      preLoaderRoute: typeof AdminSiteSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/users': {
@@ -1034,6 +1053,7 @@ interface AdminRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   AdminMediaRoute: typeof AdminMediaRoute
   AdminResetPasswordRoute: typeof AdminResetPasswordRoute
+  AdminSiteSettingsRoute: typeof AdminSiteSettingsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminVisibilityRoute: typeof AdminVisibilityRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -1070,6 +1090,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   AdminMediaRoute: AdminMediaRoute,
   AdminResetPasswordRoute: AdminResetPasswordRoute,
+  AdminSiteSettingsRoute: AdminSiteSettingsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminVisibilityRoute: AdminVisibilityRoute,
   AdminIndexRoute: AdminIndexRoute,

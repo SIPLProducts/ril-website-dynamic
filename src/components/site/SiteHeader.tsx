@@ -6,6 +6,8 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
+import { useSiteSettings } from "@/lib/site-settings.functions";
+import { menuOrder, orderSustainability } from "@/lib/site-settings";
 import { IR_CATEGORIES } from "@/lib/investor-relations";
 const logo = logoAsset.url;
 
@@ -21,6 +23,9 @@ const investorHref = (cat: string, sub: string) => `/investors?cat=${cat}&sub=${
 
 export function SiteHeader() {
   const sustainabilityOnly = useRouterState({ select: (state) => isSustainabilityPage(state.location.pathname) });
+  const settings = useSiteSettings();
+  const o = (k: Parameters<typeof menuOrder>[1]) => menuOrder(settings.mainMenu, k);
+  const esgSections = orderSustainability(ESG_SECTIONS, settings.sustainabilityNav);
   const [open, setOpen] = useState(false);
   const [investorsOpen, setInvestorsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -52,7 +57,7 @@ export function SiteHeader() {
         </a>
 
         <nav className="ml-auto hidden items-center gap-7 lg:flex">
-          <div className="group relative" inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
+          <div style={o("about")} className="group relative " inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
             <a
               href="/#about"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -89,7 +94,7 @@ export function SiteHeader() {
               </div>
             </div>
           </div>
-          <div className="group relative" inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
+          <div style={o("management")} className="group relative " inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
             <a
               href="/#management"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -110,6 +115,7 @@ export function SiteHeader() {
           {NAV.map((item) => (
             <a
               key={item.label}
+              style={o("capabilities")}
               inert={sustainabilityOnly}
               aria-disabled={sustainabilityOnly || undefined}
               href={item.href}
@@ -118,7 +124,7 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
-          <div className="group relative">
+          <div className="group relative" style={o("sustainability")}>
             <Link
               to="/sustainability"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -127,7 +133,7 @@ export function SiteHeader() {
             </Link>
             <div className="pointer-events-none absolute left-0 top-full pt-5 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100">
               <div className="w-60 rounded-sm border border-border bg-background p-4 shadow-xl">
-                {ESG_SECTIONS.map((section) => (
+                {esgSections.map((section) => (
                   <Link
                     key={section.slug}
                     to="/esg/$slug"
@@ -140,7 +146,7 @@ export function SiteHeader() {
               </div>
             </div>
           </div>
-          <div className="group relative" inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
+          <div style={o("investors")} className="group relative " inert={sustainabilityOnly} aria-disabled={sustainabilityOnly || undefined}>
             <a
               href="/investors"
               className="inline-flex items-center gap-1 font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -172,6 +178,7 @@ export function SiteHeader() {
           </div>
           <a
             href="/accolades"
+            style={o("accolades")}
             inert={sustainabilityOnly}
             aria-disabled={sustainabilityOnly || undefined}
             className="font-display text-[0.82rem] font-semibold uppercase tracking-[0.09em] text-foreground/75 transition-colors hover:text-brand-blue"
@@ -180,6 +187,7 @@ export function SiteHeader() {
           </a>
           <a
             href="/#contact"
+            style={o("contact")}
             inert={sustainabilityOnly}
             aria-disabled={sustainabilityOnly || undefined}
             className="rounded-sm bg-brand-orange px-5 py-2.5 font-display text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-accent-foreground transition-opacity hover:opacity-90"
@@ -201,8 +209,8 @@ export function SiteHeader() {
       </div>
 
       {open && (
-        <nav className="border-t border-border bg-background px-5 pb-5 lg:hidden">
-          {!sustainabilityOnly && <div className="border-b border-border bg-surface px-4 py-2">
+        <nav className="flex flex-col border-t border-border bg-background px-5 pb-5 lg:hidden">
+          {!sustainabilityOnly && <div style={o("about")} className="border-b border-border bg-surface px-4 py-2">
             <p className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
               About Ramky
             </p>
@@ -237,6 +245,7 @@ export function SiteHeader() {
           {!sustainabilityOnly && NAV.map((item) => (
             <a
               key={item.label}
+              style={o("capabilities")}
               href={item.href}
               onClick={() => setOpen(false)}
               className="block border-b border-border py-3 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80"
@@ -244,11 +253,11 @@ export function SiteHeader() {
               {item.label}
             </a>
           ))}
-          <div className="border-b border-border bg-surface px-4 py-2">
+          <div style={o("sustainability")} className="border-b border-border bg-surface px-4 py-2">
             <Link to="/sustainability" onClick={() => setOpen(false)} className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
               Sustainability
             </Link>
-            {ESG_SECTIONS.map((section) => (
+            {esgSections.map((section) => (
               <Link
                 key={section.slug}
                 to="/esg/$slug"
@@ -260,7 +269,7 @@ export function SiteHeader() {
               </Link>
             ))}
           </div>
-          {!sustainabilityOnly && <><div className="border-b border-border bg-surface px-4 py-2">
+          {!sustainabilityOnly && <><div style={o("management")} className="border-b border-border bg-surface px-4 py-2">
             <a href="/#management" onClick={() => setOpen(false)} className="block py-2 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80">
               Management
             </a>
@@ -273,6 +282,7 @@ export function SiteHeader() {
           </div>
           <button
             type="button"
+            style={o("investors")}
             onClick={() => setInvestorsOpen((value) => !value)}
             aria-expanded={investorsOpen}
             className="flex w-full items-center justify-between border-b border-border py-3 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80"
@@ -281,7 +291,7 @@ export function SiteHeader() {
             <ChevronDown className={`size-4 transition-transform ${investorsOpen ? "rotate-180" : ""}`} />
           </button>
           {investorsOpen && (
-            <div className="max-h-[55vh] overflow-y-auto border-b border-border bg-surface px-4 py-4">
+            <div style={o("investors")} className="max-h-[55vh] overflow-y-auto border-b border-border bg-surface px-4 py-4">
               {INVESTOR_LINKS.map((group) => (
                 <div key={group.label} className="mb-5 last:mb-0">
                   <p className="font-display text-xs font-bold uppercase text-brand-blue">{group.label}</p>
@@ -303,6 +313,7 @@ export function SiteHeader() {
           )}
           <a
             href="/accolades"
+            style={o("accolades")}
             onClick={() => setOpen(false)}
             className="block border-b border-border py-3 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80"
           >
@@ -310,6 +321,7 @@ export function SiteHeader() {
           </a>
           <a
             href="/#contact"
+            style={o("contact")}
             onClick={() => setOpen(false)}
             className="block border-b border-border py-3 font-display text-sm font-semibold uppercase tracking-[0.08em] text-foreground/80"
           >
