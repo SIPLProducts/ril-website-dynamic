@@ -1,8 +1,8 @@
 import { SustainabilityContactButton } from "@/components/esg/SustainabilityContact";
-import framework2026 from "@/assets/framework-2026.jpg";
-import frameworkBrsr from "@/assets/framework-brsr.jpg";
-import frameworkGri from "@/assets/framework-gri.jpg";
-import frameworkSasb from "@/assets/framework-sasb.jpg";
+import framework2026 from "@/assets/logo-2026.svg";
+import frameworkBrsr from "@/assets/logo-brsr.svg";
+import frameworkGri from "@/assets/logo-gri.svg";
+import frameworkSasb from "@/assets/logo-sasb.jpg";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, ClipboardCheck, Leaf, Mail, Scale, FileText, Download, Globe2, ScrollText, Users, X } from "lucide-react";
@@ -196,8 +196,8 @@ function EsgPage() {
                     className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
                     {section.slug === "esg-reporting" && frameworkImg(metric.value) ? (
-                      <div className="-mx-6 -mt-6 mb-5 overflow-hidden">
-                        <img src={frameworkImg(metric.value)} alt={metric.label || metric.value} loading="lazy" width={1024} height={640} className="aspect-[16/10] w-full object-cover" />
+                      <div className="-mx-6 -mt-6 mb-5 flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border bg-background p-6">
+                        <img src={frameworkImg(metric.value)} alt={metric.label || metric.value} loading="lazy" className="h-full w-auto max-w-full object-contain" />
                       </div>
                     ) : MetricIcon && (
                       <div className="mb-5 flex size-11 items-center justify-center rounded-sm bg-emerald-700/10 text-emerald-700">
