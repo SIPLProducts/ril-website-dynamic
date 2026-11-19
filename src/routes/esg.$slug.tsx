@@ -19,13 +19,12 @@ import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import socialImage from "@/assets/esg-social-professional-v2.jpg";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
-import reportingImage from "@/assets/esg-reporting.jpg";
+import reportingBg from "@/assets/esg-reports-wind-solar.png.asset.json";
 
 const SIDE_IMAGES: Record<string, string> = {
   environmental: envImage.url,
   social: socialImage,
   governance: governanceImage,
-  "esg-reporting": reportingImage,
 };
 
 export const Route = createFileRoute("/esg/$slug")({
@@ -96,6 +95,12 @@ function EsgPage() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden bg-[#0d2b1f] pb-20 pt-36 text-white lg:pb-28 lg:pt-44">
+          {section.slug === "esg-reporting" && !section.bannerImage && (
+            <>
+              <img src={slotImg("hero:esg-reporting", reportingBg.url)} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0d2b1f]/90 via-[#0d2b1f]/60 to-[#0d2b1f]/20" aria-hidden="true" />
+            </>
+          )}
           {section.bannerImage && (
             <>
               <img src={section.bannerImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
@@ -122,7 +127,7 @@ function EsgPage() {
                 {section.hero}
               </p>
             </div>
-            {sideImage ? (
+            {section.slug === "esg-reporting" ? <div /> : sideImage ? (
               <div className={`relative w-full lg:-my-16 lg:-mr-16 ${section.slug === "social" ? "my-0" : "-my-20"}`}>
                 <img
                   src={sideImage}
