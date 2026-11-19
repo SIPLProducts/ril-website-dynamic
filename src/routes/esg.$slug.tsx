@@ -1,6 +1,6 @@
 import { SustainabilityContactButton } from "@/components/esg/SustainabilityContact";
-import framework2026 from "@/assets/logo-2026.svg";
-import frameworkBrsr from "@/assets/logo-brsr.svg";
+import framework2026 from "@/assets/logo-2026.png";
+import frameworkBrsr from "@/assets/logo-brsr.png";
 import frameworkGri from "@/assets/logo-gri.svg";
 import frameworkSasb from "@/assets/logo-sasb.jpg";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
