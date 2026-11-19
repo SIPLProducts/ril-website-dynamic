@@ -17,13 +17,13 @@ import { orderSustainability, type PdfViewerSettings } from "@/lib/site-settings
 import { publishedFileUrl } from "@/lib/file-url";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
-import socialImage from "@/assets/esg-social-professional-v2.jpg";
+import csrDiagram from "@/assets/csr-framework-diagram.png.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
 import reportingBg from "@/assets/esg-reports-wind-solar.png.asset.json";
 
 const SIDE_IMAGES: Record<string, string> = {
   environmental: envImage.url,
-  social: socialImage,
+  social: csrDiagram.url,
   governance: governanceImage,
 };
 
@@ -127,7 +127,13 @@ function EsgPage() {
                 {section.hero}
               </p>
             </div>
-            {section.slug === "esg-reporting" ? <div /> : sideImage ? (
+            {section.slug === "esg-reporting" ? <div /> : section.slug === "social" && sideImage ? (
+              <div className="flex justify-center lg:justify-end">
+                <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+                  <img src={sideImage} alt="Corporate Social Responsibility: Environment, Community Development, Workplace and Human Resources" width={462} height={432} className="h-auto w-full object-contain" />
+                </div>
+              </div>
+            ) : sideImage ? (
               <div className={`relative w-full lg:-my-16 lg:-mr-16 ${section.slug === "social" ? "my-0" : "-my-20"}`}>
                 <img
                   src={sideImage}
