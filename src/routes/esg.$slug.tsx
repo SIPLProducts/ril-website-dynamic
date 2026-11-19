@@ -20,6 +20,18 @@ import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import csrDiagram from "@/assets/csr-framework-diagram.png.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
 import reportingBg from "@/assets/esg-reports-wind-solar.png.asset.json";
+import heroPolicies from "@/assets/esg-hero-policies.jpg";
+import heroSocial from "@/assets/esg-hero-social-themes.jpg";
+import heroEnvironmental from "@/assets/esg-hero-environmental.jpg";
+import heroGovernance from "@/assets/esg-hero-governance-committee.jpg";
+
+const FULL_BG: Record<string, string> = {
+  "esg-reporting": reportingBg.url,
+  policies: heroPolicies,
+  social: heroSocial,
+  environmental: heroEnvironmental,
+  governance: heroGovernance,
+};
 
 const SIDE_IMAGES: Record<string, string> = {
   environmental: envImage.url,
@@ -95,9 +107,9 @@ function EsgPage() {
       <main>
         {/* Hero */}
         <section className="relative overflow-hidden bg-[#0d2b1f] pb-20 pt-36 text-white lg:pb-28 lg:pt-44">
-          {section.slug === "esg-reporting" && !section.bannerImage && (
+          {FULL_BG[section.slug] && !section.bannerImage && (
             <>
-              <img src={slotImg("hero:esg-reporting", reportingBg.url)} alt="" className="absolute inset-0 h-full w-full object-cover" />
+              <img src={slotImg(`hero:${section.slug}`, FULL_BG[section.slug])} alt="" className="absolute inset-0 h-full w-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-r from-[#05160e]/95 via-[#05160e]/80 to-[#05160e]/30" aria-hidden="true" />
             </>
           )}
@@ -127,7 +139,7 @@ function EsgPage() {
                 {section.hero}
               </p>
             </div>
-            {section.slug === "esg-reporting" ? <div /> : section.slug === "social" && sideImage ? (
+            {FULL_BG[section.slug] ? <div /> : section.slug === "social" && sideImage ? (
               <div className="flex justify-center lg:justify-end">
                 <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
                   <img src={sideImage} alt="Corporate Social Responsibility: Environment, Community Development, Workplace and Human Resources" width={462} height={432} className="h-auto w-full object-contain" />
