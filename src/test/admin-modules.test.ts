@@ -14,7 +14,7 @@ describe("admin menu", () => {
     expect(isReady(about)).toBe(true);
   });
   it("all Sustainability pages are editable", () => {
-    expect(mod("sustainability").children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Sustainability Section", "Policies", "Environmental", "Social", "Governance", "ESG Reporting"]);
+    expect(mod("sustainability").children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Sustainability Section", "Policies", "Environmental", "Social", "Governance", "Sustainability (ESG) Reports"]);
   });
   it("Home Page has its four editable screens", () => {
     expect(mod("home").children!.filter((p) => p.to).map((p) => p.label)).toEqual(["Hero Slides", "Key Figures", "Who We Are", "Our Journey"]);

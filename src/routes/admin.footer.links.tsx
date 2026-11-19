@@ -48,7 +48,7 @@ const SITE_PAGES: { label: string; href: string }[] = [
   { label: "Sustainability — Environmental", href: "/esg/environmental" },
   { label: "Sustainability — Social", href: "/esg/social" },
   { label: "Sustainability — Governance", href: "/esg/governance" },
-  { label: "Sustainability — ESG Reporting", href: "/esg/esg-reporting" },
+  { label: "Sustainability — Sustainability (ESG) Reports", href: "/esg/esg-reporting" },
 ];
 
 function Page() {

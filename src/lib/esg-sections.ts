@@ -211,7 +211,7 @@ export const ESG_SECTIONS: EsgSection[] = [
   },
   {
     slug: "esg-reporting",
-    title: "ESG Reporting",
+    title: "Sustainability (ESG) Reports",
     eyebrow: "Transparency In Action",
     hero: "Formal disclosures, frameworks and reports — download our latest ESG publications and track our performance year over year.",
     metrics: [
