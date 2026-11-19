@@ -42,6 +42,7 @@ const saveSchema = z.object({
   from_name: z.string().trim().max(120),
   cc: z.array(z.string().trim().email()).max(20),
   careers_to: z.string().trim().email("Enter a valid applications email").max(200),
+  sustainability_to: z.string().trim().email("Enter a valid sustainability email").max(200),
 });
 
 export const saveEmailSettings = createServerFn({ method: "POST" })

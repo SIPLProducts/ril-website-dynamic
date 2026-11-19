@@ -568,6 +568,39 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          email_sent: boolean
+          full_name: string
+          id: string
+          message: string
+          organisation: string
+          topic: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_sent?: boolean
+          full_name: string
+          id?: string
+          message: string
+          organisation?: string
+          topic?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_sent?: boolean
+          full_name?: string
+          id?: string
+          message?: string
+          organisation?: string
+          topic?: string
+        }
+        Relationships: []
+      }
       csr_areas: {
         Row: {
           body: string
@@ -643,6 +676,7 @@ export type Database = {
           password: string
           port: number
           secure: boolean
+          sustainability_to: string
           updated_at: string
           username: string
         }
@@ -657,6 +691,7 @@ export type Database = {
           password?: string
           port?: number
           secure?: boolean
+          sustainability_to?: string
           updated_at?: string
           username?: string
         }
@@ -671,6 +706,7 @@ export type Database = {
           password?: string
           port?: number
           secure?: boolean
+          sustainability_to?: string
           updated_at?: string
           username?: string
         }

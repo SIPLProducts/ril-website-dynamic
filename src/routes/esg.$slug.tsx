@@ -1,3 +1,4 @@
+import { SustainabilityContactButton } from "@/components/esg/SustainabilityContact";
 import framework2026 from "@/assets/framework-2026.jpg";
 import frameworkBrsr from "@/assets/framework-brsr.jpg";
 import frameworkGri from "@/assets/framework-gri.jpg";
@@ -348,12 +349,7 @@ function EsgPage() {
                 through our reports.
               </p>
             </div>
-            <a
-              href="mailto:sustainability@ramky.com"
-              className="inline-flex items-center gap-2 rounded-sm bg-emerald-500 px-7 py-4 font-display text-sm font-semibold uppercase tracking-[0.12em] text-[#0d2b1f] transition-opacity hover:opacity-90"
-            >
-              <Mail className="size-4" /> Contact Sustainability Team
-            </a>
+            <SustainabilityContactButton className="inline-flex items-center gap-2 rounded-sm bg-emerald-500 px-7 py-4 font-display text-sm font-semibold uppercase tracking-[0.12em] text-[#0d2b1f] transition-opacity hover:opacity-90" />
           </div>
         </section>
 

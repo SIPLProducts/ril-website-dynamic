@@ -197,6 +197,13 @@
       "when": 1795091836333,
       "tag": "0027_site_settings_scoped_read",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1795100932402,
+      "tag": "0028_sustainability_contact",
+      "breakpoints": true
     }
   ]
 }
