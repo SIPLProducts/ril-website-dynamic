@@ -190,6 +190,13 @@
       "when": 1795091279294,
       "tag": "0026_site_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1795091836333,
+      "tag": "0027_site_settings_scoped_read",
+      "breakpoints": true
     }
   ]
 }

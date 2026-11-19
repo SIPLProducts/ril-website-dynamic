@@ -11,4 +11,7 @@ CREATE POLICY "site_settings public read" ON public.site_settings FOR SELECT TO 
 CREATE POLICY "site_settings staff insert" ON public.site_settings FOR INSERT TO authenticated WITH CHECK (public.is_staff(auth.uid()));
 CREATE POLICY "site_settings staff update" ON public.site_settings FOR UPDATE TO authenticated USING (public.is_staff(auth.uid())) WITH CHECK (public.is_staff(auth.uid()));
 CREATE POLICY "site_settings staff delete" ON public.site_settings FOR DELETE TO authenticated USING (public.is_staff(auth.uid()));
-CREATE TRIGGER site_settings_touch BEFORE UPDATE ON public.site_settings FOR EACH ROW EXECUTE FUNCTION public.touch_updated_at();
+CREATE TRIGGER site_settings_touch BEFORE UPDATE ON public.site_settings FOR EACH ROW EXECUTE FUNCTION public.touch_updated_at();DROP POLICY IF EXISTS "site_settings public read" ON public.site_settings;
+CREATE POLICY "site_settings public read known keys" ON public.site_settings FOR SELECT TO anon, authenticated
+  USING (key IN ('esg_trends','esg_images','main_menu','sustainability_nav','pdf_viewer'));
+CREATE POLICY "site_settings staff read" ON public.site_settings FOR SELECT TO authenticated USING (public.is_staff(auth.uid()));
