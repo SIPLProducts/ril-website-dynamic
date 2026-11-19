@@ -98,7 +98,7 @@ function EsgPage() {
           {section.slug === "esg-reporting" && !section.bannerImage && (
             <>
               <img src={slotImg("hero:esg-reporting", reportingBg.url)} alt="" className="absolute inset-0 h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0d2b1f]/90 via-[#0d2b1f]/60 to-[#0d2b1f]/20" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#05160e]/95 via-[#05160e]/80 to-[#05160e]/30" aria-hidden="true" />
             </>
           )}
           {section.bannerImage && (
@@ -117,13 +117,13 @@ function EsgPage() {
           />
           <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_36rem] lg:items-center lg:px-10">
             <div className="max-w-4xl">
-              <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">
+              <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)]">
                 ESG · {section.eyebrow}
               </p>
-              <h1 className="mt-5 text-4xl font-bold leading-tight sm:text-5xl lg:text-7xl">
+              <h1 className="mt-5 text-4xl font-bold leading-tight sm:text-5xl lg:text-7xl [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">
                 {section.title}
               </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/70 sm:text-xl">
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/95 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)] sm:text-xl">
                 {section.hero}
               </p>
             </div>
