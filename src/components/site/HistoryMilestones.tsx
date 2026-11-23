@@ -28,9 +28,17 @@ export function HistoryMilestones({ items }: { items?: { year: string; text: str
   const touchX = useRef<number | null>(null);
   const current = MILESTONES[active]!;
 
-  const go = (i: number) => setActive(Math.max(0, Math.min(total - 1, i)));
+  const fromHover = useRef(false);
+
+  const go = (i: number, hover = false) => {
+    fromHover.current = hover;
+    setActive(Math.max(0, Math.min(total - 1, i)));
+  };
 
   useEffect(() => {
+    // Hovering only swaps the content below; the rail itself stays put so the
+    // pointer never drifts off the year it is on.
+    if (fromHover.current) return;
     const rail = railRef.current;
     const btn = rail?.querySelector<HTMLElement>(`[data-index="${active}"]`);
     if (rail && btn) {
@@ -85,6 +93,7 @@ export function HistoryMilestones({ items }: { items?: { year: string; text: str
                   aria-selected={isActive}
                   aria-controls="ms-panel"
                   tabIndex={isActive ? 0 : -1}
+                  onMouseEnter={() => go(i, true)}
                   onClick={() => go(i)}
                   className={`group relative min-w-[5.5rem] shrink-0 snap-center rounded-sm border px-4 py-3 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
                     isActive
