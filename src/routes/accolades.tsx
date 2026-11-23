@@ -31,7 +31,9 @@ function AwardItem({ a }: { a: PublicAward }) {
   return (
     <article className="grid gap-6 border-b border-border py-8 last:border-b-0 md:grid-cols-[minmax(0,20rem)_1fr]">
       {a.image ? (
-        <img src={a.image} alt={a.altText ?? a.title} loading="lazy" className="h-auto w-full rounded-sm border border-border object-contain" />
+        <div className="aspect-[4/3] w-full overflow-hidden rounded-sm border border-border bg-surface">
+          <img src={a.image} alt={a.altText ?? a.title} loading="lazy" className="h-full w-full object-contain" />
+        </div>
       ) : (
         <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-sm border border-border bg-surface px-5 text-center text-muted-foreground">
           <AwardIcon className="size-12" strokeWidth={1} aria-hidden="true" />
