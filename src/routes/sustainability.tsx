@@ -45,7 +45,7 @@ function SustainabilityOverview() {
           </div>
         </nav>
       </main>
-      <SiteFooter sustainabilityOnly />
+      <SiteFooter />
     </div>
   );
 }

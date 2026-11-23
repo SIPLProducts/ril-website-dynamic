@@ -365,7 +365,7 @@ function EsgPage() {
           </Link>
         </div>
       </main>
-      <SiteFooter sustainabilityOnly />
+      <SiteFooter />
     </div>
   );
 }
@@ -386,7 +386,7 @@ function EsgNotFound() {
           </Link>
         </div>
       </main>
-      <SiteFooter sustainabilityOnly />
+      <SiteFooter />
     </div>
   );
 }

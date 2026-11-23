@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { isSustainabilityPage } from "@/lib/sustainability-navigation";
 import { ChevronDown, Menu, X } from "lucide-react";
 import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
 import { ABOUT_SECTIONS } from "@/lib/about-sections";
@@ -22,7 +21,7 @@ const INVESTOR_LINKS = IR_CATEGORIES.map((c) => ({
 const investorHref = (cat: string, sub: string) => `/investors?cat=${cat}&sub=${sub}`;
 
 export function SiteHeader() {
-  const sustainabilityOnly = useRouterState({ select: (state) => isSustainabilityPage(state.location.pathname) });
+  const sustainabilityOnly = false;
   const settings = useSiteSettings();
   const o = (k: Parameters<typeof menuOrder>[1]) => menuOrder(settings.mainMenu, k);
   const esgSections = orderSustainability(ESG_SECTIONS, settings.sustainabilityNav);
