@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Mail } from "lucide-react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -31,7 +31,7 @@ export function SustainabilityContactButton({ className }: { className?: string 
       <button type="button" onClick={() => setOpen(true)} className={className}><Mail className="size-4" /> Contact us</button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-lg">
-          <DialogHeader><DialogTitle>Contact us</DialogTitle><DialogDescription>Send us your question and our team will get back to you. Office: <a href="tel:+914023015000" className="font-semibold underline">+91 40 2301 5000</a></DialogDescription></DialogHeader>
+          <DialogHeader><DialogTitle>Contact us</DialogTitle></DialogHeader>
           <form onSubmit={onSubmit} className="space-y-3">
             <div><Label htmlFor="sc-name">Full name *</Label><Input id="sc-name" maxLength={120} value={f.full_name} onChange={(e) => set("full_name", e.target.value)} /></div>
             <div><Label htmlFor="sc-email">Email *</Label><Input id="sc-email" type="email" maxLength={200} value={f.email} onChange={(e) => set("email", e.target.value)} /></div>
