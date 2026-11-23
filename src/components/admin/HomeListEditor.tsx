@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { RichField } from "@/components/admin/RichField";
 import { plainText } from "@/lib/strength-style";
-import { DEFAULT_RESOLUTION, IMAGE_RESOLUTIONS, resizeImage } from "@/lib/image-resolution";
+import { DEFAULT_RESOLUTION, IMAGE_RESOLUTIONS, isVideo, uniformImage } from "@/lib/image-resolution";
 import { refreshHome, removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 type Table = "home_hero_slides" | "home_stats" | "home_journey_milestones" | "history_milestones" | "subsidiaries" | "management_system_items" | "careers_landing_cards" | "strength_pillars" | "strength_items";
@@ -124,11 +124,11 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
     try {
       const payload: Record<string, unknown> = { published, ...Object.fromEntries(fields.map((x) => [x.key, f[x.key]!.trim()])) };
       let upload: File | null = file;
-      if (resolution && !upload && resChanged && row?.image_url && current) {
+      if (resolution && !upload && resChanged && row?.image_url && current && !isVideo(row.image_url) && !/\.gif$/i.test(row.image_url)) {
         const b = await (await fetch(current)).blob();
         upload = new File([b], "photo." + (b.type === "image/png" ? "png" : "jpg"), { type: b.type || "image/jpeg" });
       }
-      if (resolution && upload) upload = await resizeImage(upload, res);
+      if (resolution && upload) upload = await uniformImage(upload, res);
       if (withImage && upload) payload["image_url"] = await uploadHomeFile(table, upload);
       else if (withImage && imageOptional && clearImage && row?.image_url) payload["image_url"] = null;
       if (doc && docFile) payload[doc.key] = await uploadHomeFile(table, docFile);
@@ -165,18 +165,18 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
         <FormSection title={row ? "Photo (upload a new one to replace)" : imageOptional ? "Photo (optional)" : "Photo *"}>
           {row?.image_url && !file && !clearImage && (
             <div className="flex items-center gap-3">
-              {current ? <img src={current} alt="Current" className="h-24 max-w-[260px] rounded border border-border object-contain" /> : <span className="text-sm text-muted-foreground">A photo is saved.</span>}
+              {current && resolution && isVideo(row.image_url) ? <video src={current} muted loop autoPlay playsInline className="h-24 max-w-[260px] rounded border border-border object-cover" /> : current ? <img src={current} alt="Current" className="h-24 max-w-[260px] rounded border border-border object-contain" /> : <span className="text-sm text-muted-foreground">A photo is saved.</span>}
               {imageOptional && <Button type="button" variant="outline" size="sm" onClick={() => setClearImage(true)}><Trash2 className="size-4" /> Remove photo</Button>}
             </div>
           )}
           {clearImage && !file && <p className="text-sm text-muted-foreground">Photo will be removed when you save. <button type="button" className="underline" onClick={() => setClearImage(false)}>Undo</button></p>}
-          <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept="image/png,image/jpeg,image/webp" hint="Wide landscape photo (1920×1080) looks best" />
+          <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept={resolution ? "image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" : "image/png,image/jpeg,image/webp"} hint={resolution ? "Photo, GIF or video (MP4/WebM, up to 50 MB). Photos are cropped to the same wide shape so every slide matches." : "Wide landscape photo (1920×1080) looks best"} />
           {resolution && (
             <div><Label>Image resolution</Label>
               <select aria-label="Image resolution" className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={res} onChange={(e) => { setRes(e.target.value); setResChanged(true); }}>
                 {IMAGE_RESOLUTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
-              <p className="mt-1 text-xs text-muted-foreground">The photo is resized to this size when you save (never enlarged or stretched). Choose a size without uploading to resize the current photo.</p>
+              <p className="mt-1 text-xs text-muted-foreground">Photos are cropped to the same 16:9 shape and resized when you save (never stretched). GIFs and videos are kept as uploaded and shown full-screen. Choose a size without uploading to resize the current photo.</p>
             </div>
           )}
         </FormSection>

@@ -12,6 +12,7 @@ import { homeTopQuery } from "@/lib/home-top.functions";
 import { iconFor, imageFor } from "@/lib/capability-defaults";
 import irrigationRegulatorsAsset from "@/assets/irrigation-regulators.jpg.asset.json";
 import hero from "@/assets/hero.asset.json";
+import { isVideo } from "@/lib/image-resolution";
 import water from "@/assets/water.asset.json";
 import bridge from "@/assets/bridge.asset.json";
 import urban from "@/assets/urban.asset.json";
@@ -87,20 +88,15 @@ export function Hero() {
 
   return (
     <section id="top" className="relative isolate min-h-[92vh] overflow-hidden bg-ink">
-      {SLIDES.map((slide, i) => (
-        <img
-          key={slide.src}
-          src={slide.src}
-          alt={slide.alt}
-          width={1920}
-          height={1080}
-          loading={i === 0 ? undefined : "lazy"}
-          aria-hidden={i !== active}
-          className={`absolute inset-0 size-full object-cover transition-opacity duration-1000 ${
-            i === active ? "opacity-100" : "opacity-0"
-          }`}
-        />
-      ))}
+      {SLIDES.map((slide, i) => {
+        const cls = `absolute inset-0 size-full object-cover transition-opacity duration-1000 ${i === active ? "opacity-100" : "opacity-0"}`;
+        return isVideo(slide.src) ? (
+          <video key={slide.src} src={slide.src} autoPlay muted loop playsInline preload={i === 0 ? "auto" : "metadata"} aria-hidden className={cls} />
+        ) : (
+          <img key={slide.src} src={slide.src} alt={slide.alt} width={1920} height={1080}
+            loading={i === 0 ? undefined : "lazy"} aria-hidden={i !== active} className={cls} />
+        );
+      })}
       <div className="absolute inset-0 bg-gradient-to-r from-ink/85 via-ink/45 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-ink/70 via-ink/30 to-transparent lg:h-1/2 lg:from-ink/45 lg:via-ink/15" />
       <div className={`relative mx-auto flex min-h-[92vh] max-w-[1400px] flex-col justify-end px-5 pb-16 pt-40 lg:px-10 lg:pb-24 ${textShadow}`}>

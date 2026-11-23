@@ -34,3 +34,32 @@ export async function resizeImage(file: File, res: string): Promise<File> {
   const name = file.name.replace(/\.[^.]+$/, "") + (type === "image/png" ? ".png" : ".jpg");
   return new File([blob], name, { type });
 }
+
+/** Crop box (source px) and output size so every photo ends up exactly the chosen shape, never upscaled. */
+export function coverSize(srcW: number, srcH: number, res: string): { sx: number; sy: number; sw: number; sh: number; w: number; h: number } {
+  const r = IMAGE_RESOLUTIONS.find((x) => x.value === res);
+  if (!r || !r.w || srcW <= 0 || srcH <= 0) return { sx: 0, sy: 0, sw: srcW, sh: srcH, w: srcW, h: srcH };
+  const ratio = r.w / r.h;
+  let sw = srcW, sh = Math.round(srcW / ratio);
+  if (sh > srcH) { sh = srcH; sw = Math.round(srcH * ratio); }
+  const w = Math.min(r.w, sw), h = Math.round(w / ratio);
+  return { sx: Math.round((srcW - sw) / 2), sy: Math.round((srcH - sh) / 2), sw, sh, w, h };
+}
+
+/** Same as resizeImage but centre-crops to the exact shape so all slides are uniform. GIFs are left untouched to keep animation. */
+export async function uniformImage(file: File, res: string): Promise<File> {
+  if (res === "original" || !file.type.startsWith("image/") || file.type === "image/svg+xml" || file.type === "image/gif") return file;
+  const bmp = await createImageBitmap(file);
+  const b = coverSize(bmp.width, bmp.height, res);
+  const c = document.createElement("canvas");
+  c.width = b.w; c.height = b.h;
+  c.getContext("2d")!.drawImage(bmp, b.sx, b.sy, b.sw, b.sh, 0, 0, b.w, b.h);
+  bmp.close();
+  const type = file.type === "image/png" ? "image/png" : "image/jpeg";
+  const blob = await new Promise<Blob | null>((ok) => c.toBlob(ok, type, 0.9));
+  if (!blob) return file;
+  return new File([blob], file.name.replace(/\.[^.]+$/, "") + (type === "image/png" ? ".png" : ".jpg"), { type });
+}
+
+/** True when a stored media value points to a video file. */
+export const isVideo = (url: string | null | undefined) => !!url && /\.(mp4|webm)(\?|#|$)/i.test(url);
