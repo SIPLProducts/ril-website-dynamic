@@ -21,7 +21,6 @@ export function HomeTopHeading({ eyebrowKey, titleKey, anchor, help }: { eyebrow
   const [saving, setSaving] = useState(false);
   useEffect(() => { if (data) setF({ e: data[eyebrowKey], t: data[titleKey] }); }, [data, eyebrowKey, titleKey]);
   async function save() {
-    if (!f.t.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const { error } = await supabase.from("home_top").update({ [eyebrowKey]: f.e.trim(), [titleKey]: f.t.trim() } as never).eq("id", 1);
     setSaving(false);
@@ -43,7 +42,7 @@ export function HomeTopHeading({ eyebrowKey, titleKey, anchor, help }: { eyebrow
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div><Label>Small heading</Label><Input maxLength={60} value={f.e} onChange={(ev) => setF({ ...f, e: ev.target.value })} /></div>
-        <div><Label>Title *</Label><Input maxLength={160} value={f.t} onChange={(ev) => setF({ ...f, t: ev.target.value })} /></div>
+        <div><Label>Title</Label><Input maxLength={160} value={f.t} onChange={(ev) => setF({ ...f, t: ev.target.value })} /></div>
       </div>
     </section>
   );

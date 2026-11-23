@@ -62,7 +62,6 @@ function PageEditor() {
   const [saving, setSaving] = useState(false);
   useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, intro: data.intro, card_title: data.card_title, card_subtitle: data.card_subtitle, card_text: data.card_text }); }, [data]);
   async function save() {
-    if (!f.title.trim()) { toast.error("Page title is required"); return; }
     setSaving(true);
     const { error } = await supabase.from("media_page").upsert({ id: 1, ...f });
     setSaving(false);
@@ -183,7 +182,6 @@ function ItemDialog({ row, newOrder, onClose, onSaved }: { row: Row | null; newO
   const set = (k: keyof typeof f, v: string | boolean) => setF((p) => ({ ...p, [k]: v }));
 
   async function save() {
-    if (!f.title.trim()) { toast.error("Title is required"); return; }
     if (f.item_date && f.item_date > today()) { toast.error("Date cannot be in the future"); return; }
     if (f.external_url && !/^https?:\/\//i.test(f.external_url.trim())) { toast.error("Link must start with http:// or https://"); return; }
     if (file && file.type !== "application/pdf") { toast.error("Only PDF files can be attached"); return; }

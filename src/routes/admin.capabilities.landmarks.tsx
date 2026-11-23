@@ -51,7 +51,6 @@ function HeadingEditor() {
   const [saving, setSaving] = useState(false);
   useEffect(() => { if (data) setF({ landmark_eyebrow: data.landmark_eyebrow, landmark_title: data.landmark_title }); }, [data]);
   async function save() {
-    if (!f.landmark_title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const { error } = await supabase.from("capabilities_settings").update({ landmark_eyebrow: f.landmark_eyebrow.trim(), landmark_title: f.landmark_title.trim() }).eq("id", 1);
     setSaving(false);
@@ -72,7 +71,7 @@ function HeadingEditor() {
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div><Label>Small heading</Label><Input maxLength={60} value={f.landmark_eyebrow} onChange={(e) => setF({ ...f, landmark_eyebrow: e.target.value })} placeholder="Projects that shape places" /></div>
-        <div><Label>Title *</Label><Input maxLength={100} value={f.landmark_title} onChange={(e) => setF({ ...f, landmark_title: e.target.value })} placeholder="Landmark Engineering" /></div>
+        <div><Label>Title</Label><Input maxLength={100} value={f.landmark_title} onChange={(e) => setF({ ...f, landmark_title: e.target.value })} placeholder="Landmark Engineering" /></div>
       </div>
     </section>
   );
@@ -160,7 +159,6 @@ function SlideDialog({ row, nextOrder, onClose, onSaved }: { row: Slide | null; 
   const [saving, setSaving] = useState(false);
   const current = useHomePreview(row?.image_url);
   async function save() {
-    if (!f.name.trim()) { toast.error("Project name is required"); return; }
     if (!file && !row?.image_url) { toast.error("Please upload a photo"); return; }
     setSaving(true);
     try {
@@ -181,7 +179,7 @@ function SlideDialog({ row, nextOrder, onClose, onSaved }: { row: Slide | null; 
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add slide"}</Button></>}>
       <FormSection title="Slide details">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div><Label>Project name *</Label><Input value={f.name} maxLength={160} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+          <div><Label>Project name</Label><Input value={f.name} maxLength={160} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
           <div>
             <Label>Photo fit</Label>
             <select value={f.fit} onChange={(e) => setF({ ...f, fit: e.target.value })} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">

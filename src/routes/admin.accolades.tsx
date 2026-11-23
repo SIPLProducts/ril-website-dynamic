@@ -188,8 +188,6 @@ function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, on
     if (!f.award_date) e.award_date = "Award date is required";
     else if (isFutureDate(f.award_date)) e.award_date = "Award date can't be in the future";
     else if (yearEnd && fyOf(f.award_date).endYear !== yearEnd) e.award_date = `Date must be within FY ${yearEnd - 1} (${fyFromEnd(yearEnd).range})`;
-    if (!f.title.trim()) e.title = "Award title is required";
-    if (!f.organisation.trim()) e.organisation = "Awarding organisation is required";
     const imgErr = imageFileError(file, false);
     if (imgErr) e.image = imgErr;
     setErrs(e);
@@ -218,7 +216,7 @@ function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, on
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add award"}</Button></>}>
       <FormSection title="Award details">
         {pickYear && (
-          <div className="max-w-xs"><Label>Financial year *</Label>
+          <div className="max-w-xs"><Label>Financial year</Label>
             <select className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={yearEnd}
               onChange={(e) => { const y = Number(e.target.value); setYearEnd(y); setF({ ...f, award_date: `${y}-03-31` }); }}>
               {pastFyStarts().map((s) => <option key={s} value={s + 1}>FY {s} ({fyFromEnd(s + 1).range})</option>)}
@@ -226,10 +224,10 @@ function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, on
           </div>
         )}
         <div className="grid gap-4 sm:grid-cols-3">
-          <div><Label>Award date *</Label><Input type="date" min={bounds.min} max={bounds.max} value={f.award_date} onChange={(e) => setF({ ...f, award_date: e.target.value })} /><FieldError msg={errs.award_date} /></div>
-          <div><Label>Award title *</Label><Input maxLength={200} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /><FieldError msg={errs.title} /></div>
+          <div><Label>Award date</Label><Input type="date" min={bounds.min} max={bounds.max} value={f.award_date} onChange={(e) => setF({ ...f, award_date: e.target.value })} /><FieldError msg={errs.award_date} /></div>
+          <div><Label>Award title</Label><Input maxLength={200} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /><FieldError msg={errs.title} /></div>
           <div><Label>Category</Label><Input maxLength={120} value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} /></div>
-          <div><Label>Awarding organisation *</Label><Input maxLength={200} value={f.organisation} onChange={(e) => setF({ ...f, organisation: e.target.value })} /><FieldError msg={errs.organisation} /></div>
+          <div><Label>Awarding organisation</Label><Input maxLength={200} value={f.organisation} onChange={(e) => setF({ ...f, organisation: e.target.value })} /><FieldError msg={errs.organisation} /></div>
           <div><Label>Project / initiative</Label><Input maxLength={200} value={f.project} onChange={(e) => setF({ ...f, project: e.target.value })} /></div>
           <div><Label>Photo description (for screen readers)</Label><Input maxLength={200} value={f.alt_text} onChange={(e) => setF({ ...f, alt_text: e.target.value })} /></div>
         </div>

@@ -50,7 +50,6 @@ function HeadingEditor() {
   const [saving, setSaving] = useState(false);
   useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, intro: data.intro }); }, [data]);
   async function save() {
-    if (!f.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const { error } = await supabase.from("capabilities_settings").upsert({ id: 1, eyebrow: f.eyebrow.trim(), title: f.title.trim(), intro: f.intro.trim() });
     setSaving(false);
@@ -71,7 +70,7 @@ function HeadingEditor() {
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
         <div><Label>Small heading</Label><Input maxLength={40} value={f.eyebrow} onChange={(e) => setF({ ...f, eyebrow: e.target.value })} placeholder="Capabilities" /></div>
-        <div><Label>Title *</Label><Input maxLength={100} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="Multi-Disciplinary Spectrum" /></div>
+        <div><Label>Title</Label><Input maxLength={100} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="Multi-Disciplinary Spectrum" /></div>
         <div><Label>Intro line</Label><Input maxLength={200} value={f.intro} onChange={(e) => setF({ ...f, intro: e.target.value })} /></div>
       </div>
     </section>
@@ -180,10 +179,8 @@ function VerticalDialog({ row, existing, nextOrder, onClose, onSaved }: { row: V
   const current = row ? imageFor(row.slug, row.image_url ? uploaded : null) : null;
   const slug = slugTouched ? slugify(f.slug) : slugify(f.title);
   async function save() {
-    if (!f.title.trim()) { toast.error("Title is required"); return; }
     if (!slug) { toast.error("Page link is required"); return; }
     if (slug !== row?.slug && existing.includes(slug)) { toast.error("Another capability already uses this page link"); return; }
-    if (!f.card_text.trim()) { toast.error("Card text is required"); return; }
     if (!row && !file) { toast.error("Please upload a card image"); return; }
     setSaving(true);
     try {
@@ -204,9 +201,9 @@ function VerticalDialog({ row, existing, nextOrder, onClose, onSaved }: { row: V
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add capability"}</Button></>}>
       <FormSection title="Card details">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div><Label>Title *</Label><Input value={f.title} maxLength={80} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="e.g. Water & Wastewater" /></div>
+          <div><Label>Title</Label><Input value={f.title} maxLength={80} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="e.g. Water & Wastewater" /></div>
           <div>
-            <Label>Page link *</Label>
+            <Label>Page link</Label>
             <Input value={slug} maxLength={60} onChange={(e) => { setSlugTouched(true); setF({ ...f, slug: e.target.value }); }} />
             <p className="mt-1 text-xs text-muted-foreground">Website address: /businesses/{slug || "…"}</p>
           </div>
@@ -218,7 +215,7 @@ function VerticalDialog({ row, existing, nextOrder, onClose, onSaved }: { row: V
           </div>
           <label className="flex items-center gap-3 self-end pb-2 text-sm"><Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} /> Live on website</label>
         </div>
-        <div><Label>Card text (home page) *</Label><Textarea rows={2} maxLength={300} value={f.card_text} onChange={(e) => setF({ ...f, card_text: e.target.value })} /></div>
+        <div><Label>Card text (home page)</Label><Textarea rows={2} maxLength={300} value={f.card_text} onChange={(e) => setF({ ...f, card_text: e.target.value })} /></div>
         <div><Label>Projects page description</Label><Textarea rows={2} maxLength={400} value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} placeholder="Shown under the title on the projects page" /></div>
       </FormSection>
       <FormSection title={row ? "Card image (upload a new one to replace)" : "Card image *"}>

@@ -70,7 +70,6 @@ export function AboutContentEditor({ slug, label, card1, card2 }: { slug: string
   async function save() {
     const err = imageFileError(bannerFile, false) ?? imageFileError(imgFile, false);
     if (err) { toast.error(err); return; }
-    if (!f.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     try {
       const next = { ...f };

@@ -57,7 +57,6 @@ function PurposeDialog({ row, nextOrder, onClose, onSaved }: { row: Purpose | nu
   const [published, setPublished] = useState(row?.published ?? true);
   const [saving, setSaving] = useState(false);
   async function save() {
-    if (!title.trim()) { toast.error("Card heading is required"); return; }
     if (!body.trim() && !lines(bullets).length) { toast.error("Add some text or bullet points"); return; }
     setSaving(true);
     const payload = { title: title.trim(), body: body.trim(), bullets: lines(bullets), published };
@@ -71,7 +70,7 @@ function PurposeDialog({ row, nextOrder, onClose, onSaved }: { row: Purpose | nu
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0"><Save className="size-4" /> {saving ? "Saving…" : "Save"}</Button></>}>
       <FormSection title="Card">
         <div className="grid gap-4">
-          <div><Label>Card heading *</Label><Input value={title} placeholder="e.g. Vision, Mission, Values, Culture" onChange={(e) => setTitle(e.target.value)} /></div>
+          <div><Label>Card heading</Label><Input value={title} placeholder="e.g. Vision, Mission, Values, Culture" onChange={(e) => setTitle(e.target.value)} /></div>
           <div><Label>Text</Label><Textarea rows={4} value={body} onChange={(e) => setBody(e.target.value)} /></div>
           <div><Label>Bullet points (optional, one per line)</Label><Textarea rows={5} value={bullets} onChange={(e) => setBullets(e.target.value)} /></div>
           <div className="flex items-center gap-3"><Switch checked={published} onCheckedChange={setPublished} /><Label>Live on website</Label></div>
@@ -89,7 +88,6 @@ function SectionDialog({ row, nextOrder, onClose, onSaved }: { row: Section | nu
   const [clearImage, setClearImage] = useState(false);
   const [saving, setSaving] = useState(false);
   async function save() {
-    if (!title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     try {
       let image_url = clearImage ? null : row?.image_url ?? null;

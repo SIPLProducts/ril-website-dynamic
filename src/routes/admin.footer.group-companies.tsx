@@ -71,7 +71,6 @@ function HeadingEditor() {
   const [saving, setSaving] = useState(false);
   useEffect(() => { if (data) setF({ group_eyebrow: data.group_eyebrow, group_title: data.group_title, group_subtitle: data.group_subtitle }); }, [data]);
   async function save() {
-    if (!f.group_title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const { error } = await supabase.from("footer_settings").update({ group_eyebrow: f.group_eyebrow.trim(), group_title: f.group_title.trim(), group_subtitle: f.group_subtitle.trim() }).eq("id", 1);
     setSaving(false);
@@ -187,7 +186,6 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
   const current = usePreview(row?.logo_url ?? null);
   const [clearLogo, setClearLogo] = useState(false);
   async function save() {
-    if (!name.trim()) { toast.error("Company name is required"); return; }
     if (url.trim() && !/^https?:\/\/[^\s.]+\.[^\s]+$/i.test(url.trim())) { toast.error("Website must be a full link starting with https://"); return; }
     setSaving(true);
     try {
@@ -209,7 +207,7 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add company"}</Button></>}>
       <FormSection title="Company details">
         <div className="grid gap-4 sm:grid-cols-2">
-          <div><Label>Company name *</Label><Input value={name} maxLength={120} onChange={(e) => setName(e.target.value)} placeholder="e.g. MILES City" /></div>
+          <div><Label>Company name</Label><Input value={name} maxLength={120} onChange={(e) => setName(e.target.value)} placeholder="e.g. MILES City" /></div>
           <div><Label>Website link</Label><Input value={url} maxLength={300} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" /></div>
         </div>
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Live on website</label>

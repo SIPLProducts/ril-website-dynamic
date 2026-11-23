@@ -101,7 +101,6 @@ function VacancyDialog({ row, nextOrder, onClose, onSaved }: { row: Vacancy | nu
   const [saving, setSaving] = useState(false);
   const set = (k: string, v: string) => setF((p) => ({ ...p, [k]: v }));
   async function save() {
-    if (!f["title"]?.trim()) { toast.error("Title is required"); return; }
     const n = f["vacancies"]?.trim() ? Number(f["vacancies"]) : null;
     if (n !== null && (!Number.isInteger(n) || n < 1)) { toast.error("Number of vacancies must be a whole number"); return; }
     setSaving(true);
@@ -148,7 +147,6 @@ function FlyerDialog({ row, nextOrder, onClose, onSaved }: { row: Flyer | null; 
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
   async function save() {
-    if (!title.trim()) { toast.error("Title is required"); return; }
     if (!row?.image_url && !file) { toast.error("Please upload the flyer image"); return; }
     if (url.trim() && !/^https?:\/\//i.test(url.trim())) { toast.error("Link must start with http:// or https://"); return; }
     setSaving(true);

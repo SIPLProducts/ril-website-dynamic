@@ -163,7 +163,6 @@ function ColumnDialog({ row, nextOrder, onClose, onSaved }: { row: Col | null; n
   const [title, setTitle] = useState(row?.title ?? "");
   const [saving, setSaving] = useState(false);
   async function save() {
-    if (!title.trim()) { toast.error("Column heading is required"); return; }
     setSaving(true);
     const { error } = row
       ? await supabase.from("footer_columns").update({ title: title.trim() }).eq("id", row.id)
@@ -176,7 +175,7 @@ function ColumnDialog({ row, nextOrder, onClose, onSaved }: { row: Col | null; n
     <AdminDialog icon={Link2} title={row ? "Rename column" : "Add column"} subtitle="A heading in the website footer with links below it" onClose={onClose}
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save" : "Add column"}</Button></>}>
       <FormSection title="Column">
-        <div><Label>Column heading *</Label><Input value={title} maxLength={40} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Company" /></div>
+        <div><Label>Column heading</Label><Input value={title} maxLength={40} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Company" /></div>
       </FormSection>
     </AdminDialog>
   );
@@ -192,7 +191,6 @@ function LinkDialog({ col, row, nextOrder, onClose, onSaved }: { col: Col; row: 
   const [saving, setSaving] = useState(false);
   async function save() {
     const h = href.trim();
-    if (!label.trim()) { toast.error("Link text is required"); return; }
     if (!h) { toast.error("Please choose a page or enter a link"); return; }
     if (!/^(\/|https?:\/\/|mailto:|tel:)/i.test(h)) { toast.error("Link must start with / (website page) or https://"); return; }
     setSaving(true);
@@ -208,20 +206,20 @@ function LinkDialog({ col, row, nextOrder, onClose, onSaved }: { col: Col; row: 
     <AdminDialog icon={Link2} title={row ? "Edit link" : "Add link"} subtitle={`In the "${col.title}" footer column`} onClose={onClose}
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add link"}</Button></>}>
       <FormSection title="Link">
-        <div><Label>Link text *</Label><Input value={label} maxLength={60} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Media" /></div>
+        <div><Label>Link text</Label><Input value={label} maxLength={60} onChange={(e) => setLabel(e.target.value)} placeholder="e.g. Media" /></div>
         <div className="flex gap-4 text-sm">
           <label className="flex items-center gap-2"><input type="radio" checked={mode === "page"} onChange={() => setMode("page")} /> A page on this website</label>
           <label className="flex items-center gap-2"><input type="radio" checked={mode === "custom"} onChange={() => setMode("custom")} /> Other link (another website)</label>
         </div>
         {mode === "page" ? (
-          <div><Label>Website page *</Label>
+          <div><Label>Website page</Label>
             <select className={adminSelect} value={href} onChange={(e) => { setHref(e.target.value); if (!label) setLabel(SITE_PAGES.find((p) => p.href === e.target.value)?.label.split(" (")[0] ?? ""); }}>
               <option value="">Choose a page…</option>
               {SITE_PAGES.map((p) => <option key={p.href} value={p.href}>{p.label}</option>)}
             </select>
           </div>
         ) : (
-          <div><Label>Link address *</Label><Input value={href} maxLength={500} onChange={(e) => setHref(e.target.value)} placeholder="https://…" /></div>
+          <div><Label>Link address</Label><Input value={href} maxLength={500} onChange={(e) => setHref(e.target.value)} placeholder="https://…" /></div>
         )}
         <div className="flex flex-wrap gap-6">
           <label className="flex items-center gap-3 text-sm"><Switch checked={newTab} onCheckedChange={setNewTab} /> Open in a new tab</label>

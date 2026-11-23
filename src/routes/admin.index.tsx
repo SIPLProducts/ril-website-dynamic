@@ -259,7 +259,6 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
   async function save(e: React.FormEvent) {
     e.preventDefault();
     const errs: Partial<Record<"title" | "doc_date" | "file", string>> = {};
-    if (!d.title.trim()) errs.title = "Please enter a title";
     if (!d.doc_date) errs.doc_date = "Please choose a date";
     if (!file && !d.url.trim()) errs.file = "Upload a file or paste a link";
     else if (!file && !d.url.startsWith(STORAGE_PREFIX) && !/^https?:\/\//.test(d.url)) errs.file = "Link must start with https://";
@@ -293,10 +292,10 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
       footer={<><Button type="button" variant="outline" onClick={onClose}>Cancel</Button><Button type="submit" form="doc-form" disabled={saving} className="admin-accent hover:bg-transparent border-0 px-6 hover:opacity-90">{saving ? "Saving…" : d.id ? "Save changes" : "Upload"}</Button></>}>
       <form id="doc-form" onSubmit={save} noValidate>
         <FormSection title="Details">
-          <div><Label>Title <span className="text-destructive">*</span></Label><Input value={d.title} placeholder="e.g. Financial Results – Q1 FY 2026–27" onChange={(e) => set("title", e.target.value)} className="mt-1.5 h-10" aria-invalid={!!errors.title} /><FieldError msg={errors.title} /></div>
+          <div><Label>Title</Label><Input value={d.title} placeholder="e.g. Financial Results – Q1 FY 2026–27" onChange={(e) => set("title", e.target.value)} className="mt-1.5 h-10" aria-invalid={!!errors.title} /><FieldError msg={errors.title} /></div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div><Label>Document type</Label><Input placeholder="e.g. Financial Results" value={d.doc_type} onChange={(e) => set("doc_type", e.target.value)} className="mt-1.5 h-10" /></div>
-            <div><Label>Date <span className="text-destructive">*</span></Label><Input type="date" value={d.doc_date} onChange={(e) => set("doc_date", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors.doc_date} /></div>
+            <div><Label>Date</Label><Input type="date" value={d.doc_date} onChange={(e) => set("doc_date", e.target.value)} className="mt-1.5 h-10" /><FieldError msg={errors.doc_date} /></div>
           </div>
           <div><Label>Description</Label><Textarea rows={2} placeholder="Optional short note" value={d.description ?? ""} onChange={(e) => set("description", blankToNull(e.target.value))} className="mt-1.5" /></div>
         </FormSection>

@@ -112,7 +112,6 @@ function PageEditor({ slug, label }: { slug: string; label: string }) {
   async function save() {
     const err = imageFileError(file, false);
     if (err) { toast.error(err); return; }
-    if (!f.title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     try {
       const next = { ...f };
@@ -285,10 +284,6 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
 
   async function save() {
     const e: { title?: string; value?: string; body?: string; year?: string; file?: string } = {};
-    if (!f.title.trim()) e.title = kind === "metric" ? "Label is required" : "Title is required";
-    if (kind === "metric" && !f.value.trim()) e.value = "Value is required";
-    if (kind === "accordion" && !f.body.trim()) e.body = "Description is required";
-    if (kind === "report" && !f.year.trim()) e.year = "Year is required";
     if (kind === "report" && mode === "file" && file && (file.type !== "application/pdf" || file.size > MAX_PDF)) e.file = "Upload a PDF up to 50 MB";
     if (kind === "report" && mode === "link" && link && !/^https?:\/\//i.test(link.trim())) e.file = "Link must start with http:// or https://";
     setErrs(e);

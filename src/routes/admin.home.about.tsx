@@ -49,7 +49,6 @@ function Page() {
   }, [data]);
 
   async function save() {
-    if (!title.trim()) { toast.error("Title is required"); return; }
     const p = paras.map((x) => x.trim()).filter(Boolean);
     if (!p.length) { toast.error("Add at least one paragraph"); return; }
     setSaving(true);
@@ -86,7 +85,7 @@ function Page() {
         <Card title="Heading">
           <div className="grid gap-4 sm:grid-cols-2">
             <div><Label>Small heading</Label><Input maxLength={60} value={eyebrow} onChange={(e) => setEyebrow(e.target.value)} /></div>
-            <div><Label>Title *</Label><Input maxLength={160} value={title} onChange={(e) => setTitle(e.target.value)} /></div>
+            <div><Label>Title</Label><Input maxLength={160} value={title} onChange={(e) => setTitle(e.target.value)} /></div>
           </div>
         </Card>
         <Card title="Paragraphs" help='The first paragraph is always shown; the others appear when visitors click "Read more".'

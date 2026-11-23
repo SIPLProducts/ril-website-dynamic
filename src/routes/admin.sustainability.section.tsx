@@ -61,7 +61,6 @@ function ContentEditor() {
     setSide(Array.isArray(data.side_stats) ? (data.side_stats as { v: string; l: string }[]) : []);
   }, [data]);
   async function save() {
-    if (!f.title.trim()) { toast.error("Main heading is required"); return; }
     if (video && video.size > MAX_VIDEO) { toast.error("Video must be 20 MB or smaller"); return; }
     setSaving(true);
     try {
@@ -99,7 +98,7 @@ function ContentEditor() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <div><Label>Small heading</Label><Input maxLength={40} value={f.eyebrow} onChange={(e) => setF({ ...f, eyebrow: e.target.value })} /></div>
-          <div><Label>Main heading *</Label><Input maxLength={160} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /></div>
+          <div><Label>Main heading</Label><Input maxLength={160} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /></div>
           <div><Label>Paragraph</Label><Textarea rows={4} maxLength={800} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} /></div>
           <div>
             <div className="mb-2 flex items-center justify-between"><Label>Small figures beside the text</Label>
@@ -204,8 +203,6 @@ function StatDialog({ row, nextOrder, onClose, onSaved }: { row: Stat | null; ne
   const [f, setF] = useState({ value: row?.value ?? "", label: row?.label ?? "", note: row?.note ?? "", published: row?.published ?? true });
   const [saving, setSaving] = useState(false);
   async function save() {
-    if (!f.value.trim()) { toast.error("Value is required"); return; }
-    if (!f.label.trim()) { toast.error("Label is required"); return; }
     setSaving(true);
     const payload = { value: f.value.trim(), label: f.label.trim(), note: f.note.trim(), published: f.published };
     const { error } = row
@@ -221,8 +218,8 @@ function StatDialog({ row, nextOrder, onClose, onSaved }: { row: Stat | null; ne
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add figure"}</Button></>}>
       <FormSection title="Figure">
         <div className="grid gap-4 sm:grid-cols-3">
-          <div><Label>Value *</Label><Input value={f.value} maxLength={30} onChange={(e) => setF({ ...f, value: e.target.value })} placeholder="e.g. 22% Reduction" /></div>
-          <div className="sm:col-span-2"><Label>Label *</Label><Input value={f.label} maxLength={80} onChange={(e) => setF({ ...f, label: e.target.value })} placeholder="e.g. Energy Consumption" /></div>
+          <div><Label>Value</Label><Input value={f.value} maxLength={30} onChange={(e) => setF({ ...f, value: e.target.value })} placeholder="e.g. 22% Reduction" /></div>
+          <div className="sm:col-span-2"><Label>Label</Label><Input value={f.label} maxLength={80} onChange={(e) => setF({ ...f, label: e.target.value })} placeholder="e.g. Energy Consumption" /></div>
         </div>
         <div><Label>Short note</Label><Textarea rows={2} maxLength={200} value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} /></div>
         <label className="flex items-center gap-3 text-sm"><Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} /> Live on website</label>

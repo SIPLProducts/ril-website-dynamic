@@ -148,8 +148,6 @@ function ProjectDialog({ row, slug, title, nextOrder, onClose, onSaved }: { row:
   const [f, setF] = useState({ name: row?.name ?? "", location: row?.location ?? "", client: row?.client ?? "", status: row?.status ?? "Ongoing", published: row?.published ?? true });
   const [saving, setSaving] = useState(false);
   async function save() {
-    if (!f.name.trim()) { toast.error("Project name is required"); return; }
-    if (!f.location.trim()) { toast.error("Location is required (City, State)"); return; }
     setSaving(true);
     const payload = { name: f.name.trim(), location: f.location.trim(), client: f.client.trim(), status: f.status, published: f.published };
     const { error } = row
@@ -164,16 +162,16 @@ function ProjectDialog({ row, slug, title, nextOrder, onClose, onSaved }: { row:
     <AdminDialog icon={FolderKanban} wide title={row ? "Edit project" : "Add project"} subtitle={title} onClose={onClose}
       footer={<><Button variant="outline" onClick={onClose}>Cancel</Button><Button onClick={save} disabled={saving} className="neu-btn-gradient border-0">{saving ? "Saving…" : row ? "Save changes" : "Add project"}</Button></>}>
       <FormSection title="Project details">
-        <div><Label>Project name *</Label><Input value={f.name} maxLength={200} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+        <div><Label>Project name</Label><Input value={f.name} maxLength={200} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <Label>Location *</Label>
+            <Label>Location</Label>
             <Input value={f.location} maxLength={120} onChange={(e) => setF({ ...f, location: e.target.value })} placeholder="City, State" />
             <p className="mt-1 text-xs text-muted-foreground">The text after the last comma is used for the State filter</p>
           </div>
           <div><Label>Client</Label><Input value={f.client} maxLength={160} onChange={(e) => setF({ ...f, client: e.target.value })} /></div>
           <div>
-            <Label>Status *</Label>
+            <Label>Status</Label>
             <select value={f.status} onChange={(e) => setF({ ...f, status: e.target.value as ProjectRow["status"] })} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
               {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>

@@ -161,8 +161,6 @@ function PersonDialog({ group, row, taken, nextOrder, onClose, onSaved }: { grou
   async function save() {
     const finalSlug = slugifyName(slug || name);
     const e: Record<string, string> = {};
-    if (!name.trim()) e["name"] = "Name is required";
-    if (!designation.trim()) e["designation"] = "Designation is required";
     if (!finalSlug) e["slug"] = "Web address is required";
     else if (taken.includes(finalSlug)) e["slug"] = "Another person already uses this web address";
     const imgErr = imageFileError(file, false);
@@ -201,12 +199,12 @@ function PersonDialog({ group, row, taken, nextOrder, onClose, onSaved }: { grou
       <FormSection title="Details">
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <Label>Name *</Label>
+            <Label>Name</Label>
             <Input value={name} maxLength={120} placeholder="e.g. Mr. Ravi Kumar" onChange={(e) => { setName(e.target.value); if (!slugTouched) setSlug(slugifyName(e.target.value)); }} />
             <FieldError msg={errs["name"] || undefined} />
           </div>
           <div>
-            <Label>Designation *</Label>
+            <Label>Designation</Label>
             <Input value={designation} maxLength={120} placeholder="e.g. Independent Director" onChange={(e) => setDesignation(e.target.value)} />
             <FieldError msg={errs["designation"] || undefined} />
           </div>

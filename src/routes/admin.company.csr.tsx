@@ -50,7 +50,6 @@ function ContentEditor() {
   useEffect(() => { if (data) setF({ eyebrow: data.eyebrow, title: data.title, subtitle: data.subtitle, intro: data.intro, cta_label: data.cta_label, cta_url: data.cta_url }); }, [data]);
 
   async function save() {
-    if (!f.title.trim()) { toast.error("Title is required"); return; }
     if (f.cta_url && !/^https?:\/\//i.test(f.cta_url.trim())) { toast.error("Button link must start with http:// or https://"); return; }
     setSaving(true);
     const { error } = await supabase.from("csr_content").upsert({ id: 1, ...f, cta_url: f.cta_url.trim() });
@@ -165,7 +164,6 @@ function AreaDialog({ row, nextOrder, onClose, onSaved }: { row: Area | null; ne
   const [published, setPublished] = useState(row?.published ?? true);
   const [saving, setSaving] = useState(false);
   async function save() {
-    if (!title.trim()) { toast.error("Title is required"); return; }
     setSaving(true);
     const payload = { title: title.trim(), body: body.trim(), published };
     const { error } = row

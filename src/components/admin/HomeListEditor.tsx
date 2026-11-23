@@ -119,9 +119,7 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
   const [res, setRes] = useState<string>(DEFAULT_RESOLUTION);
   const [resChanged, setResChanged] = useState(false);
   async function save() {
-    const missing = fields.find((x) => x.required && !f[x.key]?.trim());
-    if (missing) { toast.error(`${missing.label} is required`); return; }
-    if (withImage && !imageOptional && !file && !row?.image_url) { toast.error("Please upload a photo"); return; }
+        if (withImage && !imageOptional && !file && !row?.image_url) { toast.error("Please upload a photo"); return; }
     setSaving(true);
     try {
       const payload: Record<string, unknown> = { published, ...Object.fromEntries(fields.map((x) => [x.key, f[x.key]!.trim()])) };
@@ -154,12 +152,12 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
               <select className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })}>
                 {x.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select></div>
-          ) : x.rich ? <div key={x.key} className="sm:col-span-2"><RichField label={`${x.label}${x.required ? " *" : ""}`} max={x.max ?? 200} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /></div> : (
-            <div key={x.key}><Label>{x.label}{x.required ? " *" : ""}</Label><Input maxLength={x.max ?? 200} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
+          ) : x.rich ? <div key={x.key} className="sm:col-span-2"><RichField label={`${x.label}$`} max={x.max ?? 200} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /></div> : (
+            <div key={x.key}><Label>{x.label}</Label><Input maxLength={x.max ?? 200} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
           ))}
         </div>
-        {fields.filter((x) => x.long).map((x) => x.rich ? <RichField key={x.key} long label={`${x.label}${x.required ? " *" : ""}`} max={x.max ?? 800} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /> : (
-          <div key={x.key}><Label>{x.label}{x.required ? " *" : ""}</Label><Textarea rows={3} maxLength={x.max ?? 800} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
+        {fields.filter((x) => x.long).map((x) => x.rich ? <RichField key={x.key} long label={`${x.label}$`} max={x.max ?? 800} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /> : (
+          <div key={x.key}><Label>{x.label}</Label><Textarea rows={3} maxLength={x.max ?? 800} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
         ))}
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Live on website</label>
       </FormSection>
