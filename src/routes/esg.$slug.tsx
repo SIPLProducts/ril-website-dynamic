@@ -13,7 +13,7 @@ import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import { getMetricTrend } from "@/lib/esg-metric-trends";
 import { useSiteSettings } from "@/lib/site-settings.functions";
-import { orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
+import { esgLabel, orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
 import { publishedFileUrl } from "@/lib/file-url";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
@@ -177,7 +177,7 @@ function EsgPage() {
         {hasMetrics && (
         <section className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
           <p className="eyebrow">
-            {section.slug === "esg-reporting" ? "Frameworks" : "Key Metrics"}
+            {esgLabel(settings.esgLabels, section.slug, "metrics")}
             {section.metricsPeriod && (
               <span className="font-normal normal-case tracking-normal text-muted-foreground">
                 {" "}| {section.metricsPeriod}
@@ -263,7 +263,7 @@ function EsgPage() {
         {/* Accordions */}
         <section className="border-t border-border bg-surface">
           <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
-            <p className="eyebrow">{section.slug === "policies" ? "Company Policies" : "In Detail"}</p>
+            <p className="eyebrow">{esgLabel(settings.esgLabels, section.slug, "detail")}</p>
             <div className="mt-8 max-w-4xl divide-y divide-border border-y border-border">
               {section.accordions.map((item, index) => {
                 const open = openIndex === index;
@@ -298,7 +298,7 @@ function EsgPage() {
         {section.reports && section.reports.length > 0 && (
           <section className="border-t border-border">
             <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
-              <p className="eyebrow">Downloads</p>
+              <p className="eyebrow">{esgLabel(settings.esgLabels, section.slug, "downloads")}</p>
               <h2 className="mt-4 font-display text-3xl font-bold">Reports</h2>
               <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
                 {section.reports.map((report) => (

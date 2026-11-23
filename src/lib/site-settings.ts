@@ -26,7 +26,17 @@ export const IMAGE_SLOTS = [
 
 export interface PdfViewerSettings { allowDownload: boolean; downloadLabel: string; exploreLabel: string }
 export interface SustainabilityNavItem { slug: string; label?: string }
+export interface EsgLabels { metrics?: string; detail?: string; downloads?: string }
+/** Default section headings per Sustainability page; admin overrides replace them when non-empty. */
+export function esgLabel(labels: Record<string, EsgLabels>, slug: string, part: keyof EsgLabels): string {
+  const v = labels[slug]?.[part]?.trim();
+  if (v) return v;
+  if (part === "metrics") return slug === "esg-reporting" ? "Frameworks" : "Key Metrics";
+  if (part === "detail") return slug === "policies" ? "Company Policies" : "In Detail";
+  return "Downloads";
+}
 export interface SiteSettings {
+  esgLabels: Record<string, EsgLabels>;
   esgTrends: MetricTrend[];
   /** slot → file reference (storage:... or URL) */
   images: Record<string, string>;
@@ -37,6 +47,7 @@ export interface SiteSettings {
 
 export const DEFAULT_PDF: PdfViewerSettings = { allowDownload: true, downloadLabel: "Download Report", exploreLabel: "Explore" };
 export const DEFAULT_SETTINGS: SiteSettings = {
+  esgLabels: {},
   esgTrends: METRIC_TRENDS,
   images: {},
   mainMenu: MAIN_MENU.map((m) => m.key),
@@ -58,7 +69,9 @@ export function parseSettings(rows: Row[]): SiteSettings {
   if (Array.isArray(imgs)) for (const i of imgs as { slot?: string; url?: string }[]) if (i?.slot && i.url) images[i.slot] = i.url;
   const keys = MAIN_MENU.map((m) => m.key) as string[];
   const menuOrder = Array.isArray(menu) ? (menu as string[]).filter((k) => keys.includes(k)) : [];
+  const lab = get("esg_labels");
   return {
+    esgLabels: lab && typeof lab === "object" && !Array.isArray(lab) ? (lab as Record<string, EsgLabels>) : {},
     esgTrends: Array.isArray(trends) && trends.length ? (trends as MetricTrend[]) : METRIC_TRENDS,
     images,
     mainMenu: [...menuOrder, ...keys.filter((k) => !menuOrder.includes(k))] as MainMenuKey[],

@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { METRIC_TRENDS, computeChange, type MetricTrend, type Polarity } from "@/lib/esg-metric-trends";
-import { DEFAULT_PDF, IMAGE_SLOTS, MAIN_MENU, orderSustainability, parseSettings, type MainMenuKey, type PdfViewerSettings, type SustainabilityNavItem } from "@/lib/site-settings";
+import { DEFAULT_PDF, esgLabel, type EsgLabels, IMAGE_SLOTS, MAIN_MENU, orderSustainability, parseSettings, type MainMenuKey, type PdfViewerSettings, type SustainabilityNavItem } from "@/lib/site-settings";
 import { removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 export const Route = createFileRoute("/admin/site-settings")({
@@ -58,12 +58,14 @@ function Page() {
             <TabsTrigger value="menu">Menu order</TabsTrigger>
             <TabsTrigger value="pdf">PDF viewer</TabsTrigger>
             <TabsTrigger value="sus">Sustainability navigation</TabsTrigger>
+            <TabsTrigger value="labels">Section headings</TabsTrigger>
           </TabsList>
           <TabsContent value="trends"><TrendsEditor initial={data.esgTrends} /></TabsContent>
           <TabsContent value="images"><ImagesEditor images={data.images} /></TabsContent>
           <TabsContent value="menu"><MenuEditor initial={data.mainMenu} /></TabsContent>
           <TabsContent value="pdf"><PdfEditor initial={data.pdfViewer} /></TabsContent>
           <TabsContent value="sus"><SusNavEditor initial={data.sustainabilityNav} /></TabsContent>
+          <TabsContent value="labels"><LabelsEditor initial={data.esgLabels} /></TabsContent>
         </Tabs>
       )}
     </AdminShell>
@@ -262,6 +264,31 @@ function SusNavEditor({ initial }: { initial: SustainabilityNavItem[] }) {
       <p className="mb-3 text-xs text-muted-foreground">Order and names used in the Sustainability dropdown and the tabs on every Sustainability page. Leave a name empty to keep the default. Hide a page from <strong>Page visibility</strong>.</p>
       <OrderList items={list.map((n) => ({ id: n.slug, label: defTitle(n.slug) }))} onMove={(i, d) => setList(move(list, i, d))}
         extra={(i) => <div className="flex items-center gap-2"><span className="w-40 shrink-0 text-xs text-muted-foreground">{defTitle(list[i]!.slug)}</span><Input value={list[i]!.label ?? ""} placeholder={defTitle(list[i]!.slug)} onChange={(e) => setList(list.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} /></div>} />
+    </Card>
+  );
+}
+
+/* ---------- Section headings ---------- */
+function LabelsEditor({ initial }: { initial: Record<string, EsgLabels> }) {
+  const save = useSave();
+  const [v, setV] = useState<Record<string, EsgLabels>>(initial);
+  const set = (slug: string, part: keyof EsgLabels, val: string) => setV({ ...v, [slug]: { ...v[slug], [part]: val } });
+  return (
+    <Card title="Sustainability section headings" actions={<div className="flex gap-2">
+      <Button size="sm" variant="outline" onClick={() => setV({})}><RotateCcw className="size-4" /> Default</Button>
+      <Button size="sm" onClick={() => save("esg_labels", v, "Headings saved")}>Save</Button></div>}>
+      <p className="mb-4 text-sm text-muted-foreground">Leave a box empty to use the default heading shown in grey.</p>
+      <div className="grid gap-6">
+        {ESG_SECTIONS.map((s) => (
+          <div key={s.slug} className="grid gap-3 sm:grid-cols-3">
+            <p className="font-semibold sm:col-span-3">{s.title}</p>
+            {(["metrics", "detail", "downloads"] as const).map((part) => (
+              <label key={part} className="text-xs font-semibold">{part === "metrics" ? "Figures heading" : part === "detail" ? "Detail heading" : "Downloads heading"}
+                <Input value={v[s.slug]?.[part] ?? ""} placeholder={esgLabel({}, s.slug, part)} onChange={(e) => set(s.slug, part, e.target.value)} /></label>
+            ))}
+          </div>
+        ))}
+      </div>
     </Card>
   );
 }

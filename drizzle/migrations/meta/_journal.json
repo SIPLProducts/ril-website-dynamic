@@ -204,6 +204,13 @@
       "when": 1795100932402,
       "tag": "0028_sustainability_contact",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1795405699274,
+      "tag": "0029_esg_labels_read",
+      "breakpoints": true
     }
   ]
 }
