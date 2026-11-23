@@ -268,7 +268,7 @@ function DocList({ docs, onView, detailed }: { docs: IrDocument[]; onView: (d: I
             {/composition of board committees/i.test(d.title) && <BoardCommittees />}
           </div>
           <div className="flex shrink-0 gap-2 sm:self-start">
-            {(() => {
+            {!/composition of board committees/i.test(d.title) && (() => {
               const t = linkTarget(d.title);
               return t ? (
                 <Link to="/investors" search={{ cat: t[0], sub: t[1] }} className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
@@ -361,16 +361,17 @@ function BoardCommittees() {
 
 function CommitteeCard({ title, details }: { title: string; details: string }) {
   const [open, setOpen] = useState(false);
-  const head = <><Scale className="size-5 shrink-0 text-brand-orange" aria-hidden="true" /><span className="flex-1 font-display text-sm font-semibold text-foreground">{title}</span></>;
-  if (!details.trim()) return <li className="flex items-center gap-3 rounded-sm border border-border bg-surface p-4">{head}</li>;
+  const lines = details.split(/\n+/).filter((l) => l.trim());
   return (
-    <li className={`rounded-sm border bg-surface ${open ? "border-brand-blue/40 sm:col-span-2" : "border-border"}`}>
-      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-4 text-left">
-        {head}<ChevronDown className={`size-5 shrink-0 text-brand-blue transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+    <li className={`rounded-sm border bg-surface transition-shadow hover:shadow-lg ${open ? "border-brand-blue/40 sm:col-span-2" : "border-border"}`}>
+      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-5 text-left">
+        <Scale className="size-5 shrink-0 text-brand-orange" aria-hidden="true" />
+        <span className="flex-1 font-display text-base font-semibold text-foreground">{title}</span>
+        <ChevronDown className={`size-5 shrink-0 text-brand-blue transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       {open && (
-        <div className="space-y-2 border-t border-border px-4 pb-4 pt-3 text-sm leading-relaxed text-muted-foreground">
-          {details.split(/\n+/).map((line, i) => {
+        <div className="space-y-2 border-t border-border px-5 pb-5 pt-4 text-sm leading-relaxed text-muted-foreground">
+          {lines.length === 0 ? <p className="italic">Committee details will be updated soon.</p> : lines.map((line, i) => {
             const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
             return m ? <p key={i}><span className="font-semibold text-foreground">{m[1]}:</span> {m[2]}</p> : <p key={i}>{line}</p>;
           })}
