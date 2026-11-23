@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { METRIC_TRENDS, computeChange, type MetricTrend, type Polarity } from "@/lib/esg-metric-trends";
-import { DEFAULT_PDF, esgLabel, type EsgLabels, IMAGE_SLOTS, MAIN_MENU, orderSustainability, parseSettings, type MainMenuKey, type PdfViewerSettings, type SustainabilityNavItem } from "@/lib/site-settings";
+import { DEFAULT_PDF, DEFAULT_THEME, THEME_FONTS, THEME_SIZES, themeFontsHref, type ThemeSettings, esgLabel, type EsgLabels, IMAGE_SLOTS, MAIN_MENU, orderSustainability, parseSettings, type MainMenuKey, type PdfViewerSettings, type SustainabilityNavItem } from "@/lib/site-settings";
 import { removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 export const Route = createFileRoute("/admin/site-settings")({
@@ -51,8 +51,9 @@ function Page() {
   return (
     <AdminShell staff={staff} active={{ kind: "settings" }} crumbs={["Website settings"]}>
       {isLoading || !data ? <p className="text-sm text-muted-foreground">Loading…</p> : (
-        <Tabs defaultValue="trends">
+        <Tabs defaultValue="theme">
           <TabsList className="flex h-auto flex-wrap justify-start">
+            <TabsTrigger value="theme">Fonts, colours &amp; size</TabsTrigger>
             <TabsTrigger value="trends">ESG trends</TabsTrigger>
             <TabsTrigger value="images">Hero &amp; framework images</TabsTrigger>
             <TabsTrigger value="menu">Menu order</TabsTrigger>
@@ -60,6 +61,7 @@ function Page() {
             <TabsTrigger value="sus">Sustainability navigation</TabsTrigger>
             <TabsTrigger value="labels">Section headings</TabsTrigger>
           </TabsList>
+          <TabsContent value="theme"><ThemeEditor initial={data.theme} /></TabsContent>
           <TabsContent value="trends"><TrendsEditor initial={data.esgTrends} /></TabsContent>
           <TabsContent value="images"><ImagesEditor images={data.images} /></TabsContent>
           <TabsContent value="menu"><MenuEditor initial={data.mainMenu} /></TabsContent>
@@ -305,6 +307,54 @@ function LabelsEditor({ initial }: { initial: Record<string, EsgLabels> }) {
             ))}
           </div>
         ))}
+      </div>
+    </Card>
+  );
+}
+
+/* ---------- Theme ---------- */
+function ThemeEditor({ initial }: { initial: ThemeSettings }) {
+  const save = useSave();
+  const [v, setV] = useState(initial);
+  const sel = "mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm font-normal";
+  const font = (k: "headingFont" | "bodyFont", label: string) => (
+    <label className="text-xs font-semibold">{label}
+      <select className={sel} value={v[k]} onChange={(e) => setV({ ...v, [k]: e.target.value })}>
+        <option value="">Default ({k === "headingFont" ? "Archivo" : "Hind"})</option>
+        {THEME_FONTS.map((f) => <option key={f} value={f}>{f}</option>)}
+      </select></label>
+  );
+  const color = (k: "primary" | "orange" | "green" | "textColor", label: string) => (
+    <label className="text-xs font-semibold">{label}
+      <div className="mt-1 flex items-center gap-2">
+        <input type="color" className="h-10 w-14 rounded border border-input" value={v[k] || "#000000"} onChange={(e) => setV({ ...v, [k]: e.target.value })} />
+        <span className="text-sm font-normal text-muted-foreground">{v[k] || "Default"}</span>
+        {v[k] && <button type="button" className="text-xs underline" onClick={() => setV({ ...v, [k]: "" })}>Use default</button>}
+      </div></label>
+  );
+  return (
+    <Card title="Website fonts, colours and text size" actions={<div className="flex gap-2">
+      <Button size="sm" variant="outline" onClick={() => setV(DEFAULT_THEME)}><RotateCcw className="size-4" /> Default</Button>
+      <Button size="sm" onClick={() => save("theme", v, "Website look saved")}>Save</Button></div>}>
+      <p className="mb-4 text-sm text-muted-foreground">Applies to every public page. Leave a value on default to keep the original design. To style a single heading or paragraph, use the Format button on that field.</p>
+      <div className="grid max-w-3xl gap-4 sm:grid-cols-2">
+        {font("headingFont", "Heading font")}
+        {font("bodyFont", "Body text font")}
+        <label className="text-xs font-semibold">Text size
+          <select className={sel} value={v.baseSize} onChange={(e) => setV({ ...v, baseSize: e.target.value })}>
+            <option value="">Default</option>{THEME_SIZES.map((z) => <option key={z.value} value={z.value}>{z.label}</option>)}
+          </select></label>
+        {color("textColor", "Main text colour")}
+        {color("primary", "Primary colour (buttons, links)")}
+        {color("orange", "Brand orange")}
+        {color("green", "Brand green")}
+      </div>
+      <div className="mt-6 rounded-md border border-dashed border-border p-4" style={{ fontSize: v.baseSize || undefined, color: v.textColor || undefined }}>
+        <div className="text-xs uppercase text-muted-foreground">Preview</div>
+        <h3 className="text-2xl font-bold" style={{ fontFamily: v.headingFont || undefined, color: v.primary || undefined }}>Towards sustainable growth</h3>
+        <p style={{ fontFamily: v.bodyFont || undefined }}>Integrated infrastructure development across water, roads and buildings.</p>
+        <div className="mt-2 flex gap-2"><span className="h-2 w-16 rounded" style={{ background: v.orange || "var(--brand-orange)" }} /><span className="h-2 w-16 rounded" style={{ background: v.green || "var(--brand-green)" }} /></div>
+        {themeFontsHref(v) && <link rel="stylesheet" href={themeFontsHref(v)} />}
       </div>
     </Card>
   );

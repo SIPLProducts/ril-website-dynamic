@@ -1,4 +1,5 @@
-import { siteSettingsQuery } from "@/lib/site-settings.functions";
+import { siteSettingsQuery, useSiteSettings } from "@/lib/site-settings.functions";
+import { themeCss, themeFontsHref } from "@/lib/site-settings";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -155,12 +156,17 @@ function VisibilityGate() {
   const { data: hidden = [] } = useQuery(hiddenPagesQuery());
   const loc = useLocation();
   const isAdmin = loc.pathname.startsWith("/admin");
-  if (isAdmin || hidden.length === 0) return <Outlet />;
+  const theme = useSiteSettings().theme;
+  if (isAdmin) return <Outlet />;
+  const tCss = themeCss(theme); const tFonts = themeFontsHref(theme);
+  const themed = <>{tFonts && <link rel="stylesheet" href={tFonts} />}{tCss && <style>{tCss}</style>}</>;
+  if (hidden.length === 0) return <>{themed}<Outlet /></>;
   const search = typeof loc.searchStr === "string" ? loc.searchStr : "";
   if (isUrlHidden(hidden, loc.pathname, search)) return <NotFoundComponent />;
   const css = hiddenLinksCss(hidden);
   return (
     <>
+      {themed}
       {css && <style>{css}</style>}
       <Outlet />
     </>

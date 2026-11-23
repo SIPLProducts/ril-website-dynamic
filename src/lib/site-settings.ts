@@ -35,7 +35,42 @@ export function esgLabel(labels: Record<string, EsgLabels>, slug: string, part: 
   if (part === "detail") return slug === "policies" ? "Company Policies" : "In Detail";
   return "Downloads";
 }
+/** Site-wide look chosen in admin; empty values keep the built-in design. */
+export interface ThemeSettings { headingFont: string; bodyFont: string; primary: string; orange: string; green: string; textColor: string; baseSize: string }
+export const DEFAULT_THEME: ThemeSettings = { headingFont: "", bodyFont: "", primary: "", orange: "", green: "", textColor: "", baseSize: "" };
+export const THEME_FONTS = ["Archivo", "Hind", "Montserrat", "Roboto", "Open Sans", "Lato", "Poppins", "Source Sans 3", "Merriweather", "Playfair Display", "Noto Sans", "Nunito"] as const;
+export const THEME_SIZES = [{ value: "14px", label: "Small" }, { value: "16px", label: "Normal" }, { value: "17px", label: "Large" }, { value: "18px", label: "Extra large" }] as const;
+const HEX = /^#[0-9a-f]{6}$/i;
+/** Clean a stored theme: only known fonts, hex colours and listed sizes survive. */
+export function cleanTheme(v: unknown): ThemeSettings {
+  const o = (v && typeof v === "object" ? v : {}) as Record<string, unknown>;
+  const font = (x: unknown) => (typeof x === "string" && (THEME_FONTS as readonly string[]).includes(x) ? x : "");
+  const col = (x: unknown) => (typeof x === "string" && HEX.test(x) ? x : "");
+  const size = typeof o["baseSize"] === "string" && THEME_SIZES.some((z) => z.value === o["baseSize"]) ? (o["baseSize"] as string) : "";
+  return { headingFont: font(o["headingFont"]), bodyFont: font(o["bodyFont"]), primary: col(o["primary"]), orange: col(o["orange"]), green: col(o["green"]), textColor: col(o["textColor"]), baseSize: size };
+}
+/** CSS overriding the design tokens for the chosen theme ("" when nothing is set). */
+export function themeCss(t: ThemeSettings): string {
+  const r: string[] = [];
+  if (t.headingFont) r.push(`--font-display: "${t.headingFont}", ui-sans-serif, system-ui, sans-serif`);
+  if (t.bodyFont) r.push(`--font-sans: "${t.bodyFont}", ui-sans-serif, system-ui, sans-serif`);
+  if (t.primary) r.push(`--primary: ${t.primary}`);
+  if (t.orange) r.push(`--brand-orange: ${t.orange}`);
+  if (t.green) r.push(`--brand-green: ${t.green}`);
+  if (t.textColor) r.push(`--foreground: ${t.textColor}`);
+  let css = r.length ? `:root{${r.join(";")}}` : "";
+  if (t.headingFont) css += `h1,h2,h3,h4,h5,h6,.font-display{font-family:var(--font-display)}`;
+  if (t.bodyFont) css += `body,.font-sans{font-family:var(--font-sans)}`;
+  if (t.baseSize) css += `html{font-size:${t.baseSize}}`;
+  return css;
+}
+/** Google Fonts link for chosen fonts not already loaded by default. */
+export function themeFontsHref(t: ThemeSettings): string {
+  const f = [...new Set([t.headingFont, t.bodyFont].filter((x) => x && x !== "Archivo" && x !== "Hind"))];
+  return f.length ? `https://fonts.googleapis.com/css2?${f.map((x) => `family=${x.replace(/ /g, "+")}:wght@400;500;600;700`).join("&")}&display=swap` : "";
+}
 export interface SiteSettings {
+  theme: ThemeSettings;
   esgLabels: Record<string, EsgLabels>;
   esgTrends: MetricTrend[];
   /** slot → file reference (storage:... or URL) */
@@ -47,6 +82,7 @@ export interface SiteSettings {
 
 export const DEFAULT_PDF: PdfViewerSettings = { allowDownload: true, downloadLabel: "Download Report", exploreLabel: "Explore" };
 export const DEFAULT_SETTINGS: SiteSettings = {
+  theme: DEFAULT_THEME,
   esgLabels: {},
   esgTrends: METRIC_TRENDS,
   images: {},
@@ -71,6 +107,7 @@ export function parseSettings(rows: Row[]): SiteSettings {
   const menuOrder = Array.isArray(menu) ? (menu as string[]).filter((k) => keys.includes(k)) : [];
   const lab = get("esg_labels");
   return {
+    theme: cleanTheme(get("theme")),
     esgLabels: lab && typeof lab === "object" && !Array.isArray(lab) ? (lab as Record<string, EsgLabels>) : {},
     esgTrends: Array.isArray(trends) && trends.length ? (trends as MetricTrend[]) : METRIC_TRENDS,
     images,

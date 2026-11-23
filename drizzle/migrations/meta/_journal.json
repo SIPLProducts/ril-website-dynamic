@@ -225,6 +225,13 @@
       "when": 1795407040618,
       "tag": "0031_scope_public_site_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1795435288291,
+      "tag": "0032_site_theme_public_read",
+      "breakpoints": true
     }
   ]
 }
