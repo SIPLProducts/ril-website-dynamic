@@ -506,7 +506,7 @@ function CsrCard() {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="csr-details"
-          className="inline-flex items-center gap-2 rounded-sm border border-border px-5 py-3 font-display text-xs font-semibold uppercase tracking-[0.12em]"
+          className="inline-flex items-center gap-2 rounded-sm bg-brand-orange px-5 py-3 font-display text-xs font-semibold uppercase tracking-[0.12em] text-accent-foreground"
         >
           {open ? "Show less" : "Read more"}
         </button>
