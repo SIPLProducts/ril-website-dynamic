@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronDown, Download, ExternalLink, Eye, FileText, Mail, Search, X } from "lucide-react";
+import { ArrowRight, ChevronDown, ExternalLink, Eye, FileText, Mail, Search, X } from "lucide-react";
 import { z } from "zod";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -265,17 +265,37 @@ function DocList({ docs, onView, detailed }: { docs: IrDocument[]; onView: (d: I
             {detailed && d.description && <p className="mt-1 text-sm text-muted-foreground">{d.description}</p>}
           </div>
           <div className="flex shrink-0 gap-2">
-            <button onClick={() => onView(d)} className="inline-flex items-center gap-1.5 rounded-sm border border-brand-blue px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue hover:text-primary-foreground">
-              <Eye className="size-3.5" /> View
-            </button>
-            <a href={d.url.startsWith("/files/") ? d.url + "?download" : d.url} download className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
-              <Download className="size-3.5" /> Download
-            </a>
+            {(() => {
+              const t = linkTarget(d.title);
+              return t ? (
+                <Link to="/investors" search={{ cat: t[0], sub: t[1] }} className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
+                  Open <ArrowRight className="size-3.5" />
+                </Link>
+              ) : (
+                <button onClick={() => onView(d)} className="inline-flex items-center gap-1.5 rounded-sm border border-brand-blue px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue hover:text-primary-foreground">
+                  <Eye className="size-3.5" /> View
+                </button>
+              );
+            })()}
           </div>
         </li>
       ))}
     </ul>
   );
+}
+
+/** Cards whose topic has its own Investor Relations sub-page open that page instead of a file. */
+const LINKS: [RegExp, string, string][] = [
+  [/shareholding pattern/i, "stock-exchange-filings", "shareholding-pattern"],
+  [/credit rating/i, "shareholders-information", "credit-rating"],
+  [/investor grievance|contact details/i, "shareholders-information", "investor-contacts"],
+  [/analyst|institutional investor|earnings call/i, "shareholders-information", "investor-calls"],
+  [/familiari[sz]ation|independent director/i, "corporate-governance", "board-and-committees"],
+  [/details of business/i, "financials", "quarterly-results"],
+];
+function linkTarget(title: string) {
+  const m = LINKS.find(([re]) => re.test(title));
+  return m ? [m[1], m[2]] as const : null;
 }
 
 function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
@@ -322,7 +342,6 @@ function Viewer({ doc, onClose }: { doc: IrDocument; onClose: () => void }) {
           <FileText className="size-5 shrink-0 text-brand-orange" />
           <p className="min-w-0 flex-1 truncate text-sm font-semibold">{doc.title}</p>
           <a href={doc.url} target="_blank" rel="noreferrer" className="hidden items-center gap-1 text-xs text-brand-blue hover:underline sm:inline-flex"><ExternalLink className="size-3.5" /> New tab</a>
-          <a href={doc.url.startsWith("/files/") ? doc.url + "?download" : doc.url} download className="inline-flex items-center gap-1 text-xs text-brand-blue hover:underline"><Download className="size-3.5" /> Download</a>
           <button onClick={onClose} aria-label="Close viewer" className="rounded-sm p-1 hover:bg-surface"><X className="size-5" /></button>
         </div>
         <iframe src={doc.url} title={doc.title} className="flex-1 bg-surface" />
