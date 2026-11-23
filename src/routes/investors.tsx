@@ -4,7 +4,9 @@ import { ArrowRight, ChevronDown, ExternalLink, Eye, FileText, Search, X } from 
 import { z } from "zod";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Scale } from "lucide-react";
 import { resolveIn, rollingFyLabels, withDocuments, type IrContact, type IrDocument, type IrSubTab } from "@/lib/investor-relations";
 import { irDataQuery } from "@/lib/ir-data.functions";
 
@@ -263,8 +265,9 @@ function DocList({ docs, onView, detailed }: { docs: IrDocument[]; onView: (d: I
               <span>{fmt(d.date)}</span>
             </p>
             {detailed && d.description && <p className="mt-1 text-sm text-muted-foreground">{d.description}</p>}
+            {/composition of board committees/i.test(d.title) && <BoardCommittees />}
           </div>
-          <div className="flex shrink-0 gap-2">
+          <div className="flex shrink-0 gap-2 sm:self-start">
             {(() => {
               const t = linkTarget(d.title);
               return t ? (
@@ -344,5 +347,35 @@ function Viewer({ doc, onClose }: { doc: IrDocument; onClose: () => void }) {
         <iframe src={doc.url} title={doc.title} className="flex-1 bg-surface" />
       </div>
     </div>
+  );
+}
+
+function BoardCommittees() {
+  const { data = [] } = useQuery({ queryKey: ["board-committees"], queryFn: async () => {
+    const { data } = await supabase.from("esg_items").select("id,title,body").eq("page_slug", "board-committees").eq("kind", "governance_item").eq("published", true).order("sort_order");
+    return data ?? [];
+  } });
+  if (!data.length) return null;
+  return <ul className="mt-4 grid gap-3 sm:grid-cols-2">{data.map((c) => <CommitteeCard key={c.id} title={c.title} details={c.body} />)}</ul>;
+}
+
+function CommitteeCard({ title, details }: { title: string; details: string }) {
+  const [open, setOpen] = useState(false);
+  const head = <><Scale className="size-5 shrink-0 text-brand-orange" aria-hidden="true" /><span className="flex-1 font-display text-sm font-semibold text-foreground">{title}</span></>;
+  if (!details.trim()) return <li className="flex items-center gap-3 rounded-sm border border-border bg-surface p-4">{head}</li>;
+  return (
+    <li className={`rounded-sm border bg-surface ${open ? "border-brand-blue/40 sm:col-span-2" : "border-border"}`}>
+      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-4 text-left">
+        {head}<ChevronDown className={`size-5 shrink-0 text-brand-blue transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="space-y-2 border-t border-border px-4 pb-4 pt-3 text-sm leading-relaxed text-muted-foreground">
+          {details.split(/\n+/).map((line, i) => {
+            const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
+            return m ? <p key={i}><span className="font-semibold text-foreground">{m[1]}:</span> {m[2]}</p> : <p key={i}>{line}</p>;
+          })}
+        </div>
+      )}
+    </li>
   );
 }

@@ -46,6 +46,7 @@ export const isLiveHost = (host = typeof window !== "undefined" ? window.locatio
 export const isModuleReady = (m: AdminModule, live = isLiveHost()): boolean => !(live && LIVE_LOCKED.includes(m.key)) && isReady(m);
 
 export const CONTACTS_SECTION = "contacts";
+export const BOARD_COMMITTEES_SECTION = "board-committees";
 export const DASHBOARD_ICON = LayoutDashboard;
 export const INVESTORS_ICON = Landmark;
 export const USERS_ICON = Users;
@@ -56,6 +57,8 @@ export function investorGroups() {
   const m = new Map<string, { key: string; label: string }[]>();
   for (const s of IR_SECTIONS) m.set(s.categoryLabel, [...(m.get(s.categoryLabel) ?? []), { key: s.key, label: s.label }]);
   const groups = [...m.entries()].map(([label, items]) => ({ label, items }));
+  const cg = groups.find((g) => g.label === "Corporate Governance");
+  cg?.items.push({ key: BOARD_COMMITTEES_SECTION, label: "Board Committees" });
   const sh = groups.find((g) => g.label === "Shareholders Information");
   (sh ?? groups[groups.length - 1]!).items.push({ key: CONTACTS_SECTION, label: "Investor Contacts" });
   return groups;

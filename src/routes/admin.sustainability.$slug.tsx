@@ -21,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 export const Route = createFileRoute("/admin/sustainability/$slug")({
   ssr: false,
   beforeLoad: async ({ params }) => {
-    if (!ESG_SECTIONS.some((s) => s.slug === params.slug)) throw notFound();
+    if (params.slug !== BOARD_SLUG && !ESG_SECTIONS.some((s) => s.slug === params.slug)) throw notFound();
     const staff = await getStaff();
     if (!staff) throw redirect({ to: "/admin/login" });
     return { staff };
@@ -29,6 +29,8 @@ export const Route = createFileRoute("/admin/sustainability/$slug")({
   component: Page,
   notFoundComponent: () => <div className="p-10">Page not found.</div>,
 });
+
+const BOARD_SLUG = "board-committees";
 
 type Kind = "metric" | "accordion" | "governance_item" | "report";
 type Item = { id: string; kind: Kind; group_title: string | null; title: string; value: string; body: string; year: string; url: string | null; published: boolean; sort_order: number };
@@ -41,6 +43,7 @@ const KIND_INFO: Record<Kind, { heading: string; hint: string; noun: string }> =
 };
 
 function kindInfo(slug: string, kind: Kind) {
+  if (slug === BOARD_SLUG) return { heading: "Board Committees", hint: "Shown under Investors › Corporate Governance › Board & Committees. Add a description to make the card expandable", noun: "committee" };
   if (slug === "policies" && kind === "accordion") {
     return { heading: "Policies", hint: "Expandable policy summaries shown on the Policies page", noun: "policy" };
   }
@@ -72,6 +75,11 @@ function usePreview(url: string | null) {
 function Page() {
   const { staff } = Route.useRouteContext();
   const { slug } = Route.useParams();
+  if (slug === BOARD_SLUG) return (
+    <AdminShell staff={staff} active={{ kind: "investors", section: BOARD_SLUG }} crumbs={["Investors", "Corporate Governance", "Board Committees"]}>
+      <ItemList key={slug} slug={slug} kind="governance_item" grouped={false} />
+    </AdminShell>
+  );
   const label = ESG_SECTIONS.find((s) => s.slug === slug)?.title ?? slug;
   const kinds: Kind[] = slug === "governance" ? ["governance_item", "accordion"] : slug === "esg-reporting" ? ["metric", "accordion", "report"] : slug === "policies" ? ["accordion"] : ["metric", "accordion"];
   return (

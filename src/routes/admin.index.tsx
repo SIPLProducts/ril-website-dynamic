@@ -1,4 +1,4 @@
-import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, Navigate, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Eye, FileText, FileUp, Pencil, Plus, Search, Trash2, Users, Contact, CheckCircle2, FilePen } from "lucide-react";
@@ -7,7 +7,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { getStaff } from "@/lib/admin-auth";
 import { saveIrFile } from "@/lib/ir-files.functions";
-import { CONTACTS_SECTION } from "@/lib/admin-modules";
+import { BOARD_COMMITTEES_SECTION, CONTACTS_SECTION } from "@/lib/admin-modules";
 import { IR_BUCKET, IR_SECTIONS, STORAGE_PREFIX, rollingFyLabels, type IrContact, type IrDocumentRow } from "@/lib/investor-relations";
 import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import { AdminShell } from "@/components/admin/AdminShell";
@@ -37,6 +37,7 @@ function AdminPage() {
   if (!section) {
     return <AdminShell staff={staff} active={{ kind: "dashboard" }} crumbs={["Dashboard"]}><Dashboard isSuper={staff.role === "super_admin"} name={staff.fullName} /></AdminShell>;
   }
+  if (section === BOARD_COMMITTEES_SECTION) return <Navigate to="/admin/sustainability/$slug" params={{ slug: BOARD_COMMITTEES_SECTION }} />;
   if (section === CONTACTS_SECTION) {
     return <AdminShell staff={staff} active={{ kind: "investors", section }} crumbs={["Investors", "Shareholders Information", "Investor Contacts"]}><ContactsEditor /></AdminShell>;
   }
