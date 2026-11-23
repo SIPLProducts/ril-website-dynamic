@@ -98,6 +98,9 @@ function ProjectList({ projects }: { projects: BusinessProject[] }) {
   const shown = projects.filter(
     (p) => (!f.status || p.status === f.status) && (!f.client || p.client === f.client) && (!f.state || projectState(p) === f.state),
   );
+  const counted = projects.filter(
+    (p) => (!f.client || p.client === f.client) && (!f.state || projectState(p) === f.state),
+  );
   const active = (Object.keys(f) as (keyof Filters)[]).filter((k) => f[k]);
   const labels: Record<keyof Filters, string> = { status: "Status", client: "Client", state: "State" };
 
@@ -107,7 +110,18 @@ function ProjectList({ projects }: { projects: BusinessProject[] }) {
 
   return (
     <>
-      <div className="mt-10 grid gap-3 rounded-sm border border-border bg-card p-4 sm:grid-cols-3 sm:p-5">
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Project status counts">
+        {[
+          { label: "Total projects", value: counted.length },
+          ...["Completed", "Ongoing", "O&M"].map((s) => ({ label: s, value: counted.filter((p) => p.status === s).length })),
+        ].map((c) => (
+          <div key={c.label} className="rounded-sm border border-border bg-card p-4">
+            <p className="font-display text-3xl font-bold text-brand-blue">{c.value}</p>
+            <p className="mt-1 font-display text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{c.label}</p>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 grid gap-3 rounded-sm border border-border bg-card p-4 sm:grid-cols-3 sm:p-5">
         {(Object.keys(labels) as (keyof Filters)[]).map((k) => (
           <label key={k} className="block">
             <span className="font-display text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{labels[k]}</span>
