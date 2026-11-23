@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ArrowRight, ChevronDown, ExternalLink, Eye, FileText, Mail, Search, X } from "lucide-react";
+import { ArrowRight, ChevronDown, ExternalLink, Eye, FileText, Search, X } from "lucide-react";
 import { z } from "zod";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -327,9 +327,6 @@ function Contacts({ contacts: IR_CONTACTS }: { contacts: IrContact[] }) {
           </dl>
         </div>
       ))}
-      <a href="mailto:investors@ramky.com" className="inline-flex items-center gap-2 text-sm font-semibold text-brand-orange md:col-span-3">
-        <Mail className="size-4" /> Email the investor relations team
-      </a>
     </div>
   );
 }
