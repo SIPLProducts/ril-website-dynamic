@@ -19,7 +19,7 @@ function Page() {
   const { staff } = Route.useRouteContext();
   return (
     <AdminShell staff={staff} active={{ kind: "module", module: "home", section: "hero" }} crumbs={["Home Page", "Hero Slides"]}>
-      <HomeListEditor table="home_hero_slides" title="Hero slides" itemName="Slide" icon={Images} withImage
+      <HomeListEditor table="home_hero_slides" title="Hero slides" itemName="Slide" icon={Images} withImage resolution
         help="The big photo slideshow at the very top of the home page · changes every 5 seconds"
         fields={[
           { key: "project", label: "Project name", required: true, max: 160 },

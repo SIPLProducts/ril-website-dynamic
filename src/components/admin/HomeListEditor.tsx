@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { RichField } from "@/components/admin/RichField";
 import { plainText } from "@/lib/strength-style";
+import { DEFAULT_RESOLUTION, IMAGE_RESOLUTIONS, resizeImage } from "@/lib/image-resolution";
 import { refreshHome, removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 type Table = "home_hero_slides" | "home_stats" | "home_journey_milestones" | "history_milestones" | "subsidiaries" | "management_system_items" | "careers_landing_cards" | "strength_pillars" | "strength_items";
@@ -20,7 +21,8 @@ export type Field = { key: string; label: string; required?: boolean; long?: boo
 export type DocField = { key: string; label: string; accept: string; hint: string };
 type Row = Record<string, unknown> & { id: string; published: boolean; sort_order: number; image_url?: string | null };
 
-export function HomeListEditor({ table, title, help, itemName, icon, fields, withImage, imageOptional, doc, filter, defaults }: {
+export function HomeListEditor({ table, title, help, itemName, icon, fields, withImage, imageOptional, doc, filter, defaults, resolution }: {
+  resolution?: boolean;
   table: Table; title: string; help: string; itemName: string; icon: LucideIcon; fields: Field[]; withImage?: boolean; imageOptional?: boolean;
   doc?: DocField; filter?: { key: string; value: string }; defaults?: Record<string, string>;
 }) {
@@ -92,7 +94,7 @@ export function HomeListEditor({ table, title, help, itemName, icon, fields, wit
           {!rows.length && <tr><td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">Nothing here yet. Click "Add {itemName.toLowerCase()}".</td></tr>}
         </tbody>
       </table>
-      {editing && <ItemDialog table={table} icon={icon} itemName={itemName} fields={fields} withImage={withImage} imageOptional={imageOptional} doc={doc} defaults={{ ...defaults, ...(filter ? { [filter.key]: filter.value } : {}) }} row={editing === "new" ? null : editing}
+      {editing && <ItemDialog table={table} icon={icon} itemName={itemName} fields={fields} withImage={withImage} resolution={resolution} imageOptional={imageOptional} doc={doc} defaults={{ ...defaults, ...(filter ? { [filter.key]: filter.value } : {}) }} row={editing === "new" ? null : editing}
         nextOrder={(rows.at(-1)?.sort_order ?? 0) + 1} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh(); }} />}
     </section>
   );
@@ -103,7 +105,8 @@ function Thumb({ url }: { url: string | null }) {
   return src ? <img src={src} alt="" className="h-12 w-20 rounded border border-border object-cover" /> : <div className="grid h-12 w-20 place-items-center rounded border border-dashed border-border text-[10px] text-muted-foreground">No photo</div>;
 }
 
-function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, doc, defaults, row, nextOrder, onClose, onSaved }: {
+function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imageOptional, doc, defaults, row, nextOrder, onClose, onSaved }: {
+  resolution?: boolean | undefined;
   table: Table; icon: LucideIcon; itemName: string; fields: Field[]; withImage?: boolean | undefined; imageOptional?: boolean | undefined; doc?: DocField | undefined; defaults: Record<string, string>; row: Row | null; nextOrder: number; onClose: () => void; onSaved: () => void;
 }) {
   const [f, setF] = useState<Record<string, string>>(() => Object.fromEntries(fields.map((x) => [x.key, String(row?.[x.key] ?? defaults[x.key] ?? x.options?.[0]?.value ?? "")])));
@@ -113,6 +116,8 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
   const [saving, setSaving] = useState(false);
   const [clearImage, setClearImage] = useState(false);
   const current = useHomePreview(row?.image_url);
+  const [res, setRes] = useState<string>(DEFAULT_RESOLUTION);
+  const [resChanged, setResChanged] = useState(false);
   async function save() {
     const missing = fields.find((x) => x.required && !f[x.key]?.trim());
     if (missing) { toast.error(`${missing.label} is required`); return; }
@@ -120,14 +125,20 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
     setSaving(true);
     try {
       const payload: Record<string, unknown> = { published, ...Object.fromEntries(fields.map((x) => [x.key, f[x.key]!.trim()])) };
-      if (withImage && file) payload["image_url"] = await uploadHomeFile(table, file);
+      let upload: File | null = file;
+      if (resolution && !upload && resChanged && row?.image_url && current) {
+        const b = await (await fetch(current)).blob();
+        upload = new File([b], "photo." + (b.type === "image/png" ? "png" : "jpg"), { type: b.type || "image/jpeg" });
+      }
+      if (resolution && upload) upload = await resizeImage(upload, res);
+      if (withImage && upload) payload["image_url"] = await uploadHomeFile(table, upload);
       else if (withImage && imageOptional && clearImage && row?.image_url) payload["image_url"] = null;
       if (doc && docFile) payload[doc.key] = await uploadHomeFile(table, docFile);
       const { error } = row
         ? await supabase.from(table).update(payload as never).eq("id", row.id)
         : await supabase.from(table).insert({ ...defaults, ...payload, sort_order: nextOrder } as never);
       if (error) throw new Error(error.message);
-      if ((file || (imageOptional && clearImage)) && row?.image_url) await removeHomeFile(row.image_url);
+      if ((payload["image_url"] !== undefined && payload["image_url"] !== row?.image_url || (imageOptional && clearImage)) && row?.image_url) await removeHomeFile(row.image_url);
       if (doc && docFile && row) await removeHomeFile(row[doc.key] as string | null);
       toast.success(published ? "Saved — now live on the website" : "Saved as hidden");
       onSaved();
@@ -162,6 +173,14 @@ function ItemDialog({ table, icon, itemName, fields, withImage, imageOptional, d
           )}
           {clearImage && !file && <p className="text-sm text-muted-foreground">Photo will be removed when you save. <button type="button" className="underline" onClick={() => setClearImage(false)}>Undo</button></p>}
           <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept="image/png,image/jpeg,image/webp" hint="Wide landscape photo (1920×1080) looks best" />
+          {resolution && (
+            <div><Label>Image resolution</Label>
+              <select aria-label="Image resolution" className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={res} onChange={(e) => { setRes(e.target.value); setResChanged(true); }}>
+                {IMAGE_RESOLUTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+              <p className="mt-1 text-xs text-muted-foreground">The photo is resized to this size when you save (never enlarged or stretched). Choose a size without uploading to resize the current photo.</p>
+            </div>
+          )}
         </FormSection>
       )}
       {doc && (
