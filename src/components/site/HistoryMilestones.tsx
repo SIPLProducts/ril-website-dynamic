@@ -93,7 +93,9 @@ export function HistoryMilestones({ items }: { items?: { year: string; text: str
                   aria-selected={isActive}
                   aria-controls="ms-panel"
                   tabIndex={isActive ? 0 : -1}
-                  onMouseEnter={() => go(i, true)}
+                  onPointerEnter={() => i !== active && go(i, true)}
+                  onMouseOver={() => i !== active && go(i, true)}
+                  onFocus={() => i !== active && go(i, true)}
                   onClick={() => go(i)}
                   className={`group relative min-w-[5.5rem] shrink-0 snap-center rounded-sm border px-4 py-3 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
                     isActive
@@ -103,10 +105,10 @@ export function HistoryMilestones({ items }: { items?: { year: string; text: str
                         : "border-border bg-card/60 text-muted-foreground hover:border-primary/40 hover:text-foreground"
                   }`}
                 >
-                  <span className="block font-display text-[0.6rem] font-bold uppercase tracking-[0.16em] opacity-70">
+                  <span className="pointer-events-none block font-display text-[0.6rem] font-bold uppercase tracking-[0.16em] opacity-70">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <span className="mt-0.5 block font-display text-lg font-bold">{m.year}</span>
+                  <span className="pointer-events-none mt-0.5 block font-display text-lg font-bold">{m.year}</span>
                   <span className={`absolute inset-x-0 bottom-0 h-[3px] rounded-b-sm transition-all ${isActive ? "bg-brand-orange" : "bg-transparent"}`} />
                 </button>
               );
