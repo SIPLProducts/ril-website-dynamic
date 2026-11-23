@@ -11,7 +11,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
-import { getMetricTrend } from "@/lib/esg-metric-trends";
+import { findTrendFor } from "@/lib/esg-metric-trends";
 import { useSiteSettings } from "@/lib/site-settings.functions";
 import { esgLabel, orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
 import { publishedFileUrl } from "@/lib/file-url";
@@ -212,7 +212,7 @@ function EsgPage() {
                     {metric.label && (
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
                     )}
-                    {section.slug === "environmental" && (() => { const tr = getMetricTrend(metric.label, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
+                    {section.slug === "environmental" && (() => { const tr = findTrendFor(metric, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
                   </div>
                 );
               })}
@@ -231,7 +231,7 @@ function EsgPage() {
                   >
                     <p className="font-display text-4xl font-bold text-emerald-700">{metric.value}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
-                    {section.slug === "social" && (() => { const tr = getMetricTrend(metric.label, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
+                    {section.slug === "social" && (() => { const tr = findTrendFor(metric, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
                   </div>
                 ))}
               </div>

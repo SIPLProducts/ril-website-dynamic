@@ -16,10 +16,10 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
 
   return (
     <div className="mt-4 border-t border-border pt-3">
-      <p className="font-display text-xs font-bold uppercase tracking-[0.12em] text-emerald-700">Trend</p>
+      <p className="font-display text-xs font-bold uppercase tracking-[0.12em] text-emerald-700">{trend.title?.trim() || "Trend"}</p>
       {(
         <div data-testid="metric-trend" className="mt-4">
-          <div role="img" aria-label={`${trend.label} by financial year`} className="flex h-44 items-end gap-3 border-b border-l border-border pl-2">
+          {trend.chartType === "line" ? <LineChart trend={trend} max={max} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "#047857" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year`} className="flex h-44 items-end gap-3 border-b border-l border-border pl-2">
             {trend.years.map((p, i) => {
               const y = p.year;
               const last = i === trend.years.length - 1;
@@ -42,7 +42,7 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
                 </div>
               );
             })}
-          </div>
+          </div>}
           <div className="mt-1 flex gap-3 pl-2">
             {trend.years.map(({ year: y }) => (
               <p key={y} className="flex-1 text-center text-[10px] font-semibold text-muted-foreground">{y}</p>
@@ -57,6 +57,35 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
           <p className="mt-1 text-[10px] text-muted-foreground/80">Source: {trend.source}</p>
         </div>
       )}
+    </div>
+  );
+}
+
+/** Line variant: same labels and "not disclosed" handling as the bars; missing years break the line. */
+function LineChart({ trend, max, color }: { trend: MetricTrend; max: number; color: string }) {
+  const n = trend.years.length;
+  const xs = (i: number) => ((i + 0.5) / n) * 100;
+  const ys = (v: number) => 100 - Math.max(0, Math.min(1, v / max)) * 78 - 8;
+  const segs: string[][] = [];
+  let cur: string[] = [];
+  trend.years.forEach((p, i) => {
+    if (p.value === null) { if (cur.length) segs.push(cur); cur = []; }
+    else cur.push(`${xs(i)},${ys(p.value)}`);
+  });
+  if (cur.length) segs.push(cur);
+  return (
+    <div data-testid="metric-trend-line" role="img" aria-label={`${trend.label} by financial year`} className="relative h-44 border-b border-l border-border text-muted-foreground">
+      <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden="true">
+        {segs.map((sg, i) => <polyline key={i} points={sg.join(" ")} fill="none" stroke={color} strokeWidth={2} vectorEffect="non-scaling-stroke" />)}
+      </svg>
+      {trend.years.map((p, i) => p.value === null ? (
+        <span key={p.year} className="absolute bottom-2 -translate-x-1/2 rounded-sm border border-dashed border-muted-foreground/50 px-1 text-center text-[10px] font-semibold uppercase leading-tight" style={{ left: `${xs(i)}%` }}>{p.note ?? "Not available"}</span>
+      ) : (
+        <span key={p.year} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: `${xs(i)}%`, top: `${ys(p.value)}%` }}>
+          <span className="block size-2.5 rounded-full border-2 bg-background" style={{ borderColor: color }} />
+          <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold text-foreground">{p.approximate ? `${p.value}+` : formatTrendValue(trend, p.value)}</span>
+        </span>
+      ))}
     </div>
   );
 }

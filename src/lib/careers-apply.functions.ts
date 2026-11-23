@@ -1,7 +1,7 @@
 import { safeRandomUUID } from "@/lib/uuid";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { brandedEmail, smtpReady, type EmailSettings } from "@/lib/email-config";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const RESUME_MAX = 5 * 1024 * 1024;
 const RESUME_EXT = /\.(pdf|doc|docx)$/i;
@@ -19,14 +19,7 @@ const schema = z.object({
   website: z.string().max(0, "Spam detected"),
 });
 
-const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-function toBase64(buf: ArrayBuffer) {
-  const bytes = new Uint8Array(buf);
-  let s = "";
-  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
-  return btoa(s);
-}
 
 export const submitApplication = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => {
@@ -60,18 +53,20 @@ export const submitApplication = createServerFn({ method: "POST" })
     const ins = await admin.from("career_applications").insert({ ...row, resume_path: path, resume_name: file.name.slice(0, 200) }).select("id").single();
     if (ins.error) { console.error("application insert", ins.error); throw new Error("Could not submit application. Please try again."); }
 
-    let sent = false;
-    try {
-      const { data: s } = await admin.from("email_settings").select("*").eq("id", 1).maybeSingle();
-      const settings = s as (EmailSettings & { careers_to: string }) | null;
-      if (settings && smtpReady(settings)) {
-        const rows: [string, string][] = [["Position", fields.position], ["Job Req ID", fields.reference || "—"], ["Name", fields.full_name], ["Email", fields.email], ["Mobile", fields.mobile], ["Location", fields.location], ["Qualification", fields.qualification], ["Experience (years)", fields.experience || "—"], ["Cover note", fields.cover_note || "—"]];
-        const html = brandedEmail("New job application", `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.map(([k, v]) => `<tr><td style="padding:6px 8px;color:#6b7785;vertical-align:top;white-space:nowrap">${k}</td><td style="padding:6px 8px">${esc(v).replace(/\n/g, "<br>")}</td></tr>`).join("")}</table><p style="font-size:13px;color:#6b7785">Resume attached. Also available in the admin portal under Careers → Applications.</p>`);
-        const { sendMail } = await import("@/lib/send-mail.server");
-        await sendMail(settings, { from: { name: settings.from_name, email: settings.from_email }, to: settings.careers_to || "careers@ramky.com", replyTo: { email: fields.email, name: fields.full_name }, subject: `Application: ${fields.position}${fields.reference ? ` (${fields.reference})` : ""} — ${fields.full_name}`, html, attachments: [{ filename: file.name, content: toBase64(buf), mimeType: file.type || undefined }] });
-        sent = true;
-        await admin.from("career_applications").update({ email_sent: true }).eq("id", ins.data.id);
-      }
-    } catch (e) { console.error("application email", e); }
+    const { sendApplicationEmail } = await import("@/lib/careers-mail.server");
+    const r = await sendApplicationEmail(admin, ins.data.id);
+    const sent = r.status === "sent";
     return { ok: true, emailed: sent };
+  });
+
+/** Staff-only: retry the careers email for one application. */
+export const resendApplicationEmail = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: ok } = await context.supabase.rpc("is_staff", { _user_id: context.userId });
+    if (!ok) throw new Error("Only staff can resend emails.");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { sendApplicationEmail } = await import("@/lib/careers-mail.server");
+    return sendApplicationEmail(supabaseAdmin, data.id);
   });

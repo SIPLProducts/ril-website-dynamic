@@ -52,3 +52,22 @@ describe("admin website settings", () => {
     expect(parseSettings([]).pdfViewer.allowDownload).toBe(true);
   });
 });
+
+import { findTrendFor } from "@/lib/esg-metric-trends";
+describe("chart-to-figure link", () => {
+  const base = { unit: "No.", polarity: "higher" as const, summary: "", source: "", years: [{ year: "FY 2024–25", value: 1 }, { year: "FY 2025–26", value: 2 }] };
+  it("uses the picked figure card even when names differ", () => {
+    const list = [{ ...base, label: "Trees planted", metricId: "card-1" }];
+    expect(findTrendFor({ id: "card-1", label: "Saplings" }, list)?.label).toBe("Trees planted");
+  });
+  it("a chart linked to another card is not matched by name", () => {
+    const list = [{ ...base, label: "Saplings", metricId: "card-2" }];
+    expect(findTrendFor({ id: "card-1", label: "Saplings" }, list)).toBeUndefined();
+  });
+  it("unlinked charts still match by name", () => {
+    expect(findTrendFor({ id: "x", label: "Lives Impacted" })?.label).toBe("Lives Impacted");
+  });
+  it("a deleted chart no longer shows", () => {
+    expect(findTrendFor({ id: "card-1", label: "Trees planted" }, [])).toBeUndefined();
+  });
+});

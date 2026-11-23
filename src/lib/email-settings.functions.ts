@@ -69,9 +69,10 @@ export const sendTestEmail = createServerFn({ method: "POST" })
       await smtpSend(s, data.to, "Test email from Ramky admin portal", otpEmail("123456").replace("Your login verification code", "Test email — your SMTP settings work"));
     } catch (e) {
       console.error("SMTP test failed", e);
-      throw new Error("Could not send. Check host, port, encryption, username and app password.");
+      const { friendlySmtpError } = await import("@/lib/send-mail.server");
+      return { ok: false, error: friendlySmtpError(e, [s.password]) };
     }
-    return { ok: true };
+    return { ok: true, error: null as string | null };
   });
 
 /** Active staff only; returns { sent: false } when SMTP is off so the client uses the built-in sender. */

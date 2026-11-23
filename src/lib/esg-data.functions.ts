@@ -24,7 +24,7 @@ export const getEsgPage = createServerFn({ method: "GET" })
     });
     const [pRes, iRes] = await Promise.all([
       sb.from("esg_pages").select("*").eq("slug", data.slug).maybeSingle(),
-      sb.from("esg_items").select("kind,group_title,title,value,body,year,url,sort_order").eq("page_slug", data.slug).eq("published", true).order("sort_order"),
+      sb.from("esg_items").select("id,kind,group_title,title,value,body,year,url,sort_order").eq("page_slug", data.slug).eq("published", true).order("sort_order"),
     ]);
     if (pRes.error) throw new Error(pRes.error.message);
     if (iRes.error) throw new Error(iRes.error.message);
@@ -39,7 +39,7 @@ export const getEsgPage = createServerFn({ method: "GET" })
     for (const m of metrics.filter((m) => m.group_title)) {
       let g = groups.find((x) => x.title === m.group_title);
       if (!g) groups.push((g = { title: m.group_title!, metrics: [] }));
-      g.metrics.push({ value: m.value, label: m.title });
+      g.metrics.push({ id: m.id, value: m.value, label: m.title });
     }
     const govRows = items.filter((i) => i.kind === "governance_item");
     const govItems = govRows.map((i) => i.title);
@@ -53,7 +53,7 @@ export const getEsgPage = createServerFn({ method: "GET" })
       eyebrow: page.eyebrow,
       hero: page.hero,
       metricsPeriod: page.metrics_period || undefined,
-      metrics: metrics.filter((m) => !m.group_title).map((m) => ({ value: m.value, label: m.title })),
+      metrics: metrics.filter((m) => !m.group_title).map((m) => ({ id: m.id, value: m.value, label: m.title })),
       metricGroups: groups.length ? groups : undefined,
       governance: page.highlight_value || govItems.length
         ? { highlight: { title: page.highlight_title, value: page.highlight_value, label: page.highlight_label }, items: govItems, details: govDetails }

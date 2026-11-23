@@ -1,4 +1,5 @@
 export interface EsgMetric {
+  id?: string | undefined;
   value: string;
   label: string;
 }

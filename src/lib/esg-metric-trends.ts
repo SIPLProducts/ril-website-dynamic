@@ -18,6 +18,12 @@ export interface MetricTrend {
   years: YearPoint[];
   summary: string;
   source: string;
+  /** Optional heading shown above the chart (defaults to "Trend"). */
+  title?: string | undefined;
+  /** Bar (default) or line chart. */
+  chartType?: "bar" | "line";
+  /** Id of the figure card (esg_items row) this chart sits under; chosen in admin. */
+  metricId?: string | undefined;
 }
 
 type Pt = Omit<YearPoint, "year">;
@@ -54,6 +60,16 @@ export const METRIC_TRENDS: MetricTrend[] = [
 ];
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+/** Chart for a figure card: an explicit admin link wins; unlinked charts fall back to a matching name. */
+export function findTrendFor(card: { id?: string | undefined; label: string }, list: MetricTrend[] = METRIC_TRENDS) {
+  if (card.id) {
+    const linked = list.find((m) => m.metricId === card.id);
+    if (linked) return linked;
+  }
+  const k = norm(card.label);
+  return list.find((m) => !m.metricId && norm(m.label) === k);
+}
+
 export function getMetricTrend(label: string, list: MetricTrend[] = METRIC_TRENDS) {
   const k = norm(label);
   return list.find((m) => norm(m.label) === k);

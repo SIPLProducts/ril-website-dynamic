@@ -93,6 +93,11 @@ function TrendsEditor({ initial }: { initial: MetricTrend[] }) {
   const [sel, setSel] = useState(0);
   useEffect(() => setList(initial), [initial]);
   const m = list[sel];
+  const { data: cards = [] } = useQuery({ queryKey: ["admin-esg-figure-cards"], queryFn: async () => {
+    const { data, error } = await supabase.from("esg_items").select("id,page_slug,group_title,title,value").eq("kind", "metric").in("page_slug", ["environmental", "social"]).order("page_slug").order("sort_order");
+    if (error) throw new Error(error.message);
+    return (data ?? []).map((r) => ({ id: r.id, page: r.page_slug === "social" ? "Social" : "Environmental", group: r.group_title, title: r.title, value: r.value }));
+  } });
   const upd = (patch: Partial<MetricTrend>) => setList((l) => l.map((x, i) => (i === sel ? { ...x, ...patch } : x)));
   const updYear = (yi: number, patch: Record<string, unknown>) => m && upd({ years: m.years.map((y, i) => (i === yi ? { ...y, ...patch } : y)) });
   const addYearAll = () => {
@@ -115,7 +120,7 @@ function TrendsEditor({ initial }: { initial: MetricTrend[] }) {
       <Button size="sm" variant="outline" onClick={() => { if (window.confirm("Restore the original figures from the Excel sheet? Unsaved and saved edits will be replaced once you save.")) { setList(METRIC_TRENDS); setSel(0); } }}><RotateCcw className="size-4" /> Reset to default</Button>
       <Button size="sm" onClick={() => save("esg_trends", list, "Trend data saved")}>Save all trends</Button>
     </div>}>
-      <p className="mb-3 text-xs text-muted-foreground">Charts appear under the Environmental and Social key metrics whose title matches the metric name. The last two years are compared. Leave a value empty when it is not disclosed — it will never be treated as zero.</p>
+      <p className="mb-3 text-xs text-muted-foreground">Pick the figure card each chart appears under (Environmental and Social pages). Charts without a picked card fall back to a figure with the same name. The last two years are compared. Leave a value empty when it is not disclosed — it will never be treated as zero.</p>
       <div className="mb-4 flex flex-wrap gap-2 text-xs">Years: {years.map((y) => <span key={y} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-0.5">{y}<button aria-label={`Remove ${y}`} onClick={() => removeYearAll(y)}><Trash2 className="size-3 text-destructive" /></button></span>)}</div>
       <div className="grid gap-5 lg:grid-cols-[18rem_1fr]">
         <ul className="max-h-[32rem] space-y-1 overflow-y-auto pr-1">
@@ -127,7 +132,19 @@ function TrendsEditor({ initial }: { initial: MetricTrend[] }) {
         {m && (
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
-              <label className="text-xs font-semibold">Metric name (must match the key-metric title)<Input value={m.label} onChange={(e) => upd({ label: e.target.value })} /></label>
+              <label className="text-xs font-semibold">Metric name<Input value={m.label} onChange={(e) => upd({ label: e.target.value })} /></label>
+              <label className="text-xs font-semibold">Chart title (optional, default "Trend")<Input value={m.title ?? ""} onChange={(e) => upd({ title: e.target.value || undefined })} /></label>
+              <label className="text-xs font-semibold">Show under figure
+                <select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm" value={m.metricId ?? ""} onChange={(e) => upd({ metricId: e.target.value || undefined })}>
+                  <option value="">— Match by metric name —</option>
+                  {cards.map((c) => <option key={c.id} value={c.id}>{c.page} · {c.group ? `${c.group} · ` : ""}{c.value} {c.title}</option>)}
+                </select>
+              </label>
+              <label className="text-xs font-semibold">Chart type
+                <select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm" value={m.chartType ?? "bar"} onChange={(e) => upd({ chartType: e.target.value as "bar" | "line" })}>
+                  <option value="bar">Bar chart</option><option value="line">Line chart</option>
+                </select>
+              </label>
               <label className="text-xs font-semibold">Unit (e.g. GJ, tCO2e, KL, %, No., ₹ Mn)<Input value={m.unit} onChange={(e) => upd({ unit: e.target.value })} /></label>
               <label className="text-xs font-semibold">Which direction is good?
                 <select className="mt-1 h-9 w-full rounded-md border border-input bg-background px-2 text-sm" value={m.polarity} onChange={(e) => upd({ polarity: e.target.value as Polarity })}>

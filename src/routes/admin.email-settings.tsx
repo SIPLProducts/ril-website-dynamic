@@ -68,7 +68,7 @@ function EmailSettingsPage() {
   async function onTest() {
     if (!isEmail(testTo)) { toast.error("Enter a valid email to send the test to"); return; }
     setBusy("test");
-    try { await test({ data: { to: testTo } }); toast.success(`Test email sent to ${testTo}`); }
+    try { const r = await test({ data: { to: testTo } }); if (r.ok) toast.success(`Test email handed to the mail server for ${testTo}. Check that inbox (and spam) to confirm delivery.`); else toast.error(r.error ?? "Test failed", { duration: 12000 }); }
     catch (e) { toast.error(e instanceof Error ? e.message : "Test failed"); }
     finally { setBusy(""); }
   }

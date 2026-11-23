@@ -255,7 +255,10 @@ export type Database = {
           cover_note: string
           created_at: string
           email: string
+          email_attempted_at: string | null
+          email_error: string | null
           email_sent: boolean
+          email_status: string
           experience: string
           full_name: string
           id: string
@@ -272,7 +275,10 @@ export type Database = {
           cover_note?: string
           created_at?: string
           email: string
+          email_attempted_at?: string | null
+          email_error?: string | null
           email_sent?: boolean
+          email_status?: string
           experience?: string
           full_name: string
           id?: string
@@ -289,7 +295,10 @@ export type Database = {
           cover_note?: string
           created_at?: string
           email?: string
+          email_attempted_at?: string | null
+          email_error?: string | null
           email_sent?: boolean
+          email_status?: string
           experience?: string
           full_name?: string
           id?: string
