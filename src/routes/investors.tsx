@@ -269,6 +269,11 @@ function DocList({ docs, onView, detailed }: { docs: IrDocument[]; onView: (d: I
           </div>
           <div className="flex shrink-0 gap-2 sm:self-start">
             {!/composition of board committees/i.test(d.title) && (() => {
+              if (/^board composition$/i.test(d.title.trim())) return (
+                <a href="/#board-of-directors" className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
+                  Open <ArrowRight className="size-3.5" />
+                </a>
+              );
               const t = linkTarget(d.title);
               return t ? (
                 <Link to="/investors" search={{ cat: t[0], sub: t[1] }} className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
