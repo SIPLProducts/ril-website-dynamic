@@ -218,6 +218,13 @@
       "when": 1795406303725,
       "tag": "0030_careers_email_status",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1795407040618,
+      "tag": "0031_scope_public_site_reads",
+      "breakpoints": true
     }
   ]
 }
