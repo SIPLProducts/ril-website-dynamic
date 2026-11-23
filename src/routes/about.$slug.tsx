@@ -143,7 +143,7 @@ function ClientGrid({ items }: { items: ClientItem[] }) {
     <ul className="grid grid-cols-1 border-t border-border sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3">
       {items.map((o) => (
         <li key={o.id} className="flex items-center gap-4 break-words border-b border-border py-4 font-display text-[0.95rem] font-medium leading-snug text-foreground">
-          {o.image ? <img src={o.image} alt={o.description || "Client logo"} loading="lazy" className="h-14 w-24 shrink-0 object-contain" /> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
+          {o.image ? <img src={o.image} alt={o.description || "Client logo"} loading="lazy" className="h-16 w-28 shrink-0 object-contain" /> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
           {o.description && <span className="min-w-0">{o.description}</span>}
         </li>
       ))}

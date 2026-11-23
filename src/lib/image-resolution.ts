@@ -63,3 +63,39 @@ export async function uniformImage(file: File, res: string): Promise<File> {
 
 /** True when a stored media value points to a video file. */
 export const isVideo = (url: string | null | undefined) => !!url && /\.(mp4|webm)(\?|#|$)/i.test(url);
+
+/** Bounding box of the visible part of an RGBA pixel buffer (ignores transparent and near-white borders). */
+export function contentBox(data: Uint8ClampedArray, w: number, h: number): { x: number; y: number; w: number; h: number } {
+  let x0 = w, y0 = h, x1 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 4;
+    const a = data[i + 3] ?? 0, r = data[i] ?? 255, g = data[i + 1] ?? 255, b = data[i + 2] ?? 255;
+    if (a < 16 || (r > 245 && g > 245 && b > 245)) continue;
+    if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+  }
+  if (x1 < 0) return { x: 0, y: 0, w, h };
+  return { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+}
+
+export const LOGO_BOX = { w: 480, h: 288, pad: 16 } as const;
+
+/** Trims empty borders from a client logo and centres it on one fixed-size transparent canvas, so all logos look the same size. */
+export async function uniformLogo(file: Blob, name = "logo.png"): Promise<File> {
+  if (file.type === "image/svg+xml" || file.type === "image/gif") return new File([file], name, { type: file.type });
+  const bmp = await createImageBitmap(file);
+  const src = document.createElement("canvas");
+  src.width = bmp.width; src.height = bmp.height;
+  const sctx = src.getContext("2d")!;
+  sctx.drawImage(bmp, 0, 0); bmp.close();
+  const box = contentBox(sctx.getImageData(0, 0, src.width, src.height).data, src.width, src.height);
+  const c = document.createElement("canvas");
+  c.width = LOGO_BOX.w; c.height = LOGO_BOX.h;
+  const scale = Math.min((LOGO_BOX.w - LOGO_BOX.pad * 2) / box.w, (LOGO_BOX.h - LOGO_BOX.pad * 2) / box.h);
+  const dw = Math.round(box.w * scale), dh = Math.round(box.h * scale);
+  const ctx = c.getContext("2d")!;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(src, box.x, box.y, box.w, box.h, Math.round((LOGO_BOX.w - dw) / 2), Math.round((LOGO_BOX.h - dh) / 2), dw, dh);
+  const blob = await new Promise<Blob | null>((ok) => c.toBlob(ok, "image/png"));
+  if (!blob) return new File([file], name, { type: file.type });
+  return new File([blob], name.replace(/\.[^.]+$/, "") + ".png", { type: "image/png" });
+}

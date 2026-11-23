@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { getStaff } from "@/lib/admin-auth";
 import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
+import { uniformLogo } from "@/lib/image-resolution";
 import { clientImageError, imageFileError } from "@/lib/admin-validation";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AboutContentEditor } from "@/components/admin/AboutContentEditor";
@@ -157,13 +158,19 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
     if (e) return;
     setSaving(true);
     try {
-      const image_url = file ? await uploadImage(file, "clients") : existing;
+      let image_url = existing;
+      if (file) image_url = await uploadImage(await uniformLogo(file, file.name), "clients");
+      else if (existing && preview) {
+        // Re-save keeps older logos in line with the uniform size.
+        const blob = await fetch(preview).then((r) => r.blob());
+        image_url = await uploadImage(await uniformLogo(blob), "clients");
+      }
       const payload = { image_url, description: description.trim(), published };
       const { error } = row
         ? await supabase.from("clientele").update(payload).eq("id", row.id)
         : await supabase.from("clientele").insert({ ...payload, sort_order: nextOrder });
       if (error) throw new Error(error.message);
-      if ((file || removeImg) && row?.image_url) await removeStored(row.image_url);
+      if (image_url !== row?.image_url && row?.image_url) await removeStored(row.image_url);
       toast.success(published ? "Saved — now live on the website" : "Saved as draft");
       onSaved();
     } catch (x) { toast.error(x instanceof Error ? x.message : "Save failed"); } finally { setSaving(false); }
