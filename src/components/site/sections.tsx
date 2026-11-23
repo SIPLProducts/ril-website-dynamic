@@ -1,3 +1,4 @@
+import { Formatted } from "@/components/site/Formatted";
 import { useQuery } from "@tanstack/react-query";
 import { csrQuery, mediaQuery } from "@/lib/site-content.functions";
 import { managementQuery } from "@/lib/management.functions";
@@ -106,16 +107,16 @@ export function Hero() {
         <p className="eyebrow">Ramky Infrastructure Limited</p>
         <div key={active}>
           <p className="hero-text-in mt-5 max-w-2xl font-display text-xs font-semibold uppercase text-ink-foreground/90">
-            <span className="text-brand-orange">Project:</span> {activeSlide.project}
+            <span className="text-brand-orange">Project:</span> <Formatted text={activeSlide.project} />
           </p>
           <h1 className="hero-text-in mt-4 max-w-4xl text-4xl font-bold leading-[1.05] text-ink-foreground sm:text-6xl lg:text-7xl">
-            {activeSlide.headline}
+            <Formatted text={activeSlide.headline} />
           </h1>
           <p
             className="hero-text-in mt-6 max-w-2xl text-base leading-relaxed text-ink-foreground/90 sm:text-lg"
             style={{ animationDelay: "0.15s" }}
           >
-            {activeSlide.sub}
+            <Formatted text={activeSlide.sub} />
           </p>
         </div>
         <div className="-ml-1.5 mt-7 flex flex-wrap items-center gap-0.5">

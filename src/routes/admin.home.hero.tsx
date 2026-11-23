@@ -22,10 +22,10 @@ function Page() {
       <HomeListEditor table="home_hero_slides" title="Hero slides" itemName="Slide" icon={Images} withImage resolution
         help="The big photo slideshow at the very top of the home page · changes every 5 seconds"
         fields={[
-          { key: "project", label: "Project name", required: true, max: 160 },
-          { key: "headline", label: "Headline", required: true, max: 160 },
+          { key: "project", label: "Project name", required: true, max: 2000, rich: true },
+          { key: "headline", label: "Headline", required: true, max: 2000, rich: true },
           { key: "alt", label: "Photo description (for screen readers)", max: 200 },
-          { key: "sub", label: "Sub-text", long: true, max: 400 },
+          { key: "sub", label: "Sub-text", long: true, max: 4000, rich: true },
         ]} />
     </AdminShell>
   );

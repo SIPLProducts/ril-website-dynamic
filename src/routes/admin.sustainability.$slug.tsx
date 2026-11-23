@@ -1,3 +1,5 @@
+import { plainText } from "@/lib/strength-style";
+import { RichField } from "@/components/admin/RichField";
 import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -247,8 +249,8 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
               </td>
               {kind === "metric" && <><td className="px-4 py-2 font-display text-base font-bold text-emerald-700">{r.value}</td><td className="px-4 py-2 font-medium">{r.title}</td>{grouped && <td className="px-4 py-2 text-muted-foreground">{r.group_title ?? "—"}</td>}</>}
               {kind === "report" && <><td className="px-4 py-2">{r.year}</td><td className="px-4 py-2 font-medium">{r.title}</td><td className="px-4 py-2">{r.url ? <FileLink url={r.url} /> : <span className="text-muted-foreground">No file yet</span>}</td></>}
-              {kind === "accordion" && <><td className="px-4 py-2 font-medium">{r.title}</td><td className="max-w-xl px-4 py-2 text-muted-foreground"><span className="line-clamp-2">{r.body}</span></td></>}
-              {kind === "governance_item" && <td className="px-4 py-2 font-medium">{r.title}</td>}
+              {kind === "accordion" && <><td className="px-4 py-2 font-medium">{plainText(r.title)}</td><td className="max-w-xl px-4 py-2 text-muted-foreground"><span className="line-clamp-2">{plainText(r.body)}</span></td></>}
+              {kind === "governance_item" && <td className="px-4 py-2 font-medium">{plainText(r.title)}</td>}
               <td className="px-4 py-2"><Switch checked={r.published} onCheckedChange={() => toggle(r)} aria-label="Live" /></td>
               <td className="px-4 py-2">
                 <div className="flex justify-end gap-2">
@@ -316,11 +318,11 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
         <div className="grid gap-4 sm:grid-cols-3">
           {kind === "metric" && <div><Label>Value</Label><Input value={f.value} maxLength={30} placeholder="e.g. 22%" onChange={(e) => setF({ ...f, value: e.target.value })} /><FieldError msg={errs.value} /></div>}
           {kind === "report" && <div><Label>Year</Label><Input value={f.year} maxLength={20} placeholder="e.g. 2026 or 2025-26" onChange={(e) => setF({ ...f, year: e.target.value })} /><FieldError msg={errs.year} /></div>}
-          <div className={kind === "metric" || kind === "report" ? "" : "sm:col-span-2"}><Label>{kind === "metric" ? "Label" : "Title"}</Label><Input value={f.title} maxLength={160} onChange={(e) => setF({ ...f, title: e.target.value })} /><FieldError msg={errs.title} /></div>
+          <div className={kind === "metric" || kind === "report" ? "" : "sm:col-span-2"}>{kind === "metric" || kind === "report" ? <><Label>{kind === "metric" ? "Label" : "Title"}</Label><Input value={f.title} maxLength={160} onChange={(e) => setF({ ...f, title: e.target.value })} /></> : <RichField label="Title" max={2000} value={f.title} onChange={(v) => setF({ ...f, title: v })} />}<FieldError msg={errs.title} /></div>
           {grouped && <GroupPicker value={f.group_title} groups={groups} onChange={(v) => setF({ ...f, group_title: v })} />}
         </div>
         {(kind === "accordion" || kind === "report" || kind === "governance_item") && (
-          <div><Label>Description {kind !== "accordion" && <span className="text-muted-foreground">(optional{kind === "governance_item" ? " — when filled, the card expands on click. Start a line with \"Chair:\" or \"Members:\" to bold the label" : ""})</span>}</Label><Textarea rows={4} maxLength={2000} value={f.body} onChange={(e) => setF({ ...f, body: e.target.value })} /><FieldError msg={errs.body} /></div>
+          <div><Label>Description {kind !== "accordion" && <span className="text-muted-foreground">(optional{kind === "governance_item" ? " — when filled, the card expands on click. Start a line with \"Chair:\" or \"Members:\" to bold the label" : ""})</span>}</Label><RichField long label="Text" max={8000} value={f.body} onChange={(v) => setF({ ...f, body: v })} /><FieldError msg={errs.body} /></div>
         )}
         <label className="flex items-center gap-3 text-sm"><Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} /> Live on website</label>
       </FormSection>

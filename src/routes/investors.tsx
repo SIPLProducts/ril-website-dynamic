@@ -1,3 +1,5 @@
+import { Formatted } from "@/components/site/Formatted";
+import { isHtml } from "@/lib/strength-style";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowRight, ChevronDown, ExternalLink, Eye, FileText, Search, X } from "lucide-react";
@@ -371,12 +373,12 @@ function CommitteeCard({ title, details }: { title: string; details: string }) {
     <li className={`rounded-sm border bg-surface transition-shadow hover:shadow-lg ${open ? "border-brand-blue/40 sm:col-span-2" : "border-border"}`}>
       <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-5 text-left">
         <Scale className="size-5 shrink-0 text-brand-orange" aria-hidden="true" />
-        <span className="flex-1 font-display text-base font-semibold text-foreground">{title}</span>
+        <span className="flex-1 font-display text-base font-semibold text-foreground"><Formatted text={title} /></span>
         <ChevronDown className={`size-5 shrink-0 text-brand-blue transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       {open && (
         <div className="space-y-2 border-t border-border px-5 pb-5 pt-4 text-sm leading-relaxed text-muted-foreground">
-          {lines.length === 0 ? <p className="italic">Committee details will be updated soon.</p> : lines.map((line, i) => {
+          {isHtml(details) ? <Formatted as="div" text={details} /> : lines.length === 0 ? <p className="italic">Committee details will be updated soon.</p> : lines.map((line, i) => {
             const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
             return m ? <p key={i}><span className="font-semibold text-foreground">{m[1]}:</span> {m[2]}</p> : <p key={i}>{line}</p>;
           })}

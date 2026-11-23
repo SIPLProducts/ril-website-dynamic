@@ -1,3 +1,5 @@
+import { isHtml } from "@/lib/strength-style";
+import { Formatted } from "@/components/site/Formatted";
 import { SustainabilityContactButton } from "@/components/esg/SustainabilityContact";
 import framework2026 from "@/assets/logo-2026.png";
 import frameworkBrsr from "@/assets/logo-brsr.png";
@@ -276,16 +278,16 @@ function EsgPage() {
                       className="flex w-full items-center justify-between gap-4 py-5 text-left"
                     >
                       <span className="font-display text-lg font-semibold text-foreground">
-                        {item.title}
+                        <Formatted text={item.title} />
                       </span>
                       <ChevronDown
                         className={`size-5 shrink-0 text-emerald-700 transition-transform ${open ? "rotate-180" : ""}`}
                       />
                     </button>
                     {open && (
-                      <p className="max-w-3xl pb-6 leading-relaxed text-muted-foreground">
-                        {item.body}
-                      </p>
+                      <div className="max-w-3xl pb-6 leading-relaxed text-muted-foreground">
+                        <Formatted as="div" text={item.body} />
+                      </div>
                     )}
                   </div>
                 );
@@ -416,7 +418,7 @@ function GovernanceCard({ title, details }: { title: string; details?: string | 
     return (
       <li className="flex items-center gap-3 rounded-sm border border-border bg-surface p-5 transition-shadow hover:shadow-lg">
         <Scale className="size-5 shrink-0 text-emerald-700" aria-hidden="true" />
-        <span className="font-display text-base font-semibold text-foreground">{title}</span>
+        <span className="font-display text-base font-semibold text-foreground"><Formatted text={title} /></span>
       </li>
     );
   }
@@ -424,12 +426,12 @@ function GovernanceCard({ title, details }: { title: string; details?: string | 
     <li className={`rounded-sm border bg-surface transition-shadow hover:shadow-lg ${open ? "border-emerald-700/40 sm:col-span-2" : "border-border"}`}>
       <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-5 text-left">
         <Scale className="size-5 shrink-0 text-emerald-700" aria-hidden="true" />
-        <span className="flex-1 font-display text-base font-semibold text-foreground">{title}</span>
+        <span className="flex-1 font-display text-base font-semibold text-foreground"><Formatted text={title} /></span>
         <ChevronDown className={`size-5 shrink-0 text-emerald-700 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       {open && (
         <div className="space-y-2 border-t border-border px-5 pb-5 pt-4 text-sm leading-relaxed text-muted-foreground">
-          {details.split(/\n+/).map((line, i) => {
+          {isHtml(details) ? <Formatted as="div" text={details} /> : details.split(/\n+/).map((line, i) => {
             const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
             return m ? <p key={i}><span className="font-semibold text-foreground">{m[1]}:</span> {m[2]}</p> : <p key={i}>{line}</p>;
           })}
