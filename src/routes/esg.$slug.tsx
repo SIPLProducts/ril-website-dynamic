@@ -350,6 +350,7 @@ function EsgPage() {
                 Our sustainability team is happy to share data, discuss partnerships or walk you
                 through our reports.
               </p>
+              <p className="mt-3 text-white/80">Office: <a href="tel:+914023015000" className="font-semibold text-emerald-300 hover:underline">+91 40 2301 5000</a></p>
             </div>
             <SustainabilityContactButton className="inline-flex items-center gap-2 rounded-sm bg-emerald-500 px-7 py-4 font-display text-sm font-semibold uppercase tracking-[0.12em] text-[#0d2b1f] transition-opacity hover:opacity-90" />
           </div>
