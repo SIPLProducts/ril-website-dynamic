@@ -38,7 +38,7 @@ function SubsidiariesPage() {
         </section>
         <section className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10 lg:py-20">
           {withLogos ? (
-            <ul className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <ul className="gap-4 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[calc(50%-8px)] md:[&>*]:basis-[calc(33.333%-11px)] lg:[&>*]:basis-[calc(25%-12px)]">
               {withLogos.map((r) => {
                 const name = r["name"] ?? "";
                 const initials = name.split(/\s+/).filter((w) => /^[A-Za-z]/.test(w) && !/^(limited|private|pvt|ltd)$/i.test(w)).slice(0, 2).map((w) => w[0]!.toUpperCase()).join("");

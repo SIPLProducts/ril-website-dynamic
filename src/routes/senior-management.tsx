@@ -40,7 +40,7 @@ function SeniorManagementPage() {
           {members.length === 0 ? (
             <p className="mt-12 text-muted-foreground">Senior Management details will be published shortly.</p>
           ) : (
-            <ul className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <ul className="mt-12 gap-8 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-16px)] lg:[&>*]:basis-[calc(25%-24px)]">
               {members.map((m) => (
                 <li key={m.id} className="text-center">
                   {m.image ? (

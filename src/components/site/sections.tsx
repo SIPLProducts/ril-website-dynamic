@@ -555,7 +555,7 @@ export function Journey() {
             {j?.title || "Three decades of building, milestone by milestone."}
           </h2>
         </div>
-        <div className="mt-12 grid items-start gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-12 items-start gap-6 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-12px)] lg:[&>*]:basis-[calc(25%-18px)]">
           {milestones.map((m, i) => {
             const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6]!]!;
             const step = JOURNEY_STEPS[Math.max(0, 6 - n) + i] ?? "lg:mt-0";

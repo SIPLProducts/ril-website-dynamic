@@ -188,7 +188,7 @@ function EsgPage() {
           </p>
           {section.metrics.length > 0 && (
             <div
-              className={`mt-8 grid gap-5 sm:grid-cols-2 ${section.metrics.length === 5 ? "lg:grid-cols-3 xl:grid-cols-5" : "lg:grid-cols-4"}`}
+              className={"mt-8 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}
             >
               {section.metrics.map((metric) => {
                 const MetricIcon = section.slug === "esg-reporting"
@@ -225,7 +225,7 @@ function EsgPage() {
               <h2 className="border-l-4 border-emerald-600 pl-3 font-display text-xl font-bold text-foreground">
                 {group.title}
               </h2>
-              <div className={`mt-5 grid gap-5 sm:grid-cols-2 ${group.metrics.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
+              <div className={"mt-5 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}>
                 {group.metrics.map((metric) => (
                   <div
                     key={metric.label}
@@ -302,7 +302,7 @@ function EsgPage() {
             <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
               <p className="eyebrow">{esgLabel(settings.esgLabels, section.slug, "downloads")}</p>
               <h2 className="mt-4 font-display text-3xl font-bold">Reports</h2>
-              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-10 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]">
                 {section.reports.map((report) => (
                   <div
                     key={report.title}
