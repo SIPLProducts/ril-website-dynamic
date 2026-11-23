@@ -165,7 +165,7 @@ export function SiteFooter({ sustainabilityOnly = false }: { sustainabilityOnly?
             <p className="hidden text-sm text-muted-foreground sm:block">{st?.groupSubtitle ?? "Visit our group companies"}</p>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-6 gap-3 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[calc(50%-6px)] sm:[&>*]:basis-[calc(33.333%-8px)] lg:[&>*]:basis-[calc(25%-9px)]">
             {GROUP_COMPANIES.map((company) => {
               const withName = "showName" in company && company.showName;
               const inner = company.logo ? <div className="flex h-full w-full flex-col items-center justify-center gap-1"><img src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className={`${withName ? "max-h-28" : "h-full max-h-36"} min-h-0 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]`} />{withName && <span className="text-center text-xs font-semibold text-foreground">{company.name}</span>}</div> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>;
