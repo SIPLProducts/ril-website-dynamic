@@ -21,7 +21,7 @@ import { publishedFileUrl } from "@/lib/file-url";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
-import socialImage from "@/assets/esg-social-indian-community.jpg.asset.json";
+import socialImage from "@/assets/social-community-volunteers.jpg.asset.json";
 import reportingImage from "@/assets/esg-reporting-solar-aerial.jpg.asset.json";
 import policiesImage from "@/assets/esg-policies-sapling-hands.jpg.asset.json";
 
@@ -131,7 +131,7 @@ function EsgPage() {
               <div className="relative w-full lg:-my-16 lg:-mr-16">
                 <img
                   src={sideImage}
-                  alt={section.slug === "social" ? "Women and a child at a community gathering in rural India" : `${section.title} at Ramky Infrastructure`}
+                  alt={section.slug === "social" ? "Community volunteers working together to plant a tree" : `${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
                   className="aspect-[4/3] w-full object-cover"
