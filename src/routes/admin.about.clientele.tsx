@@ -186,7 +186,7 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
             <Button type="button" variant="outline" size="sm" onClick={() => { setRemoveImg(true); setErr(null); }}>Remove logo</Button>
           </div>
         )}
-        <FileDropzone file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, JPG, WebP or SVG, up to 5 MB${existing ? " — leave empty to keep current" : " — optional"}`} />
+        <FileDropzone file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, WebP or SVG with transparent background recommended (any size, up to 5 MB). Empty edges are trimmed and the logo is centred in a standard box so all logos match${existing ? " — leave empty to keep current" : " — optional"}`} />
         <FieldError msg={err ?? undefined} />
       </FormSection>
       <FormSection title="Details">
