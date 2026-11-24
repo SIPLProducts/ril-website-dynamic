@@ -140,9 +140,9 @@ export const IR_CATEGORIES: IrCategory[] = [
       asNeeded("board-and-committees", "Board & Committees", [
         doc({ title: "Board Composition", type: "Board", date: "2026-05-14", description: "Current composition of the Board of Directors." }),
         doc({ title: "Composition of Board Committees", type: "Committee", date: "2026-05-14", description: "Audit, Nomination & Remuneration, Stakeholders' Relationship and CSR committees." }),
-        doc({ title: "Terms of Appointment of Independent Directors", type: "Board", date: "2025-08-02" }),
       ]),
       asNeeded("policies", "Policies", [
+        doc({ title: "Terms of Appointment of Independent Directors", type: "Board", date: "2025-08-02" }),
         doc({ title: "Code of Conduct for Board & Senior Management", type: "Policy", date: "2025-11-03" }),
         doc({ title: "Whistle Blower / Vigil Mechanism Policy", type: "Policy", date: "2025-06-18" }),
         doc({ title: "Related Party Transaction Policy", type: "Policy", date: "2025-04-11" }),
