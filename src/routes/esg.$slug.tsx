@@ -293,38 +293,53 @@ function EsgPage() {
             <div className="mx-auto max-w-[1400px] px-5 py-16 lg:px-10 lg:py-20">
               <p className="eyebrow">{esgLabel(settings.esgLabels, section.slug, "downloads")}</p>
               <h2 className="mt-4 font-display text-3xl font-bold">Reports</h2>
-              <div className="mt-10 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]">
-                {section.reports.map((report) => (
-                  <div
-                    key={report.title}
-                    className="flex flex-col rounded-sm border border-border bg-background p-6 transition-shadow hover:shadow-lg"
-                  >
-                    <FileText className="size-8 text-emerald-700" strokeWidth={1.5} aria-hidden="true" />
-                    <p className="mt-4 font-display text-xs font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                      {report.year}
-                    </p>
-                    <h3 className="mt-2 font-display text-lg font-semibold leading-snug">
-                      {report.title}
-                    </h3>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                      {report.description}
-                    </p>
-                    {report.url ? (
-                      <button
-                        type="button"
-                        onClick={() => setViewer({ title: report.title, url: report.url! })}
-                        className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
-                      >
-                        <ArrowUpRight className="size-4" /> {settings.pdfViewer.exploreLabel || "Explore"}
-                      </button>
-                    ) : (
-                      <span className="mt-5 inline-flex items-center justify-center rounded-sm border border-border px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
-                        Coming soon
-                      </span>
-                    )}
+              {(() => {
+                const byYear = new Map<string, typeof section.reports>();
+                for (const r of section.reports!) {
+                  const y = (r.year || "").trim() || "Other";
+                  if (!byYear.has(y)) byYear.set(y, []);
+                  byYear.get(y)!.push(r);
+                }
+                const years = [...byYear.keys()].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
+                return years.map((year) => (
+                  <div key={year} className="mt-10">
+                    <h3 className="border-b border-border pb-3 font-display text-2xl font-bold text-brand-orange">{year}</h3>
+                    <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                      {byYear.get(year)!.map((report) => (
+                        <div key={report.title} className="flex flex-col rounded-sm border border-border bg-background p-6 transition-shadow hover:shadow-lg">
+                          <FileText className="size-8 text-emerald-700" strokeWidth={1.5} aria-hidden="true" />
+                          <h4 className="mt-4 font-display text-lg font-semibold leading-snug">{report.title}</h4>
+                          <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">{report.description}</p>
+                          {report.url ? (
+                            <div className="mt-5 grid gap-2">
+                              <button
+                                type="button"
+                                onClick={() => setViewer({ title: report.title, url: report.url! })}
+                                className="inline-flex items-center justify-center gap-2 rounded-sm bg-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90"
+                              >
+                                <ArrowUpRight className="size-4" /> {settings.pdfViewer.exploreLabel || "Explore"}
+                              </button>
+                              <a
+                                href={report.url}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-2 rounded-sm border border-emerald-700 px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-emerald-700 transition-colors hover:bg-emerald-50"
+                              >
+                                <Download className="size-4" /> Download PDF
+                              </a>
+                            </div>
+                          ) : (
+                            <span className="mt-5 inline-flex items-center justify-center rounded-sm border border-border px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                              Coming soon
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
+                ));
+              })()}
             </div>
           </section>
         )}

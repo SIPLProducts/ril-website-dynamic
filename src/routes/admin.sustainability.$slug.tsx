@@ -50,7 +50,7 @@ const KIND_INFO: Record<Kind, { heading: string; hint: string; noun: string }> =
   metric: { heading: "Key figures", hint: "Value and label, e.g. 22% · Reduction in Energy Consumption", noun: "figure" },
   governance_item: { heading: "Committees & policies", hint: "Shown next to the highlight box", noun: "item" },
   accordion: { heading: "Focus areas", hint: "Expandable sections in the In Detail block", noun: "focus area" },
-  report: { heading: "Reports", hint: "Download cards — upload a PDF or add a link", noun: "report" },
+  report: { heading: "Reports", hint: "Grouped by year on the website — use Add year for a new year, then edit each report to upload its PDF", noun: "report" },
 };
 
 function kindInfo(slug: string, kind: Kind) {
@@ -231,6 +231,21 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
     if (error) toast.error(error.message); else { toast.success("Group renamed"); refresh(); }
   }
 
+  async function addYear() {
+    const year = window.prompt("Year to add (e.g. 2027):", String(new Date().getFullYear() + 1))?.trim().slice(0, 20);
+    if (!year) return;
+    if (rows.some((r) => r.year.trim() === year)) { toast.error(`${year} already exists`); return; }
+    const base = Math.max(0, ...rows.map((r) => r.sort_order)) + 1;
+    const set = [
+      { title: `Sustainability Report ${year}`, body: "Our flagship annual report covering strategy, performance and targets across environmental, social and governance themes. Integrated report with sustainability disclosures." },
+      { title: "BRSR Report", body: "Business Responsibility and Sustainability Report as filed with Indian stock exchanges under SEBI regulations." },
+      { title: "GRI Content Index", body: "A topic-by-topic index mapping our disclosures to the GRI Standards for easy reference and comparison." },
+      { title: "SASB Framework Disclosure", body: "Sector-specific metrics aligned to the SASB Engineering & Construction Services standard." },
+    ];
+    const { error } = await supabase.from("esg_items").insert(set.map((x, i) => ({ page_slug: slug, kind: "report", title: x.title, body: x.body, value: "", year, published: true, sort_order: base + i })));
+    if (error) toast.error(error.message); else { toast.success(`${year} added — edit each report to upload its PDF`); refresh(); }
+  }
+
   const cols = kind === "metric" ? ["Value", "Label", ...(grouped ? ["Group"] : [])] : kind === "report" ? ["Year", "Title", "File"] : kind === "accordion" ? ["Title", "Description"] : ["Title"];
 
   return (
@@ -240,7 +255,8 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
           <h2 className="font-display text-xl font-bold">{info.heading}</h2>
           <p className="text-sm text-muted-foreground">{rows.length} · {info.hint}</p>
         </div>
-        <Button onClick={() => { setNewTitle(""); setEditing("new"); }} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add {info.noun}</Button>
+        <div className="flex gap-2">{kind === "report" && <Button variant="outline" onClick={addYear}><Plus className="size-4" /> Add year</Button>}
+        <Button onClick={() => { setNewTitle(""); setEditing("new"); }} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add {info.noun}</Button></div>
       </div>
       {slug === "social" && kind === "accordion" && (
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border p-5">
