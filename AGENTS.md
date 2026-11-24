@@ -23,7 +23,7 @@
 - Sustainability (ESG) page content lives in `esg_pages` + `esg_items` (kind = metric|accordion|governance_item|report); `src/lib/esg-sections.ts` keeps only the tab list and types so tabs stay code-controlled.
 - Environmental and Social accordion images use their existing `esg_items.url` field and same-origin file delivery, keeping each image attached to its detail without a second content store.
 - Social Inclusion count presentation derives full employee coverage from same-year employee totals, never treating procurement percentages or operation coverage as counts; Diversity & Inclusion editing reuses the existing accordion row to avoid duplicate content stores.
-- Social KPI rails use compact cards and charts with an in-card name/value preview on hover or keyboard focus, preserving all stored figures and chart choices without covering the graph.
+- Social KPIs use compact 5/3/2-column grids and a shared hover/tap detail popover that reuses the existing chart renderer and calculations, so all figures, remarks and chart choices remain available without horizontal scrolling.
 - Sustainability is a standalone page at `/sustainability` (not a home-page section) with full site navigation and footer, so visitors can move freely to other pages.
 - Management people (board/executive/senior) live in `management_people` with profile paragraphs in a `sections` jsonb; `src/lib/management.ts` keeps the group list and section headings so layouts stay code-controlled.
 

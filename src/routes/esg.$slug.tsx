@@ -19,6 +19,7 @@ import { useSiteSettings } from "@/lib/site-settings.functions";
 import { esgLabel, orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
 import { publishedFileUrl } from "@/lib/file-url";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
+import { SocialKpiCard } from "@/components/esg/SocialKpiCard";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
 import socialImage from "@/assets/social-community-volunteers.jpg.asset.json";
@@ -189,9 +190,10 @@ function EsgPage() {
           </p>
           {section.metrics.length > 0 && (
             <div
-              className={"mt-8 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}
+              className={section.slug === "social" ? "mt-8 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4" : "mt-8 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}
             >
               {section.metrics.map((metric) => {
+                if (section.slug === "social") return <SocialKpiCard key={metric.label} label={metric.label} value={metric.value} trend={findTrendFor(metric, settings.esgTrends)} />;
                 const trend = section.slug === "environmental" ? findTrendFor(metric, settings.esgTrends) : undefined;
                 const improved = trend && computeChange(trend).direction === "improved";
                 const compliant = metric.label.trim().toLowerCase() === "environmental compliance" && trend?.years.at(-1)?.value === 100;
@@ -229,23 +231,21 @@ function EsgPage() {
               <h2 className="border-l-4 border-emerald-600 pl-3 font-display text-xl font-bold text-foreground">
                 {group.title}
               </h2>
-              <div className={section.slug === "social" ? "mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[75%] sm:[&>*]:basis-[calc(33.333%-11px)] lg:[&>*]:basis-[calc(20%-13px)]" : "mt-5 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}>
+              <div className={section.slug === "social" ? "mt-5 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4" : "mt-5 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}>
                 {group.metrics.map((metric) => {
                   const inclusion = section.slug === "social" && group.title === "Inclusion & Responsible Business" ? inclusionPresentation(metric, settings.esgTrends) : undefined;
                   const trend = inclusion ? inclusion.trend : section.slug === "environmental" || section.slug === "social" ? findTrendFor(metric, settings.esgTrends) : undefined;
                   const value = inclusion?.value ?? metric.value;
                   const improved = trend && computeChange(trend).direction === "improved";
+                  if (section.slug === "social") return <SocialKpiCard key={metric.label} label={metric.label} value={value} trend={trend} />;
                   return (
                   <div
                     key={metric.label}
-                    tabIndex={section.slug === "social" ? 0 : undefined}
-                    aria-label={section.slug === "social" ? `${plainText(metric.label)} — ${value}` : undefined}
-                    className={section.slug === "social" ? "group min-w-0 overflow-hidden rounded-sm border border-border bg-surface p-4 transition-shadow hover:shadow-lg focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-[-2px]" : "overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"}
+                    className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
-                    <p className={`font-display ${value === "Not Disclosed" ? "text-xl" : section.slug === "social" ? "text-3xl" : "text-4xl"} font-bold ${section.slug === "environmental" ? improved ? "text-brand-green" : "text-brand-orange" : "text-emerald-700"}`}>{value}</p>
-                    <p className={`${section.slug === "social" ? "mt-2 min-h-10 text-xs" : "mt-3 text-sm"} leading-relaxed text-muted-foreground ${section.slug === "environmental" ? "min-h-16 font-medium" : ""}`}>{metric.label}</p>
-                    {trend && <MetricTrendToggle trend={trend} environmental={section.slug === "environmental"} social={section.slug === "social"} compact={section.slug === "social"} />}
-                    {section.slug === "social" && <div className="mt-3 min-h-14" role="tooltip"><p className="rounded-sm bg-brand-green/10 px-2 py-2 text-xs font-medium leading-relaxed text-foreground opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none">{plainText(metric.label)} — <span className="font-bold tabular-nums">{value}</span></p></div>}
+                    <p className={`font-display ${value === "Not Disclosed" ? "text-xl" : "text-4xl"} font-bold ${section.slug === "environmental" ? improved ? "text-brand-green" : "text-brand-orange" : "text-emerald-700"}`}>{value}</p>
+                    <p className={`mt-3 text-sm leading-relaxed text-muted-foreground ${section.slug === "environmental" ? "min-h-16 font-medium" : ""}`}>{metric.label}</p>
+                    {trend && <MetricTrendToggle trend={trend} environmental={section.slug === "environmental"} />}
                   </div>
                 ); })}
               </div>

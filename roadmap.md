@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Replace Social KPI rails with compact 5/3/2-column grids and hover/tap detail panels; all 16 cards fit their grids, details retain figures/charts/remarks/sources, keyboard access verified, and 30 calculation regression tests pass
 - [x] Replace the Social opening photo with authentic community-volunteering imagery; verified image loading on desktop/mobile without browser errors
 - [x] Compact all three Social KPI card rails and show metric name/value on hover or keyboard focus while preserving figures and graphs — verified desktop, tablet and mobile
 - [x] Show confirmed employee counts for Social Inclusion instead of percentages; mark unsupported absolute figures unavailable
