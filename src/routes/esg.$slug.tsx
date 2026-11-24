@@ -1,6 +1,5 @@
 import * as React from "react";
 import { AutoScrollRail } from "@/components/site/AutoScrollRail";
-import type React from "react";
 import { isHtml, plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
 import { SustainabilityContactButton } from "@/components/esg/SustainabilityContact";
