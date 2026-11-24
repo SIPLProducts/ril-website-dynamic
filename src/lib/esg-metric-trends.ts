@@ -50,7 +50,7 @@ export const METRIC_TRENDS: MetricTrend[] = [
   t("Employees", "No.", "neutral", 1082, 1041, "Permanent employees (no direct workers).", "BRSR 24-25 p.54; BRSR 25-26 p.97"),
   t("Employee Health Insurance Coverage", "%", "higher", 100, 100, "Full coverage maintained in both years.", "BRSR 24-25 p.66; BRSR 25-26 p.111", true),
   t("Performance Reviews Completed", "%", "higher", 100, 100, "All performance reviews completed in both years.", "BRSR 24-25 p.68; BRSR 25-26 p.113", true),
-  t("Workplace Fatalities", "No.", "lower", 0, 0, "Zero fatalities in both years; FY 2025–26 includes contract workforce.", "BRSR 24-25 p.69; BRSR 25-26 p.115"),
+  t("LTR (Lost Time Rate)", "No.", "lower", 0, 0, "Zero lost-time injuries reported in both years.", "BRSR 24-25 p.69; BRSR 25-26 p.115"),
   t("POSH Complaints", "No.", "lower", 0, 0, "Zero POSH complaints in both years.", "BRSR 24-25 p.73; BRSR 25-26 p.121"),
   t("Employees Trained on Health & Safety", "%", "higher", 100, 87.223823246878, "FY 2024–25: 1,082 of 1,082 trained; FY 2025–26: 908 of 1,041 trained.", "BRSR 24-25 p.68; BRSR 25-26 p.113", true),
   t("Employees Covered by Equal Opportunity Policies", "%", "higher", 100, 100, "Policy applies company-wide in both years.", "BRSR 24-25 p.67; BRSR 25-26 p.112", true),

@@ -135,7 +135,7 @@ export const ESG_SECTIONS: EsgSection[] = [
           { value: "1,041", label: "Employees" },
           { value: "100%", label: "Employee Health Insurance Coverage" },
           { value: "100%", label: "Performance Reviews Completed" },
-          { value: "0", label: "Workplace Fatalities" },
+          { value: "0", label: "LTR (Lost Time Rate)" },
           { value: "0", label: "POSH Complaints" },
           { value: "87%+", label: "Employees Trained on Health & Safety" },
         ],
