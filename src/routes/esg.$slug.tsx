@@ -20,13 +20,13 @@ import { publishedFileUrl } from "@/lib/file-url";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
-import socialImage from "@/assets/esg-social-indian-community.jpg";
+import socialImage from "@/assets/esg-social-indian-classroom.jpg.asset.json";
 import reportingImage from "@/assets/esg-reporting-solar-aerial.jpg.asset.json";
 import policiesImage from "@/assets/esg-policies-sapling-hands.jpg.asset.json";
 
 const SIDE_IMAGES: Record<string, string> = {
   environmental: envImage.url,
-  social: socialImage,
+  social: socialImage.url,
   governance: governanceImage,
   "esg-reporting": reportingImage.url,
   policies: policiesImage.url,
@@ -130,7 +130,7 @@ function EsgPage() {
               <div className={`relative w-full lg:-my-16 lg:-mr-16 -my-20`}>
                 <img
                   src={sideImage}
-                  alt={section.slug === "social" ? "Indian educator supporting school children in a community learning space" : `${section.title} at Ramky Infrastructure`}
+                  alt={section.slug === "social" ? "Women learning together in an Indian community classroom" : `${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
                   className="aspect-[4/3] w-full object-cover"
