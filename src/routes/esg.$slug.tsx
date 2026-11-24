@@ -13,7 +13,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
-import { findTrendFor, trendSign } from "@/lib/esg-metric-trends";
+import { computeChange, findTrendFor } from "@/lib/esg-metric-trends";
 import { useSiteSettings } from "@/lib/site-settings.functions";
 import { esgLabel, orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
 import { publishedFileUrl } from "@/lib/file-url";
@@ -192,14 +192,15 @@ function EsgPage() {
             >
               {section.metrics.map((metric) => {
                 const trend = section.slug === "environmental" ? findTrendFor(metric, settings.esgTrends) : undefined;
-                const sign = trendSign(trend);
+                const improved = trend && computeChange(trend).direction === "improved";
+                const compliant = metric.label.trim().toLowerCase() === "environmental compliance" && trend?.years.at(-1)?.value === 100;
                 const MetricIcon = section.slug === "esg-reporting"
                   ? REPORTING_METRIC_ICONS[metric.value as keyof typeof REPORTING_METRIC_ICONS]
                   : undefined;
                 return (
                   <div
                     key={metric.label}
-                    className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
+                    className={`overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg ${section.slug === "environmental" ? "min-w-0 flex flex-col" : ""}`}
                   >
                     {section.slug === "esg-reporting" && frameworkImg(metric.value) ? (
                       <div className="-mx-6 -mt-6 mb-5 flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border bg-background p-6">
@@ -210,11 +211,11 @@ function EsgPage() {
                         <MetricIcon className="size-6" strokeWidth={1.7} aria-hidden="true" />
                       </div>
                     )}
-                    <p className={`font-display text-4xl font-bold lg:text-5xl ${section.slug === "environmental" ? sign === "negative" ? "text-destructive" : sign === "positive" ? "text-brand-green" : "text-foreground" : "text-emerald-700"}`}>
+                    <p className={`font-display text-4xl font-bold tabular-nums lg:text-5xl ${section.slug === "environmental" ? improved || compliant ? "text-brand-green" : "text-brand-orange" : "text-emerald-700"}`}>
                       {metric.value}
                     </p>
                     {metric.label && (
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
+                      <p className={`mt-3 text-sm leading-relaxed text-muted-foreground ${section.slug === "environmental" ? "min-h-16 font-medium" : ""}`}>{metric.label}</p>
                     )}
                     {trend && <MetricTrendToggle trend={trend} environmental />}
                   </div>
@@ -230,14 +231,14 @@ function EsgPage() {
               <div className={"mt-5 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}>
                 {group.metrics.map((metric) => {
                   const trend = section.slug === "environmental" || section.slug === "social" ? findTrendFor(metric, settings.esgTrends) : undefined;
-                  const sign = trendSign(trend);
+                  const improved = trend && computeChange(trend).direction === "improved";
                   return (
                   <div
                     key={metric.label}
                     className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
-                    <p className={`font-display text-4xl font-bold ${section.slug === "environmental" ? sign === "negative" ? "text-destructive" : sign === "positive" ? "text-brand-green" : "text-foreground" : "text-emerald-700"}`}>{metric.value}</p>
-                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
+                    <p className={`font-display text-4xl font-bold ${section.slug === "environmental" ? improved ? "text-brand-green" : "text-brand-orange" : "text-emerald-700"}`}>{metric.value}</p>
+                    <p className={`mt-3 text-sm leading-relaxed text-muted-foreground ${section.slug === "environmental" ? "min-h-16 font-medium" : ""}`}>{metric.label}</p>
                     {trend && <MetricTrendToggle trend={trend} environmental={section.slug === "environmental"} />}
                   </div>
                 ); })}

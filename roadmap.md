@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Refine Environmental KPI cards with comparison bars and a data-backed compliance indicator; verified desktop, tablet and mobile
 - [x] Apply the Environmental decrease-color rule to grouped figures, admin figure lists and Excel/manual previews without changing Social or stored data
 - [x] Color Environmental headline figures by numerical year-on-year change without altering the displayed numbers; align comparison badges
 - [x] Overlay trend lines on Environmental bars and remove the separate chart-view controls — verified on desktop and mobile

@@ -31,5 +31,5 @@
 - Simple admin-edited page lists (history_milestones, subsidiaries, management_system_items, careers_landing_cards) use the generic HomeListEditor and getPageList reader, with code defaults as fallback, so new list pages need no bespoke admin code.
 - Admin-editable site-wide settings (ESG trend data, ESG image overrides, menu order, Sustainability nav, PDF viewer options) live as jsonb rows in `site_settings`, parsed by `src/lib/site-settings.ts` with code defaults as fallback, so a missing or bad row never breaks the site.
 - Sustainability Excel imports use browser-loaded ExcelJS with a shared template/parser and stable figure-card IDs, saving validated charts into the existing trend settings so public graphs and manual editors share one source.
-- The shared trend renderer uses combined bars and an overlaid line for Environmental charts, keeping Social chart choices and stored Excel data unchanged.
-- Environmental public figures and admin previews use the shared numerical year-on-year sign rather than benefit polarity for colors, so imported and manually edited trends remain consistent without altering stored values.
+- Environmental charts use simple comparison bars and a data-backed compliance indicator; keep Social chart choices and stored Excel data unchanged.
+- Environmental public KPI presentation uses benefit polarity for green reduction indicators, with corporate orange for other changes; numerical sign remains available to admin data editors.
