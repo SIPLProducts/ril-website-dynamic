@@ -24,7 +24,7 @@ import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import { SocialKpiCard } from "@/components/esg/SocialKpiCard";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
-import socialImage from "@/assets/social-tree-planting-india.jpg.asset.json";
+import socialImage from "@/assets/social-staff-tree-planting.jpg.asset.json";
 import reportingImage from "@/assets/esg-reporting-solar-aerial.jpg.asset.json";
 import policiesImage from "@/assets/esg-policies-sapling-hands.jpg.asset.json";
 
@@ -98,7 +98,7 @@ function EsgPage() {
   const [viewer, setViewer] = useState<{ title: string; url: string } | null>(null);
   const settings = useSiteSettings();
   const slotImg = (slot: string, fallback: string | undefined) => (settings.images[slot] ? publishedFileUrl(settings.images[slot]) ?? fallback : fallback);
-  const sideImage = slotImg(`hero:${section.slug}`, SIDE_IMAGES[section.slug]);
+  const sideImage = settings.images[`hero:${section.slug}`] ? slotImg(`hero:${section.slug}`, undefined) : (section.bannerImage ?? SIDE_IMAGES[section.slug]);
   const frameworkImg = (k: string) => slotImg(`framework:${k}`, REPORTING_METRIC_IMAGES[k]);
   const hasMetrics = section.metrics.length > 0 || Boolean(section.metricGroups?.length) || Boolean(section.governance);
 
@@ -112,13 +112,16 @@ function EsgPage() {
           {(sideImage ?? section.bannerImage) && (
             <img
               src={sideImage ?? section.bannerImage ?? undefined}
-              alt={section.slug === "social" ? "Volunteers planting saplings together at a community tree-planting drive in India" : `${section.title} at Ramky Infrastructure`}
-              className={`absolute inset-0 -z-10 h-full w-full object-cover ${section.slug === "social" ? "object-[65%_40%] sm:object-[60%_40%]" : "object-center"}`}
+              alt={section.slug === "social" ? "Team members planting and watering a sapling together at a tree-planting drive in India" : `${section.title} at Ramky Infrastructure`}
+              className={`absolute inset-0 -z-10 h-full w-full object-cover ${section.slug === "social" ? "object-[70%_30%] sm:object-[50%_20%]" : "object-center"}`}
               style={{ filter: "saturate(1.05) contrast(1.03)" }}
             />
           )}
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0d2b1f]/85 via-[#0d2b1f]/45 to-transparent" aria-hidden="true" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0d2b1f]/35 via-transparent to-[#0d2b1f]/25" aria-hidden="true" />
+          {section.slug === "social" && sideImage === socialImage.url && (
+            <p className="absolute bottom-2 right-3 text-[10px] text-white/60">Photo: Plantation / Wikimedia Commons, CC BY-SA 4.0</p>
+          )}
           <div className="relative mx-auto w-full max-w-[1400px] px-5 lg:px-10">
             <div className="max-w-3xl">
               <p className="inline-flex items-center gap-2 font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)]">

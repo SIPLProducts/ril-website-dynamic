@@ -14,10 +14,10 @@ export type MainMenuKey = (typeof MAIN_MENU)[number]["key"];
 
 /** Image slots editable in admin; code images are used when a slot is empty. */
 export const IMAGE_SLOTS = [
-  { slot: "hero:environmental", label: "Environmental — side photo" },
-  { slot: "hero:social", label: "Social — side photo" },
-  { slot: "hero:governance", label: "Governance — side photo" },
-  { slot: "hero:esg-reporting", label: "Sustainability (ESG) Reports — side photo" },
+  { slot: "hero:environmental", label: "Environmental — banner photo" },
+  { slot: "hero:social", label: "Social — banner photo" },
+  { slot: "hero:governance", label: "Governance — banner photo" },
+  { slot: "hero:esg-reporting", label: "Sustainability (ESG) Reports — banner photo" },
   { slot: "framework:2026", label: "Framework card — 2026" },
   { slot: "framework:BRSR", label: "Framework card — BRSR" },
   { slot: "framework:GRI", label: "Framework card — GRI" },
