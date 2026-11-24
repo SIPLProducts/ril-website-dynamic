@@ -22,7 +22,7 @@ import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import { SocialKpiCard } from "@/components/esg/SocialKpiCard";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
-import socialImage from "@/assets/social-community-volunteers.jpg.asset.json";
+import socialImage from "@/assets/social-tree-planting-india.jpg.asset.json";
 import reportingImage from "@/assets/esg-reporting-solar-aerial.jpg.asset.json";
 import policiesImage from "@/assets/esg-policies-sapling-hands.jpg.asset.json";
 
@@ -132,7 +132,7 @@ function EsgPage() {
               <div className="relative w-full lg:-my-16 lg:-mr-16">
                 <img
                   src={sideImage}
-                  alt={section.slug === "social" ? "Community volunteers working together to plant a tree" : `${section.title} at Ramky Infrastructure`}
+                  alt={section.slug === "social" ? "Volunteers planting saplings together at a community tree-planting drive in India" : `${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
                   className="aspect-[4/3] w-full object-cover"
