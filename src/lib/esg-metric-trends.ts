@@ -83,6 +83,13 @@ export function formatTrendValue(m: MetricTrend, v: number) {
 }
 
 export type TrendDirection = "improved" | "worsened" | "unchanged" | "changed" | "unavailable";
+/** Sign of the displayed percentage, independent of the chart's year-on-year change. */
+export function percentageSign(value: string): "positive" | "negative" | "neutral" {
+  const match = value.trim().replace(/−/g, "-").match(/^([+-]?\d+(?:\.\d+)?)\s*%$/);
+  if (!match?.[1]) return "neutral";
+  const number = Number(match[1]);
+  return number > 0 ? "positive" : number < 0 ? "negative" : "neutral";
+}
 export interface TrendChange {
   direction: TrendDirection;
   delta?: number;

@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Update Environment charts to orange/white, add a line option, hide details and color signed percentages
 - [x] Add Environmental and Social Excel templates, validated upload previews and saved graph updates
 - [ ] Verify Excel upload/save in a signed-in admin session — waiting for an available admin session
 - [x] History & Milestones admin

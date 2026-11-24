@@ -1,4 +1,7 @@
 import { computeChange, formatTrendValue, type MetricTrend } from "@/lib/esg-metric-trends";
+import { useState } from "react";
+import { BarChart3, ChartLine } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const DIR_STYLE = {
   improved: "text-emerald-700 bg-emerald-700/10",
@@ -8,7 +11,9 @@ const DIR_STYLE = {
   unavailable: "text-muted-foreground bg-muted",
 } as const;
 
-export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
+export function MetricTrendToggle({ trend, environmental = false }: { trend: MetricTrend; environmental?: boolean }) {
+  const [chartOverride, setChartOverride] = useState<"bar" | "line" | null>(null);
+  const chartType = chartOverride ?? trend.chartType ?? "bar";
   const change = computeChange(trend);
   const values = trend.years.map((p) => p.value).filter((v): v is number => v !== null);
   const max = trend.percent ? 100 : Math.max(...values, 0) || 1;
@@ -16,10 +21,16 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
 
   return (
     <div className="mt-4 border-t border-border pt-3">
-      <p className="font-display text-xs font-bold uppercase tracking-[0.12em] text-emerald-700">{trend.title?.trim() || "Trend"}</p>
+      <div className="flex min-h-8 items-center justify-between gap-2">
+        <p className={`min-w-0 font-display text-xs font-bold uppercase tracking-[0.12em] ${environmental ? "text-brand-orange" : "text-brand-green"}`}>{trend.title?.trim() || "Trend"}</p>
+        {environmental && <div className="flex shrink-0 gap-1" role="group" aria-label={`${trend.label} chart type`}>
+          <Button size="icon" variant="ghost" className="size-8" title="Bar chart" aria-label={`${trend.label}: Bar chart`} aria-pressed={chartType === "bar"} onClick={() => setChartOverride("bar")}><BarChart3 /></Button>
+          <Button size="icon" variant="ghost" className="size-8" title="Line chart" aria-label={`${trend.label}: Line chart`} aria-pressed={chartType === "line"} onClick={() => setChartOverride("line")}><ChartLine /></Button>
+        </div>}
+      </div>
       {(
         <div data-testid="metric-trend" className="mt-4">
-          {trend.chartType === "line" ? <LineChart trend={trend} max={max} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "#047857" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year`} className="flex h-44 items-end gap-3 border-b border-l border-border pl-2">
+          {chartType === "line" ? <LineChart trend={trend} max={max} color={environmental ? "var(--brand-orange)" : change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year`} className="flex h-44 items-end gap-3 border-b border-l border-border pl-2">
             {trend.years.map((p, i) => {
               const y = p.year;
               const last = i === trend.years.length - 1;
@@ -38,7 +49,7 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
                   <p className="mb-1 text-center text-[11px] font-bold leading-tight text-foreground">
                     {p.approximate ? `${p.value}+` : formatTrendValue(trend, p.value)}
                   </p>
-                  <div className={`rounded-t-sm ${last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
+                  <div className={`rounded-t-sm ${environmental ? last ? "border border-brand-orange bg-brand-orange" : "border border-brand-orange bg-background" : last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
                 </div>
               );
             })}
@@ -53,8 +64,10 @@ export function MetricTrendToggle({ trend }: { trend: MetricTrend }) {
             {change.direction === "improved" && " · Positive"}
             {change.direction === "worsened" && " · Needs attention"}
           </p>
-          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{trend.summary}</p>
-          <p className="mt-1 text-[10px] text-muted-foreground/80">Source: {trend.source}</p>
+          {!environmental && <>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{trend.summary}</p>
+            <p className="mt-1 text-[10px] text-muted-foreground/80">Source: {trend.source}</p>
+          </>}
         </div>
       )}
     </div>
