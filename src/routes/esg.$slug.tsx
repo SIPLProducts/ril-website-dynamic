@@ -13,7 +13,7 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
-import { findTrendFor, percentageSign } from "@/lib/esg-metric-trends";
+import { findTrendFor, trendSign } from "@/lib/esg-metric-trends";
 import { useSiteSettings } from "@/lib/site-settings.functions";
 import { esgLabel, orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
 import { publishedFileUrl } from "@/lib/file-url";
@@ -191,6 +191,8 @@ function EsgPage() {
               className={"mt-8 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}
             >
               {section.metrics.map((metric) => {
+                const trend = section.slug === "environmental" ? findTrendFor(metric, settings.esgTrends) : undefined;
+                const sign = trendSign(trend);
                 const MetricIcon = section.slug === "esg-reporting"
                   ? REPORTING_METRIC_ICONS[metric.value as keyof typeof REPORTING_METRIC_ICONS]
                   : undefined;
@@ -208,13 +210,13 @@ function EsgPage() {
                         <MetricIcon className="size-6" strokeWidth={1.7} aria-hidden="true" />
                       </div>
                     )}
-                    <p className={`font-display text-4xl font-bold lg:text-5xl ${section.slug === "environmental" ? percentageSign(metric.value) === "negative" ? "text-destructive" : percentageSign(metric.value) === "positive" ? "text-brand-green" : "text-foreground" : "text-emerald-700"}`}>
+                    <p className={`font-display text-4xl font-bold lg:text-5xl ${section.slug === "environmental" ? sign === "negative" ? "text-destructive" : sign === "positive" ? "text-brand-green" : "text-foreground" : "text-emerald-700"}`}>
                       {metric.value}
                     </p>
                     {metric.label && (
                       <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
                     )}
-                    {section.slug === "environmental" && (() => { const tr = findTrendFor(metric, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} environmental /> : null; })()}
+                    {trend && <MetricTrendToggle trend={trend} environmental />}
                   </div>
                 );
               })}

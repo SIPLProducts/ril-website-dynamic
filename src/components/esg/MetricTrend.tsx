@@ -1,4 +1,4 @@
-import { computeChange, formatTrendValue, type MetricTrend } from "@/lib/esg-metric-trends";
+import { computeChange, formatTrendValue, trendSign, type MetricTrend } from "@/lib/esg-metric-trends";
 
 const DIR_STYLE = {
   improved: "text-emerald-700 bg-emerald-700/10",
@@ -11,6 +11,10 @@ const DIR_STYLE = {
 export function MetricTrendToggle({ trend, environmental = false }: { trend: MetricTrend; environmental?: boolean }) {
   const chartType = environmental ? "bar" : trend.chartType ?? "bar";
   const change = computeChange(trend);
+  const sign = trendSign(trend);
+  const changeStyle = environmental
+    ? sign === "negative" ? "text-destructive bg-destructive/10" : sign === "positive" ? "text-brand-green bg-brand-green/10" : "text-muted-foreground bg-muted"
+    : DIR_STYLE[change.direction];
   const values = trend.years.map((p) => p.value).filter((v): v is number => v !== null);
   const max = trend.percent ? 100 : Math.max(...values, 0) || 1;
   const barColor = change.direction === "worsened" ? "bg-destructive/80" : change.direction === "improved" ? "bg-emerald-600" : "bg-muted-foreground/60";
@@ -54,10 +58,10 @@ export function MetricTrendToggle({ trend, environmental = false }: { trend: Met
               <p key={y} className="flex-1 text-center text-[10px] font-semibold text-muted-foreground">{y}</p>
             ))}
           </div>
-          <p className={`mt-3 inline-block rounded-sm px-2 py-1 text-xs font-semibold ${DIR_STYLE[change.direction]}`}>
+          <p className={`mt-3 inline-block rounded-sm px-2 py-1 text-xs font-semibold ${changeStyle}`}>
             {change.text}
-            {change.direction === "improved" && " · Positive"}
-            {change.direction === "worsened" && " · Needs attention"}
+            {!environmental && change.direction === "improved" && " · Positive"}
+            {!environmental && change.direction === "worsened" && " · Needs attention"}
           </p>
           {!environmental && <>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{trend.summary}</p>

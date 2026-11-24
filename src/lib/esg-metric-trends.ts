@@ -90,6 +90,12 @@ export function percentageSign(value: string): "positive" | "negative" | "neutra
   const number = Number(match[1]);
   return number > 0 ? "positive" : number < 0 ? "negative" : "neutral";
 }
+/** Numerical year-on-year direction, not whether the change is environmentally beneficial. */
+export function trendSign(trend: MetricTrend | undefined): "positive" | "negative" | "neutral" {
+  const delta = trend ? computeChange(trend).delta : undefined;
+  if (delta === undefined || delta === 0) return "neutral";
+  return delta > 0 ? "positive" : "negative";
+}
 export interface TrendChange {
   direction: TrendDirection;
   delta?: number;
