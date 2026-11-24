@@ -1,4 +1,7 @@
 # Roadmap
+- [x] Update Social photo, year-wise comparison colours, and hide graph summary/source while retaining change figures
+- [x] Enable Social detail-image upload, replace, remove and public display
+- [ ] Verify Social detail-image upload/save/remove as staff — user must sign in to admin in preview; no own admin session available
 - [x] Refine Environmental KPI cards with comparison bars and a data-backed compliance indicator; verified desktop, tablet and mobile
 - [x] Apply the Environmental decrease-color rule to grouped figures, admin figure lists and Excel/manual previews without changing Social or stored data
 - [x] Color Environmental headline figures by numerical year-on-year change without altering the displayed numbers; align comparison badges

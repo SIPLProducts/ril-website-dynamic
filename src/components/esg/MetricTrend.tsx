@@ -9,10 +9,11 @@ const DIR_STYLE = {
   unavailable: "text-muted-foreground bg-muted",
 } as const;
 
-export function MetricTrendToggle({ trend, environmental = false }: { trend: MetricTrend; environmental?: boolean }) {
+export function MetricTrendToggle({ trend, environmental = false, social = false }: { trend: MetricTrend; environmental?: boolean; social?: boolean }) {
+  const comparison = environmental || social;
   const chartType = environmental ? "bar" : trend.chartType ?? "bar";
   const change = computeChange(trend);
-  const changeStyle = environmental
+  const changeStyle = comparison
     ? change.direction === "improved" ? "text-brand-green bg-brand-green/10" : change.direction === "worsened" || change.direction === "changed" ? "text-brand-orange bg-brand-orange/10" : "text-muted-foreground bg-muted"
     : DIR_STYLE[change.direction];
   const compliance = environmental && trend.label.trim().toLowerCase() === "environmental compliance";
@@ -33,9 +34,9 @@ export function MetricTrendToggle({ trend, environmental = false }: { trend: Met
   const barColor = change.direction === "worsened" ? "bg-destructive/80" : change.direction === "improved" ? "bg-emerald-600" : "bg-muted-foreground/60";
 
   return (
-    <div className={environmental ? "mt-5 border-t border-border pt-5" : "mt-4 border-t border-border pt-3"}>
+    <div className={comparison ? "mt-5 border-t border-border pt-5" : "mt-4 border-t border-border pt-3"}>
       <div className="flex min-h-8 items-center justify-between gap-2">
-        <p className={`min-w-0 font-display text-xs font-bold uppercase leading-relaxed ${environmental ? "text-brand-orange" : "text-brand-green"}`}>{environmental ? "Year-on-year comparison" : trend.title?.trim() || "Trend"}</p>
+        <p className={`min-w-0 font-display text-xs font-bold uppercase leading-relaxed ${comparison ? "text-brand-orange" : "text-brand-green"}`}>{comparison ? "Year-on-year comparison" : trend.title?.trim() || "Trend"}</p>
       </div>
       {(
         <div data-testid="metric-trend" className="mt-4">
@@ -56,10 +57,10 @@ export function MetricTrendToggle({ trend, environmental = false }: { trend: Met
               const h = Math.max((p.value / max) * 100, p.value === 0 ? 0 : 3);
               return (
                 <div key={y} className="flex h-full flex-1 flex-col justify-end">
-                  <p className={environmental ? "mb-2 break-words text-center text-xs font-semibold leading-snug tabular-nums text-foreground" : "mb-1 text-center text-[11px] font-bold leading-tight text-foreground"}>
+                  <p className={comparison ? "mb-2 break-words text-center text-xs font-semibold leading-snug tabular-nums text-foreground" : "mb-1 text-center text-[11px] font-bold leading-tight text-foreground"}>
                     {p.approximate ? `${p.value}+` : formatTrendValue(trend, p.value)}
                   </p>
-                  <div className={`rounded-t-sm ${environmental ? `mx-auto w-full max-w-20 ${last ? change.direction === "improved" ? "bg-brand-green" : "bg-brand-orange" : "bg-muted-foreground/40"}` : last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
+                  <div className={`rounded-t-sm ${comparison ? `mx-auto w-full max-w-20 ${last ? change.direction === "improved" ? "bg-brand-green" : "bg-brand-orange" : "bg-muted-foreground/40"}` : last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
                 </div>
               );
             })}
@@ -67,15 +68,15 @@ export function MetricTrendToggle({ trend, environmental = false }: { trend: Met
           </div>}
           <div className="mt-1 flex gap-3 pl-2">
             {trend.years.map(({ year: y }) => (
-              <p key={y} className={environmental ? "flex-1 text-center text-xs font-medium leading-relaxed text-muted-foreground" : "flex-1 text-center text-[10px] font-semibold text-muted-foreground"}>{y}</p>
+              <p key={y} className={comparison ? "flex-1 text-center text-xs font-medium leading-relaxed text-muted-foreground" : "flex-1 text-center text-[10px] font-semibold text-muted-foreground"}>{y}</p>
             ))}
           </div>
-          <p className={`${environmental ? "mt-4 inline-block rounded-sm px-3 py-2 text-xs font-medium leading-relaxed" : "mt-3 inline-block rounded-sm px-2 py-1 text-xs font-semibold"} ${changeStyle}`}>
+          <p className={`${comparison ? "mt-4 inline-block rounded-sm px-3 py-2 text-xs font-medium leading-relaxed" : "mt-3 inline-block rounded-sm px-2 py-1 text-xs font-semibold"} ${changeStyle}`}>
             {change.text}
-            {!environmental && change.direction === "improved" && " · Positive"}
-            {!environmental && change.direction === "worsened" && " · Needs attention"}
+            {!comparison && change.direction === "improved" && " · Positive"}
+            {!comparison && change.direction === "worsened" && " · Needs attention"}
           </p>
-          {!environmental && <>
+          {!comparison && <>
             <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{trend.summary}</p>
             <p className="mt-1 text-[10px] text-muted-foreground/80">Source: {trend.source}</p>
           </>}

@@ -290,7 +290,7 @@ function FileLink({ url }: { url: string }) {
 
 function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSaved }: { slug: string; kind: Kind; grouped: boolean; groups: string[]; row: Item | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const info = kindInfo(slug, kind);
-  const hasDetailImage = slug === "environmental" && kind === "accordion";
+  const hasDetailImage = (slug === "environmental" || slug === "social") && kind === "accordion";
   const [imageUrl, setImageUrl] = useState(row?.url ?? null);
   const imagePreview = usePreview(hasDetailImage ? imageUrl : null);
   const [f, setF] = useState({ title: row?.title ?? "", value: row?.value ?? "", body: row?.body ?? "", year: row?.year ?? "", group_title: row?.group_title ?? (groups[0] ?? ""), published: row?.published ?? true });
@@ -321,7 +321,7 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
     setSaving(true);
     try {
       let url = row?.url ?? null;
-      if (hasDetailImage) url = file ? await upload(file, "environmental/details") : imageUrl;
+      if (hasDetailImage) url = file ? await upload(file, `${slug}/details`) : imageUrl;
       if (kind === "report") {
         if (mode === "file" && file) url = await upload(file, "reports");
         else if (mode === "link") url = link.trim() || null;
