@@ -1,4 +1,4 @@
-import { isHtml } from "@/lib/strength-style";
+import { isHtml, plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
 import { SustainabilityContactButton } from "@/components/esg/SustainabilityContact";
 import framework2026 from "@/assets/logo-2026.png";
@@ -287,6 +287,9 @@ function EsgPage() {
                     {open && (
                       <div className="max-w-3xl pb-6 leading-relaxed text-muted-foreground">
                         <Formatted as="div" text={item.body} />
+                        {section.slug === "environmental" && item.imageUrl && (
+                          <img src={item.imageUrl} alt={plainText(item.title)} loading="lazy" className="mt-5 max-h-96 w-full rounded-sm object-contain object-left" />
+                        )}
                       </div>
                     )}
                   </div>

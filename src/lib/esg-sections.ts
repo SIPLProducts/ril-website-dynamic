@@ -7,6 +7,7 @@ export interface EsgMetric {
 export interface EsgAccordion {
   title: string;
   body: string;
+  imageUrl?: string | null;
 }
 
 export interface EsgReport {

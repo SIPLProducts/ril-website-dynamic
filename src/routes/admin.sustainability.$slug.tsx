@@ -282,16 +282,30 @@ function FileLink({ url }: { url: string }) {
 
 function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSaved }: { slug: string; kind: Kind; grouped: boolean; groups: string[]; row: Item | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const info = kindInfo(slug, kind);
+  const hasDetailImage = slug === "environmental" && kind === "accordion";
+  const [imageUrl, setImageUrl] = useState(row?.url ?? null);
+  const imagePreview = usePreview(hasDetailImage ? imageUrl : null);
   const [f, setF] = useState({ title: row?.title ?? "", value: row?.value ?? "", body: row?.body ?? "", year: row?.year ?? "", group_title: row?.group_title ?? (groups[0] ?? ""), published: row?.published ?? true });
   const isLink = !!row?.url && !row.url.startsWith(STORAGE_PREFIX);
   const [mode, setMode] = useState<"file" | "link">(isLink ? "link" : "file");
-  const [link, setLink] = useState(isLink ? row!.url! : "");
+  const [link, setLink] = useState(isLink ? row?.url ?? "" : "");
   const [file, setFile] = useState<File | null>(null);
+  const [localImage, setLocalImage] = useState<string | null>(null);
+  useEffect(() => {
+    if (!hasDetailImage || !file) { setLocalImage(null); return; }
+    const url = URL.createObjectURL(file);
+    setLocalImage(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file, hasDetailImage]);
   const [errs, setErrs] = useState<{ title?: string; value?: string; body?: string; year?: string; file?: string }>({});
   const [saving, setSaving] = useState(false);
 
   async function save() {
     const e: { title?: string; value?: string; body?: string; year?: string; file?: string } = {};
+    if (hasDetailImage) {
+      const imageError = imageFileError(file, false);
+      if (imageError) e.file = imageError;
+    }
     if (kind === "report" && mode === "file" && file && (file.type !== "application/pdf" || file.size > MAX_PDF)) e.file = "Upload a PDF up to 50 MB";
     if (kind === "report" && mode === "link" && link && !/^https?:\/\//i.test(link.trim())) e.file = "Link must start with http:// or https://";
     setErrs(e);
@@ -299,6 +313,7 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
     setSaving(true);
     try {
       let url = row?.url ?? null;
+      if (hasDetailImage) url = file ? await upload(file, "environmental/details") : imageUrl;
       if (kind === "report") {
         if (mode === "file" && file) url = await upload(file, "reports");
         else if (mode === "link") url = link.trim() || null;
@@ -340,6 +355,24 @@ function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSa
             : <Input value={link} placeholder="https://…" onChange={(e) => setLink(e.target.value)} />}
           <FieldError msg={errs.file || undefined} />
           <p className="text-xs text-muted-foreground">Without a file, the website shows "Coming soon" on this report.</p>
+        </FormSection>
+      )}
+      {hasDetailImage && (
+        <FormSection title="Content image (optional)">
+          <div className="grid gap-4 sm:grid-cols-[12rem_1fr]">
+            <div className="grid aspect-[4/3] place-items-center overflow-hidden rounded-sm border border-border bg-surface">
+              {localImage || imagePreview ? <img src={localImage ?? imagePreview ?? ""} alt="Content image preview" className="h-full w-full object-contain" /> : <ImagePlus className="size-8 text-muted-foreground" />}
+            </div>
+            <div className="space-y-3">
+              <FileDropzone file={file} onFile={(next) => {
+                const error = imageFileError(next, false);
+                setErrs({ ...errs, file: error ?? "" });
+                if (!error) setFile(next);
+              }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint="PNG, JPG, WebP or SVG, up to 5 MB" />
+              <FieldError msg={errs.file} />
+              {(imageUrl || file) && <Button type="button" variant="outline" size="sm" onClick={() => { setImageUrl(null); setFile(null); setErrs({ ...errs, file: "" }); }}><Trash2 className="size-4" /> Remove image</Button>}
+            </div>
+          </div>
         </FormSection>
       )}
     </AdminDialog>

@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Add optional per-content image uploads to Environmental In Detail sections
+- [ ] Verify Environmental detail image upload/save/remove as staff — requires the user to sign in to admin in preview
 - [x] Update Environment charts to orange/white, add a line option, hide details and color signed percentages
 - [x] Add Environmental and Social Excel templates, validated upload previews and saved graph updates
 - [ ] Verify Excel upload/save in a signed-in admin session — waiting for an available admin session

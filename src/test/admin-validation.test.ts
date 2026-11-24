@@ -29,6 +29,7 @@ describe("deleteUserBlocker", () => {
 
 import { clientImageError, imageFileError } from "@/lib/admin-validation";
 describe("client images", () => {
+  it("allows optional content images to be left empty", () => expect(imageFileError(null, false)).toBeNull());
   it("allows a client with only a description", () => expect(clientImageError(null, null, "NHAI")).toBeNull());
   it("needs a logo or a description", () => expect(clientImageError(null, null, "  ")).toBe("Add a logo or a description"));
   it("allows editing without a new file when an image exists", () => expect(clientImageError(null, "storage:a.png")).toBeNull());

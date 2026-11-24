@@ -58,7 +58,7 @@ export const getEsgPage = createServerFn({ method: "GET" })
       governance: page.highlight_value || govItems.length
         ? { highlight: { title: page.highlight_title, value: page.highlight_value, label: page.highlight_label }, items: govItems, details: govDetails }
         : undefined,
-      accordions: items.filter((i) => i.kind === "accordion").map((a) => ({ title: a.title, body: a.body })),
+      accordions: items.filter((i) => i.kind === "accordion").map((a) => ({ title: a.title, body: a.body, imageUrl: data.slug === "environmental" ? resolve(a.url) : null })),
       reports: reports.length || data.slug === "esg-reporting" ? reports : undefined,
       bannerImage: resolve(page.banner_image_url),
     };
