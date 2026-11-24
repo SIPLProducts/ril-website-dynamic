@@ -262,6 +262,7 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
                   <div className="flex items-center gap-2">
                     <span className="font-display text-sm font-bold text-emerald-800">{r.group_title || "Main Key Metrics (no group heading)"}</span>
                     {r.group_title && <button aria-label="Rename group" title="Rename group" onClick={() => renameGroup(r.group_title!)} className="btn-grad-edit grid size-6 place-items-center rounded shadow-sm hover:opacity-90"><Pencil className="size-3" /></button>}
+                    {r.group_title && (() => { const last = rows.filter((x) => x.group_title === r.group_title).at(-1); return last ? <button onClick={() => remove(last)} title={`Remove last card: ${last.title}`} className="btn-grad-danger ml-auto inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold shadow-sm hover:opacity-90"><Trash2 className="size-3" /> Remove last card</button> : null; })()}
                   </div>
                 </td>
               </tr>
