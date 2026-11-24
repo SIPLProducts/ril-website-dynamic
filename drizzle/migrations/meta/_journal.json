@@ -232,6 +232,13 @@
       "when": 1795435288291,
       "tag": "0032_site_theme_public_read",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1795512140917,
+      "tag": "0033_esg_rating_public_read",
+      "breakpoints": true
     }
   ]
 }

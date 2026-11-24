@@ -1,6 +1,7 @@
 import { plainText } from "@/lib/strength-style";
 import { RichField } from "@/components/admin/RichField";
 import { EsgExcelImport } from "@/components/admin/EsgExcelImport";
+import { EsgRatingEditor } from "@/components/admin/EsgRatingEditor";
 import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -93,11 +94,12 @@ function Page() {
     </AdminShell>
   );
   const label = ESG_SECTIONS.find((s) => s.slug === slug)?.title ?? slug;
-  const kinds: Kind[] = slug === "governance" ? ["governance_item", "accordion"] : slug === "esg-reporting" ? ["metric", "accordion", "report"] : slug === "policies" ? ["accordion"] : ["metric", "accordion"];
+  const kinds: Kind[] = slug === "governance" ? ["governance_item", "accordion"] : slug === "esg-reporting" ? ["metric", "accordion", "report"] : slug === "policies" ? ["accordion"] : slug === "esg-rating" ? [] : ["metric", "accordion"];
   return (
     <AdminShell staff={staff} active={{ kind: "module", module: "sustainability", section: slug }} crumbs={["Sustainability", label]}>
       <div key={slug} className="space-y-6">
         <PageEditor slug={slug} label={label} />
+        {slug === "esg-rating" && <EsgRatingEditor />}
         {(slug === "environmental" || slug === "social") && <EsgExcelImport page={slug} />}
         {kinds.map((k) => <ItemList key={k} slug={slug} kind={k} grouped={k === "metric"} />)}
       </div>

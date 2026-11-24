@@ -13,6 +13,7 @@ import { ArrowLeft, ArrowUpRight, BarChart3, CalendarDays, ChevronDown, Clipboar
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
+import { EsgRatingPanel } from "@/components/esg/EsgRatingPanel";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import { computeChange, findTrendFor } from "@/lib/esg-metric-trends";
@@ -33,6 +34,7 @@ const SIDE_IMAGES: Record<string, string> = {
   social: socialImage.url,
   governance: governanceImage,
   "esg-reporting": reportingImage.url,
+  "esg-rating": reportingImage.url,
   policies: policiesImage.url,
 };
 
@@ -157,6 +159,8 @@ function EsgPage() {
             ))}
           </div>
         </nav>
+
+        {section.slug === "esg-rating" && <EsgRatingPanel rating={settings.esgRating} onOpen={setViewer} />}
 
         {/* Metrics */}
         {hasMetrics && (

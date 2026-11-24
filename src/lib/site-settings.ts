@@ -1,3 +1,4 @@
+import { parseRating, type EsgRating } from "@/lib/esg-rating";
 import { METRIC_TRENDS, type MetricTrend } from "@/lib/esg-metric-trends";
 
 /** Top-level website menu items; their order is admin-controlled. */
@@ -78,6 +79,7 @@ export interface SiteSettings {
   mainMenu: MainMenuKey[];
   sustainabilityNav: SustainabilityNavItem[];
   pdfViewer: PdfViewerSettings;
+  esgRating: EsgRating | null;
 }
 
 export const DEFAULT_PDF: PdfViewerSettings = { allowDownload: true, downloadLabel: "Download Report", exploreLabel: "Explore" };
@@ -89,6 +91,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   mainMenu: MAIN_MENU.map((m) => m.key),
   sustainabilityNav: [],
   pdfViewer: DEFAULT_PDF,
+  esgRating: null,
 };
 
 type Row = { key: string; value: unknown };
@@ -114,6 +117,7 @@ export function parseSettings(rows: Row[]): SiteSettings {
     mainMenu: [...menuOrder, ...keys.filter((k) => !menuOrder.includes(k))] as MainMenuKey[],
     sustainabilityNav: Array.isArray(sus) ? (sus as SustainabilityNavItem[]).filter((s) => s && typeof s.slug === "string") : [],
     pdfViewer: { ...DEFAULT_PDF, ...(pdf && typeof pdf === "object" ? pdf : {}) },
+    esgRating: parseRating(get("esg_rating")),
   };
 }
 

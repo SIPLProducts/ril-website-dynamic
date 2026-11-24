@@ -35,3 +35,4 @@
 - Sustainability Excel imports use browser-loaded ExcelJS with a shared template/parser and stable figure-card IDs, saving validated charts into the existing trend settings so public graphs and manual editors share one source.
 - Environmental charts overlay trend lines on comparison bars and retain a data-backed compliance indicator; Social shares year-wise bar colours and hides summary/source copy while preserving chart choices and stored Excel data.
 - Environmental public KPI presentation uses benefit polarity for green reduction indicators, with corporate orange for other changes; numerical sign remains available to admin data editors.
+- ESG Rating (NSE) data lives in `site_settings` key `esg_rating`, parsed by `src/lib/esg-rating.ts`; admin uploads read values from the PDF in the browser (pdfjs + `extractRating`) and staff review before saving, so missing fields are never guessed.
