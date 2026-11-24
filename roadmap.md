@@ -8,3 +8,4 @@
 - [x] 06_dynamic_pages.sql for server
 - [x] Keep the 2026 reporting metric icon without a supporting label
 - [x] Add Policies to Sustainability with public and admin screens
+- [x] Highlight the current Sustainability tab and replace the Social photo with an Indian community image

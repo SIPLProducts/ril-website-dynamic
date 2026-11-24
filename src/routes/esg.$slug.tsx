@@ -20,13 +20,13 @@ import { publishedFileUrl } from "@/lib/file-url";
 import { MetricTrendToggle } from "@/components/esg/MetricTrend";
 import envImage from "@/assets/esg-environmental.jpg.asset.json";
 import governanceImage from "@/assets/esg-governance-professional.jpg";
-import socialImage from "@/assets/esg-social-community-children.jpg.asset.json";
+import socialImage from "@/assets/esg-social-indian-community.jpg";
 import reportingImage from "@/assets/esg-reporting-solar-aerial.jpg.asset.json";
 import policiesImage from "@/assets/esg-policies-sapling-hands.jpg.asset.json";
 
 const SIDE_IMAGES: Record<string, string> = {
   environmental: envImage.url,
-  social: socialImage.url,
+  social: socialImage,
   governance: governanceImage,
   "esg-reporting": reportingImage.url,
   policies: policiesImage.url,
@@ -130,7 +130,7 @@ function EsgPage() {
               <div className={`relative w-full lg:-my-16 lg:-mr-16 -my-20`}>
                 <img
                   src={sideImage}
-                  alt={section.slug === "social" ? "Smiling children from the communities Ramky supports" : `${section.title} at Ramky Infrastructure`}
+                  alt={section.slug === "social" ? "Indian educator supporting school children in a community learning space" : `${section.title} at Ramky Infrastructure`}
                   width={1200}
                   height={912}
                   className="aspect-[4/3] w-full object-cover"
@@ -166,8 +166,8 @@ function EsgPage() {
                 key={item.slug}
                 to="/esg/$slug"
                 params={{ slug: item.slug }}
-                className="whitespace-nowrap border-b-2 border-transparent px-4 py-4 font-display text-sm font-semibold uppercase tracking-[0.08em] text-muted-foreground transition-colors hover:text-foreground"
-                activeProps={{ className: "border-emerald-600 text-emerald-700" }}
+                aria-current={item.slug === section.slug ? "page" : undefined}
+                className={`whitespace-nowrap border-b-2 px-4 py-4 font-display text-sm font-semibold uppercase tracking-[0.08em] transition-colors ${item.slug === section.slug ? "border-brand-green bg-brand-green/10 text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}
               >
                 {item.title}
               </Link>
