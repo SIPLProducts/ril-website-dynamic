@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Restore Environmental trend lines directly on the existing comparison bars without a separate view
 - [x] Update Social photo, year-wise comparison colours, and hide graph summary/source while retaining change figures
 - [x] Enable Social detail-image upload, replace, remove and public display
 - [ ] Verify Social detail-image upload/save/remove as staff — user must sign in to admin in preview; no own admin session available

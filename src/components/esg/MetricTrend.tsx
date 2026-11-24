@@ -40,7 +40,7 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
       </div>
       {(
         <div data-testid="metric-trend" className="mt-4">
-          {chartType === "line" ? <LineChart trend={trend} max={max} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year`} className="relative h-44 border-b border-l border-border pl-2">
+          {chartType === "line" ? <LineChart trend={trend} max={max} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year${environmental ? ", bars with overlaid trend line" : ""}`} className="relative h-44 border-b border-l border-border pl-2">
             <div className="relative flex h-full items-end gap-3">
             {trend.years.map((p, i) => {
               const y = p.year;
@@ -64,6 +64,7 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
                 </div>
               );
             })}
+            {environmental && <BarTrendOverlay trend={trend} max={max} />}
             </div>
           </div>}
           <div className="mt-1 flex gap-3 pl-2">
@@ -84,6 +85,24 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
       )}
     </div>
   );
+}
+
+/** Connect the bar tops in their existing plot; missing values break the line. */
+function BarTrendOverlay({ trend, max }: { trend: MetricTrend; max: number }) {
+  const count = trend.years.length;
+  if (!count) return null;
+  const center = (index: number) => `calc(${((index + 0.5) / count) * 100}% + ${((index + 0.5) / count - 0.5) * 12}px)`;
+  const top = (value: number) => value === 0 ? "calc(100% - 2px)" : `${100 - Math.max((value / max) * 100, 3) * 0.78}%`;
+  return <svg data-testid="metric-trend-overlay" className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible text-brand-green" aria-hidden="true">
+    {trend.years.map((point, index) => {
+      if (point.value === null) return null;
+      const next = trend.years[index + 1];
+      return <g key={point.year}>
+        {next && next.value !== null && <line x1={center(index)} y1={top(point.value)} x2={center(index + 1)} y2={top(next.value)} stroke="currentColor" strokeWidth={2} />}
+        <circle cx={center(index)} cy={top(point.value)} r={3.5} className="fill-background" stroke="currentColor" strokeWidth={2} />
+      </g>;
+    })}
+  </svg>;
 }
 
 /** Line variant: same labels and "not disclosed" handling as the bars; missing years break the line. */
