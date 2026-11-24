@@ -262,7 +262,7 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
                   <div className="flex items-center gap-2">
                     <span className="font-display text-sm font-bold text-emerald-800">{r.group_title || "Main Key Metrics (no group heading)"}</span>
                     {r.group_title && <button aria-label="Rename group" title="Rename group" onClick={() => renameGroup(r.group_title!)} className="btn-grad-edit grid size-6 place-items-center rounded shadow-sm hover:opacity-90"><Pencil className="size-3" /></button>}
-                    {r.group_title && (() => { const last = rows.filter((x) => x.group_title === r.group_title).at(-1); return last ? <button onClick={() => remove(last)} title={`Remove last card: ${last.title}`} className="btn-grad-danger ml-auto inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold shadow-sm hover:opacity-90"><Trash2 className="size-3" /> Remove last card</button> : null; })()}
+                    {r.group_title && <GroupCardRemover cards={rows.filter((x) => x.group_title === r.group_title)} onRemove={remove} />}
                   </div>
                 </td>
               </tr>
@@ -292,6 +292,20 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
       </table>
       {editing && <ItemDialog slug={slug} kind={kind} grouped={grouped} groups={groups} initialTitle={newTitle} row={editing === "new" ? null : editing} nextOrder={(rows.at(-1)?.sort_order ?? 0) + 1} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh(); }} />}
     </section>
+  );
+}
+
+function GroupCardRemover({ cards, onRemove }: { cards: Item[]; onRemove: (r: Item) => void }) {
+  const [sel, setSel] = useState("");
+  const card = cards.find((c) => c.id === sel);
+  return (
+    <div className="ml-auto flex items-center gap-2">
+      <select aria-label="Choose card to remove" value={sel} onChange={(e) => setSel(e.target.value)} className="rounded border border-border bg-background px-2 py-1 text-xs">
+        <option value="">Choose a card to remove…</option>
+        {cards.map((c) => <option key={c.id} value={c.id}>{plainText(c.title)}{c.value ? ` — ${c.value}` : ""}</option>)}
+      </select>
+      <button disabled={!card} onClick={() => { if (card) { onRemove(card); setSel(""); } }} className="btn-grad-danger inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-semibold shadow-sm hover:opacity-90 disabled:opacity-40"><Trash2 className="size-3" /> Remove card</button>
+    </div>
   );
 }
 
