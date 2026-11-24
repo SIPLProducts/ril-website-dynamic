@@ -108,17 +108,17 @@ function EsgPage() {
       {viewer && <ReportViewer doc={viewer} pdf={settings.pdfViewer} onClose={() => setViewer(null)} />}
       <main>
         {/* Hero */}
-        <section className="relative isolate flex min-h-[32rem] items-end overflow-hidden bg-[#0d2b1f] pb-16 pt-36 text-white sm:min-h-[36rem] lg:min-h-[42rem] lg:pb-24 lg:pt-44">
+        <section className="relative isolate flex min-h-[30rem] items-center overflow-hidden bg-[#0d2b1f] pb-14 pt-32 text-white sm:min-h-[34rem] lg:min-h-[38rem] lg:pb-16 lg:pt-36">
           {(sideImage ?? section.bannerImage) && (
             <img
               src={sideImage ?? section.bannerImage ?? undefined}
               alt={section.slug === "social" ? "Volunteers planting saplings together at a community tree-planting drive in India" : `${section.title} at Ramky Infrastructure`}
-              className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
+              className={`absolute inset-0 -z-10 h-full w-full object-cover ${section.slug === "social" ? "object-[65%_40%] sm:object-[60%_40%]" : "object-center"}`}
               style={{ filter: "saturate(1.05) contrast(1.03)" }}
             />
           )}
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0d2b1f]/90 via-[#0d2b1f]/60 to-[#0d2b1f]/10" aria-hidden="true" />
-          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0d2b1f]/80 via-transparent to-[#0d2b1f]/30" aria-hidden="true" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0d2b1f]/85 via-[#0d2b1f]/45 to-transparent" aria-hidden="true" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0d2b1f]/35 via-transparent to-[#0d2b1f]/25" aria-hidden="true" />
           <div className="relative mx-auto w-full max-w-[1400px] px-5 lg:px-10">
             <div className="max-w-3xl">
               <p className="inline-flex items-center gap-2 font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)]">
