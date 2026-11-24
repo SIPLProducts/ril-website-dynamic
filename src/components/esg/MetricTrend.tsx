@@ -60,7 +60,7 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
                   <p className={comparison ? "mb-2 break-words text-center text-xs font-semibold leading-snug tabular-nums text-foreground" : "mb-1 text-center text-[11px] font-bold leading-tight text-foreground"}>
                     {p.approximate ? `${p.value}+` : formatTrendValue(trend, p.value)}
                   </p>
-                  <div className={`rounded-t-sm ${comparison ? `mx-auto w-full max-w-20 ${last ? change.direction === "improved" ? "bg-brand-green" : "bg-brand-orange" : "bg-muted-foreground/40"}` : last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
+                  <div className={`rounded-t-sm ${comparison ? `mx-auto w-full max-w-20 ${last ? !environmental && change.direction === "improved" ? "bg-brand-green" : "bg-brand-orange" : "bg-muted-foreground/40"}` : last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
                 </div>
               );
             })}
