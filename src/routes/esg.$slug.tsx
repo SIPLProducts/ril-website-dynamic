@@ -1,3 +1,4 @@
+import * as React from "react";
 import { AutoScrollRail } from "@/components/site/AutoScrollRail";
 import type React from "react";
 import { isHtml, plainText } from "@/lib/strength-style";
@@ -306,9 +307,8 @@ function EsgPage() {
                   byYear.get(y)!.push(r);
                 }
                 const years = [...byYear.keys()].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
-                return years.map((year) => (
-                  <div key={year} className="mt-10">
-                    <h3 className="border-b border-border pb-3 font-display text-2xl font-bold text-brand-orange">{year}</h3>
+                return years.map((year, yi) => (
+                  <ReportYear key={year} year={year} defaultOpen={yi === 0}>
                     <AutoScrollRail className="mt-6">
                       {byYear.get(year)!.map((report) => (
                         <div key={report.title} className="flex flex-col rounded-sm border border-border bg-background p-6 transition-shadow hover:shadow-lg">
@@ -342,7 +342,7 @@ function EsgPage() {
                         </div>
                       ))}
                     </AutoScrollRail>
-                  </div>
+                  </ReportYear>
                 ));
               })()}
             </div>
@@ -449,5 +449,28 @@ function GovernanceCard({ title, details }: { title: string; details?: string | 
         </div>
       )}
     </li>
+  );
+}
+
+
+function ReportYear({ year, defaultOpen, children }: { year: string; defaultOpen: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(defaultOpen);
+  const [hover, setHover] = React.useState(false);
+  const shown = open || hover;
+  return (
+    <div className="mt-10" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
+      <div className="flex items-center justify-between border-b border-border pb-3">
+        <h3 className="font-display text-2xl font-bold text-brand-orange">{year}</h3>
+        <button
+          type="button"
+          onClick={() => setOpen((o) => !o)}
+          aria-expanded={shown}
+          className="rounded-sm border border-border px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-emerald-700 hover:bg-emerald-50"
+        >
+          {open ? "Hide" : "Show"}
+        </button>
+      </div>
+      {shown ? children : <p className="mt-3 text-sm text-muted-foreground">Point at this year or press Show to see its reports.</p>}
+    </div>
   );
 }
