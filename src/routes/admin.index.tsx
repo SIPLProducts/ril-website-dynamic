@@ -271,7 +271,7 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
       let url = d.url;
       if (file) {
         const path = `${d.section_key}/${Date.now()}-${file.name.replace(/[^\w.-]+/g, "_")}`;
-        const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type || "application/pdf" });
+        const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type || (/\.html?$/i.test(file.name) ? "text/html" : "application/pdf") });
         if (error) throw error;
         await saveIrFile({ data: { path } });
         url = STORAGE_PREFIX + path;
@@ -318,7 +318,7 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
           )}
         </FormSection>
         <FormSection title="File">
-          <FileDropzone file={file} onFile={setFile} accept="application/pdf,.pdf,.ppt,.pptx,.xls,.xlsx,.doc,.docx,.mp3,.mp4" hint={d.url && !file ? "A file is already attached — upload a new one to replace it" : "PDF, Office or media files up to 50 MB"} />
+          <FileDropzone file={file} onFile={setFile} accept="application/pdf,.pdf,.ppt,.pptx,.xls,.xlsx,.doc,.docx,.mp3,.mp4,.html,.htm,text/html" hint={d.url && !file ? "A file is already attached — upload a new one to replace it" : "PDF, Office, HTML or media files up to 50 MB"} />
           {!file && (
             <div><Label className="text-xs text-muted-foreground">Or paste a link — a web address, a page on this website (e.g. /#businesses or /investors?cat=financials), or NA for not applicable</Label><Input placeholder="https://… or /#businesses" value={d.url.startsWith(STORAGE_PREFIX) ? "" : d.url} onChange={(e) => set("url", e.target.value)} className="mt-1.5 h-10" /></div>
           )}

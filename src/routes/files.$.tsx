@@ -33,7 +33,7 @@ export const Route = createFileRoute("/files/$")({
           mime = blob.type || mime;
         }
         const ext = path.split(".").pop()?.toLowerCase() ?? "";
-        const byExt: Record<string, string> = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", avif: "image/avif", pdf: "application/pdf", mp4: "video/mp4", webm: "video/webm" };
+        const byExt: Record<string, string> = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", gif: "image/gif", webp: "image/webp", svg: "image/svg+xml", avif: "image/avif", pdf: "application/pdf", mp4: "video/mp4", html: "text/html; charset=utf-8", htm: "text/html; charset=utf-8", webm: "video/webm" };
         if (byExt[ext] && (!mime || mime === "application/octet-stream" || mime === "application/pdf")) mime = byExt[ext];
         const name = (path.split("/").pop() ?? "document").replace(/^\d+-/, "");
         const download = new URL(request.url).searchParams.has("download");
@@ -44,6 +44,8 @@ export const Route = createFileRoute("/files/$")({
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff",
             ...(mime === "image/svg+xml" ? { "Content-Security-Policy": "script-src 'none'" } : {}),
+            // Uploaded HTML runs in an isolated origin so it can never act as this site.
+            ...(/^text\/html/i.test(mime) ? { "Content-Security-Policy": "sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads" } : {}),
           },
         });
       },
