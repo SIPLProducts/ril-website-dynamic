@@ -453,23 +453,15 @@ function GovernanceCard({ title, details }: { title: string; details?: string | 
 
 
 function ReportYear({ year, defaultOpen, children }: { year: string; defaultOpen: boolean; children: React.ReactNode }) {
-  const [open, setOpen] = React.useState(defaultOpen);
+  const [open] = React.useState(defaultOpen);
   const [hover, setHover] = React.useState(false);
   const shown = open || hover;
   return (
     <div className="mt-10" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
       <div className="flex items-center justify-between border-b border-border pb-3">
         <h3 className="font-display text-2xl font-bold text-brand-orange">{year}</h3>
-        <button
-          type="button"
-          onClick={() => setOpen((o) => !o)}
-          aria-expanded={shown}
-          className="rounded-sm border border-border px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-emerald-700 hover:bg-emerald-50"
-        >
-          {open ? "Hide" : "Show"}
-        </button>
       </div>
-      {shown ? children : <p className="mt-3 text-sm text-muted-foreground">Point at this year or press Show to see its reports.</p>}
+      {shown ? children : null}
     </div>
   );
 }
