@@ -101,59 +101,30 @@ function EsgPage() {
       {viewer && <ReportViewer doc={viewer} pdf={settings.pdfViewer} onClose={() => setViewer(null)} />}
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden bg-[#0d2b1f] pb-20 pt-36 text-white lg:pb-28 lg:pt-44">
-          {section.bannerImage && (
-            <>
-              <img src={section.bannerImage} alt="" className="absolute inset-0 h-full w-full object-cover" />
-              <div className="absolute inset-0 bg-[#0d2b1f]/75" aria-hidden="true" />
-            </>
+        <section className="relative isolate flex min-h-[32rem] items-end overflow-hidden bg-[#0d2b1f] pb-16 pt-36 text-white sm:min-h-[36rem] lg:min-h-[42rem] lg:pb-24 lg:pt-44">
+          {(sideImage ?? section.bannerImage) && (
+            <img
+              src={sideImage ?? section.bannerImage ?? undefined}
+              alt={section.slug === "social" ? "Volunteers planting saplings together at a community tree-planting drive in India" : `${section.title} at Ramky Infrastructure`}
+              className="absolute inset-0 -z-10 h-full w-full object-cover object-center"
+              style={{ filter: "saturate(1.05) contrast(1.03)" }}
+            />
           )}
-          <div
-            className="absolute inset-0 opacity-[0.07]"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 30%, #34d399 0, transparent 40%), radial-gradient(circle at 80% 70%, #34d399 0, transparent 40%)",
-            }}
-          />
-          <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_36rem] lg:items-center lg:px-10">
-            <div className="max-w-4xl">
-              <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)]">
-                ESG · {section.eyebrow}
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#0d2b1f]/90 via-[#0d2b1f]/60 to-[#0d2b1f]/10" aria-hidden="true" />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-t from-[#0d2b1f]/80 via-transparent to-[#0d2b1f]/30" aria-hidden="true" />
+          <div className="relative mx-auto w-full max-w-[1400px] px-5 lg:px-10">
+            <div className="max-w-3xl">
+              <p className="inline-flex items-center gap-2 font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)]">
+                <Icon className="size-4" aria-hidden="true" /> ESG · {section.eyebrow}
               </p>
-              <h1 className="mt-5 text-4xl font-bold leading-tight sm:text-5xl lg:text-7xl [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">
+              <h1 className="mt-5 text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl xl:text-7xl [text-shadow:0_2px_12px_rgba(0,0,0,0.5)]">
                 {section.title}
               </h1>
+              <div className="mt-6 h-1 w-16 rounded-full bg-brand-orange" aria-hidden="true" />
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/95 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)] sm:text-xl">
                 {section.hero}
               </p>
             </div>
-            {sideImage ? (
-              <div className="relative w-full lg:-my-16 lg:-mr-16">
-                <img
-                  src={sideImage}
-                  alt={section.slug === "social" ? "Volunteers planting saplings together at a community tree-planting drive in India" : `${section.title} at Ramky Infrastructure`}
-                  width={1200}
-                  height={912}
-                  className="aspect-[4/3] w-full object-cover"
-                  style={{
-                    filter: "brightness(1.18) saturate(1.12) contrast(1.04)",
-                    maskImage:
-                      "radial-gradient(ellipse 88% 88% at 62% 50%, #000 62%, transparent 96%)",
-                    WebkitMaskImage:
-                      "radial-gradient(ellipse 88% 88% at 62% 50%, #000 62%, transparent 96%)",
-                  }}
-                />
-                <div
-                  className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-[#0d2b1f] to-transparent"
-                  aria-hidden="true"
-                />
-              </div>
-            ) : (
-              <div className="flex justify-start lg:justify-end">
-                <Icon className="size-28 text-emerald-400" strokeWidth={1} aria-hidden="true" />
-              </div>
-            )}
           </div>
         </section>
 
