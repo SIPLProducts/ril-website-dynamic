@@ -2,6 +2,8 @@ export interface EsgMetric {
   id?: string | undefined;
   value: string;
   label: string;
+  /** Optional downloadable PDF (Frameworks cards). */
+  url?: string | null | undefined;
 }
 
 export interface EsgAccordion {

@@ -53,7 +53,7 @@ export const getEsgPage = createServerFn({ method: "GET" })
       eyebrow: page.eyebrow,
       hero: page.hero,
       metricsPeriod: page.metrics_period || undefined,
-      metrics: metrics.filter((m) => !m.group_title).map((m) => ({ id: m.id, value: m.value, label: m.title })),
+      metrics: metrics.filter((m) => !m.group_title).map((m) => ({ id: m.id, value: m.value, label: m.title, url: data.slug === "esg-reporting" ? resolve(m.url) : null })),
       metricGroups: groups.length ? groups : undefined,
       governance: page.highlight_value || govItems.length
         ? { highlight: { title: page.highlight_title, value: page.highlight_value, label: page.highlight_label }, items: govItems, details: govDetails }

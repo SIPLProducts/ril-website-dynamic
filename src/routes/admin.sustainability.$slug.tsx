@@ -58,6 +58,7 @@ function kindInfo(slug: string, kind: Kind) {
   if (slug === "policies" && kind === "accordion") {
     return { heading: "Policies", hint: "Expandable policy summaries shown on the Policies page", noun: "policy" };
   }
+  if (slug === "esg-reporting" && kind === "metric") return { heading: "Frameworks", hint: "Framework cards (2026, BRSR, GRI, SASB) — edit a card to upload a PDF visitors can download", noun: "framework" };
   return KIND_INFO[kind];
 }
 
@@ -317,6 +318,7 @@ function FileLink({ url }: { url: string }) {
 function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder, onClose, onSaved }: { slug: string; kind: Kind; grouped: boolean; groups: string[]; initialTitle: string; row: Item | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const info = kindInfo(slug, kind);
   const hasDetailImage = (slug === "environmental" || slug === "social") && kind === "accordion";
+  const hasPdf = kind === "report" || (slug === "esg-reporting" && kind === "metric");
   const [imageUrl, setImageUrl] = useState(row?.url ?? null);
   const imagePreview = usePreview(hasDetailImage ? imageUrl : null);
   const [f, setF] = useState({ title: row?.title ?? initialTitle, value: row?.value ?? "", body: row?.body ?? "", year: row?.year ?? "", group_title: row?.group_title ?? (groups[0] ?? ""), published: row?.published ?? true });
@@ -340,16 +342,16 @@ function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder,
       const imageError = imageFileError(file, false);
       if (imageError) e.file = imageError;
     }
-    if (kind === "report" && mode === "file" && file && (file.type !== "application/pdf" || file.size > MAX_PDF)) e.file = "Upload a PDF up to 50 MB";
-    if (kind === "report" && mode === "link" && link && !/^https?:\/\//i.test(link.trim())) e.file = "Link must start with http:// or https://";
+    if (hasPdf && mode === "file" && file && (file.type !== "application/pdf" || file.size > MAX_PDF)) e.file = "Upload a PDF up to 50 MB";
+    if (hasPdf && mode === "link" && link && !/^https?:\/\//i.test(link.trim())) e.file = "Link must start with http:// or https://";
     setErrs(e);
     if (Object.keys(e).length) return;
     setSaving(true);
     try {
       let url = row?.url ?? null;
       if (hasDetailImage) url = file ? await upload(file, `${slug}/details`) : imageUrl;
-      if (kind === "report") {
-        if (mode === "file" && file) url = await upload(file, "reports");
+      if (hasPdf) {
+        if (mode === "file" && file) url = await upload(file, kind === "report" ? "reports" : "frameworks");
         else if (mode === "link") url = link.trim() || null;
       }
       const payload = { title: f.title.trim(), value: f.value.trim(), body: f.body.trim(), year: f.year.trim(), group_title: grouped ? f.group_title.trim() || null : null, published: f.published, url };
@@ -378,8 +380,8 @@ function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder,
         )}
         <label className="flex items-center gap-3 text-sm"><Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} /> Live on website</label>
       </FormSection>
-      {kind === "report" && (
-        <FormSection title="Report file (optional)">
+      {hasPdf && (
+        <FormSection title={kind === "report" ? "Report file (optional)" : "Framework PDF (optional — adds a Download button on the card)"}>
           <div className="flex gap-2">
             <Button type="button" size="sm" variant={mode === "file" ? "default" : "outline"} onClick={() => setMode("file")}>Upload PDF</Button>
             <Button type="button" size="sm" variant={mode === "link" ? "default" : "outline"} onClick={() => setMode("link")}>External link</Button>
@@ -388,7 +390,8 @@ function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder,
             ? <FileDropzone file={file} onFile={(x) => { setFile(x); setErrs({ ...errs, file: "" }); }} accept="application/pdf" hint={`PDF up to 50 MB${row?.url?.startsWith(STORAGE_PREFIX) ? " — leave empty to keep current file" : ""}`} />
             : <Input value={link} placeholder="https://…" onChange={(e) => setLink(e.target.value)} />}
           <FieldError msg={errs.file || undefined} />
-          <p className="text-xs text-muted-foreground">Without a file, the website shows "Coming soon" on this report.</p>
+          {(row?.url || link) && <Button type="button" variant="outline" size="sm" onClick={() => { setLink(""); setFile(null); setMode("link"); }}><Trash2 className="size-4" /> Remove PDF</Button>}
+          <p className="text-xs text-muted-foreground">{kind === "report" ? 'Without a file, the website shows "Coming soon" on this report.' : "Without a file, the card shows no Download button."}</p>
         </FormSection>
       )}
       {hasDetailImage && (

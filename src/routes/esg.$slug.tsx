@@ -192,6 +192,11 @@ function EsgPage() {
                       <p className={`mt-3 text-sm leading-relaxed text-muted-foreground ${section.slug === "environmental" ? "min-h-16 font-medium" : ""}`}>{metric.label}</p>
                     )}
                     {trend && <MetricTrendToggle trend={trend} environmental />}
+                    {section.slug === "esg-reporting" && metric.url && (
+                      <a href={metric.url.startsWith("/files/") ? `${metric.url}${metric.url.includes("?") ? "&" : "?"}download` : metric.url} download target={metric.url.startsWith("/") ? undefined : "_blank"} rel="noopener noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-sm bg-brand-orange px-4 py-2.5 font-display text-xs font-semibold uppercase tracking-[0.1em] text-white transition-opacity hover:opacity-90">
+                        <Download className="size-4" /> Download PDF
+                      </a>
+                    )}
                   </div>
                 );
               })}
