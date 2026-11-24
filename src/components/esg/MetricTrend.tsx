@@ -9,7 +9,7 @@ const DIR_STYLE = {
   unavailable: "text-muted-foreground bg-muted",
 } as const;
 
-export function MetricTrendToggle({ trend, environmental = false, social = false }: { trend: MetricTrend; environmental?: boolean; social?: boolean }) {
+export function MetricTrendToggle({ trend, environmental = false, social = false, compact = false }: { trend: MetricTrend; environmental?: boolean; social?: boolean; compact?: boolean }) {
   const comparison = environmental || social;
   const chartType = environmental ? "bar" : trend.chartType ?? "bar";
   const change = computeChange(trend);
@@ -34,13 +34,13 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
   const barColor = change.direction === "worsened" ? "bg-destructive/80" : change.direction === "improved" ? "bg-emerald-600" : "bg-muted-foreground/60";
 
   return (
-    <div className={comparison ? "mt-5 border-t border-border pt-5" : "mt-4 border-t border-border pt-3"}>
+    <div className={compact ? "mt-3 border-t border-border pt-3" : comparison ? "mt-5 border-t border-border pt-5" : "mt-4 border-t border-border pt-3"}>
       <div className="flex min-h-8 items-center justify-between gap-2">
         <p className={`min-w-0 font-display text-xs font-bold uppercase leading-relaxed ${comparison ? "text-brand-orange" : "text-brand-green"}`}>{comparison ? "Year-on-year comparison" : trend.title?.trim() || "Trend"}</p>
       </div>
       {(
         <div data-testid="metric-trend" className="mt-4">
-          {chartType === "line" ? <LineChart trend={trend} max={max} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year${environmental ? ", bars with overlaid trend line" : ""}`} className="relative h-44 border-b border-l border-border pl-2">
+          {chartType === "line" ? <LineChart trend={trend} max={max} compact={compact} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year${environmental ? ", bars with overlaid trend line" : ""}`} className={`relative ${compact ? "h-32" : "h-44"} border-b border-l border-border pl-2`}>
             <div className="relative flex h-full items-end gap-3">
             {trend.years.map((p, i) => {
               const y = p.year;
@@ -106,7 +106,7 @@ function BarTrendOverlay({ trend, max }: { trend: MetricTrend; max: number }) {
 }
 
 /** Line variant: same labels and "not disclosed" handling as the bars; missing years break the line. */
-function LineChart({ trend, max, color }: { trend: MetricTrend; max: number; color: string }) {
+function LineChart({ trend, max, color, compact = false }: { trend: MetricTrend; max: number; color: string; compact?: boolean }) {
   const n = trend.years.length;
   const xs = (i: number) => ((i + 0.5) / n) * 100;
   const ys = (v: number) => 100 - Math.max(0, Math.min(1, v / max)) * 78 - 8;
@@ -118,7 +118,7 @@ function LineChart({ trend, max, color }: { trend: MetricTrend; max: number; col
   });
   if (cur.length) segs.push(cur);
   return (
-    <div data-testid="metric-trend-line" role="img" aria-label={`${trend.label} by financial year`} className="relative h-44 border-b border-l border-border text-muted-foreground">
+    <div data-testid="metric-trend-line" role="img" aria-label={`${trend.label} by financial year`} className={`relative ${compact ? "h-32" : "h-44"} border-b border-l border-border text-muted-foreground`}>
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden="true">
         {segs.map((sg, i) => <polyline key={i} points={sg.join(" ")} fill="none" stroke={color} strokeWidth={2} vectorEffect="non-scaling-stroke" />)}
       </svg>

@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Compact all three Social KPI card rails and show metric name/value on hover or keyboard focus while preserving figures and graphs — verified desktop, tablet and mobile
 - [x] Show confirmed employee counts for Social Inclusion instead of percentages; mark unsupported absolute figures unavailable
 - [x] Provide a clearly identified Diversity & Inclusion content-editing entry in Social admin
 - [x] Verify Social Inclusion public display on desktop, tablet and mobile
