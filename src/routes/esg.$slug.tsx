@@ -14,6 +14,7 @@ import { PdfCanvasViewer } from "@/components/site/PdfCanvasViewer";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import { computeChange, findTrendFor } from "@/lib/esg-metric-trends";
+import { inclusionPresentation } from "@/lib/esg-inclusion";
 import { useSiteSettings } from "@/lib/site-settings.functions";
 import { esgLabel, orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
 import { publishedFileUrl } from "@/lib/file-url";
@@ -230,14 +231,16 @@ function EsgPage() {
               </h2>
               <div className={"mt-5 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}>
                 {group.metrics.map((metric) => {
-                  const trend = section.slug === "environmental" || section.slug === "social" ? findTrendFor(metric, settings.esgTrends) : undefined;
+                  const inclusion = section.slug === "social" && group.title === "Inclusion & Responsible Business" ? inclusionPresentation(metric, settings.esgTrends) : undefined;
+                  const trend = inclusion ? inclusion.trend : section.slug === "environmental" || section.slug === "social" ? findTrendFor(metric, settings.esgTrends) : undefined;
+                  const value = inclusion?.value ?? metric.value;
                   const improved = trend && computeChange(trend).direction === "improved";
                   return (
                   <div
                     key={metric.label}
                     className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
-                    <p className={`font-display text-4xl font-bold ${section.slug === "environmental" ? improved ? "text-brand-green" : "text-brand-orange" : "text-emerald-700"}`}>{metric.value}</p>
+                    <p className={`font-display ${value === "Not Disclosed" ? "text-xl" : "text-4xl"} font-bold ${section.slug === "environmental" ? improved ? "text-brand-green" : "text-brand-orange" : "text-emerald-700"}`}>{value}</p>
                     <p className={`mt-3 text-sm leading-relaxed text-muted-foreground ${section.slug === "environmental" ? "min-h-16 font-medium" : ""}`}>{metric.label}</p>
                     {trend && <MetricTrendToggle trend={trend} environmental={section.slug === "environmental"} social={section.slug === "social"} />}
                   </div>

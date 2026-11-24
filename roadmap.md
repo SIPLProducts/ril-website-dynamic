@@ -1,4 +1,8 @@
 # Roadmap
+- [x] Show confirmed employee counts for Social Inclusion instead of percentages; mark unsupported absolute figures unavailable
+- [x] Provide a clearly identified Diversity & Inclusion content-editing entry in Social admin
+- [x] Verify Social Inclusion public display on desktop, tablet and mobile
+- [ ] Verify Diversity & Inclusion admin saving — requires the user to sign in to admin in preview
 - [x] Restore Environmental trend lines directly on the existing comparison bars without a separate view
 - [x] Update Social photo, year-wise comparison colours, and hide graph summary/source while retaining change figures
 - [x] Enable Social detail-image upload, replace, remove and public display

@@ -187,12 +187,14 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
     return sign === "negative" ? "text-destructive" : sign === "positive" ? "text-brand-green" : "text-foreground";
   };
   const [editing, setEditing] = useState<Item | "new" | null>(null);
+  const [newTitle, setNewTitle] = useState("");
   const qk = ["admin-esg-items", slug, kind];
   const { data: rows = [] } = useQuery({ queryKey: qk, queryFn: async () => {
     const { data, error } = await supabase.from("esg_items").select("*").eq("page_slug", slug).eq("kind", kind).order("sort_order");
     if (error) throw error;
     return data as Item[];
   } });
+  const diversity = slug === "social" && kind === "accordion" ? rows.find((r) => plainText(r.title).trim().toLowerCase() === "diversity & inclusion") : undefined;
   const refresh = () => qc.invalidateQueries({ queryKey: qk });
   const { data: allGroups = [] } = useQuery({ queryKey: ["admin-esg-groups"], enabled: grouped, queryFn: async () => {
     const { data, error } = await supabase.from("esg_items").select("group_title").eq("kind", "metric").not("group_title", "is", null);
@@ -237,8 +239,17 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
           <h2 className="font-display text-xl font-bold">{info.heading}</h2>
           <p className="text-sm text-muted-foreground">{rows.length} · {info.hint}</p>
         </div>
-        <Button onClick={() => setEditing("new")} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add {info.noun}</Button>
+        <Button onClick={() => { setNewTitle(""); setEditing("new"); }} className="neu-btn-gradient border-0"><Plus className="size-4" /> Add {info.noun}</Button>
       </div>
+      {slug === "social" && kind === "accordion" && (
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border p-5">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-display text-lg font-semibold">Diversity & Inclusion</h3>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{diversity ? plainText(diversity.body) : "No content added yet."}</p>
+          </div>
+          <Button variant="outline" onClick={() => { setNewTitle("Diversity & Inclusion"); setEditing(diversity ?? "new"); }}><Pencil className="size-4" /> {diversity ? "Edit Diversity & Inclusion" : "Add Diversity & Inclusion"}</Button>
+        </div>
+      )}
       <table className="w-full text-sm">
         <thead className="sticky top-0 z-10 bg-surface text-left text-xs uppercase tracking-wider text-muted-foreground">
           <tr><th className="px-4 py-3">Order</th>{cols.map((c) => <th key={c} className="px-4 py-3">{c}</th>)}<th className="px-4 py-3">Live</th><th className="px-4 py-3 text-right">Actions</th></tr>
@@ -278,7 +289,7 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
           {!rows.length && <tr><td colSpan={cols.length + 3} className="px-4 py-10 text-center text-muted-foreground">Nothing added yet.</td></tr>}
         </tbody>
       </table>
-      {editing && <ItemDialog slug={slug} kind={kind} grouped={grouped} groups={groups} row={editing === "new" ? null : editing} nextOrder={(rows.at(-1)?.sort_order ?? 0) + 1} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh(); }} />}
+      {editing && <ItemDialog slug={slug} kind={kind} grouped={grouped} groups={groups} initialTitle={newTitle} row={editing === "new" ? null : editing} nextOrder={(rows.at(-1)?.sort_order ?? 0) + 1} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); refresh(); }} />}
     </section>
   );
 }
@@ -288,12 +299,12 @@ function FileLink({ url }: { url: string }) {
   return href ? <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-blue hover:underline">Open <ExternalLink className="size-3.5" /></a> : <span className="text-muted-foreground">…</span>;
 }
 
-function ItemDialog({ slug, kind, grouped, groups, row, nextOrder, onClose, onSaved }: { slug: string; kind: Kind; grouped: boolean; groups: string[]; row: Item | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
+function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder, onClose, onSaved }: { slug: string; kind: Kind; grouped: boolean; groups: string[]; initialTitle: string; row: Item | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const info = kindInfo(slug, kind);
   const hasDetailImage = (slug === "environmental" || slug === "social") && kind === "accordion";
   const [imageUrl, setImageUrl] = useState(row?.url ?? null);
   const imagePreview = usePreview(hasDetailImage ? imageUrl : null);
-  const [f, setF] = useState({ title: row?.title ?? "", value: row?.value ?? "", body: row?.body ?? "", year: row?.year ?? "", group_title: row?.group_title ?? (groups[0] ?? ""), published: row?.published ?? true });
+  const [f, setF] = useState({ title: row?.title ?? initialTitle, value: row?.value ?? "", body: row?.body ?? "", year: row?.year ?? "", group_title: row?.group_title ?? (groups[0] ?? ""), published: row?.published ?? true });
   const isLink = !!row?.url && !row.url.startsWith(STORAGE_PREFIX);
   const [mode, setMode] = useState<"file" | "link">(isLink ? "link" : "file");
   const [link, setLink] = useState(isLink ? row?.url ?? "" : "");
