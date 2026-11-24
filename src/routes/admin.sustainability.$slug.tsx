@@ -1,5 +1,6 @@
 import { plainText } from "@/lib/strength-style";
 import { RichField } from "@/components/admin/RichField";
+import { EsgExcelImport } from "@/components/admin/EsgExcelImport";
 import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,6 +28,12 @@ export const Route = createFileRoute("/admin/sustainability/$slug")({
     const staff = await getStaff();
     if (!staff) throw redirect({ to: "/admin/login" });
     return { staff };
+  },
+  head: ({ params }) => {
+    const label = params.slug === "board-committees" ? "Board Committees" : ESG_SECTIONS.find((s) => s.slug === params.slug)?.title ?? "Sustainability";
+    const title = `${label} — Admin | Ramky Infrastructure`;
+    const description = `Manage ${label} content at Ramky Infrastructure.`;
+    return { meta: [{ title }, { name: "description", content: description }, { property: "og:title", content: title }, { property: "og:description", content: description }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] };
   },
   component: Page,
   notFoundComponent: () => <div className="p-10">Page not found.</div>,
@@ -88,6 +95,7 @@ function Page() {
     <AdminShell staff={staff} active={{ kind: "module", module: "sustainability", section: slug }} crumbs={["Sustainability", label]}>
       <div key={slug} className="space-y-6">
         <PageEditor slug={slug} label={label} />
+        {(slug === "environmental" || slug === "social") && <EsgExcelImport page={slug} />}
         {kinds.map((k) => <ItemList key={k} slug={slug} kind={k} grouped={k === "metric"} />)}
       </div>
     </AdminShell>

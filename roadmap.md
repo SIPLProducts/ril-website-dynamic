@@ -1,4 +1,6 @@
 # Roadmap
+- [x] Add Environmental and Social Excel templates, validated upload previews and saved graph updates
+- [ ] Verify Excel upload/save in a signed-in admin session — waiting for an available admin session
 - [x] History & Milestones admin
 - [x] Subsidiaries admin
 - [x] Management Systems admin
