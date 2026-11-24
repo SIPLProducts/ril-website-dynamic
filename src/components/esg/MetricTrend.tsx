@@ -1,7 +1,4 @@
 import { computeChange, formatTrendValue, type MetricTrend } from "@/lib/esg-metric-trends";
-import { useState } from "react";
-import { BarChart3, ChartLine } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const DIR_STYLE = {
   improved: "text-emerald-700 bg-emerald-700/10",
@@ -12,8 +9,7 @@ const DIR_STYLE = {
 } as const;
 
 export function MetricTrendToggle({ trend, environmental = false }: { trend: MetricTrend; environmental?: boolean }) {
-  const [chartOverride, setChartOverride] = useState<"bar" | "line" | null>(null);
-  const chartType = chartOverride ?? trend.chartType ?? "bar";
+  const chartType = environmental ? "bar" : trend.chartType ?? "bar";
   const change = computeChange(trend);
   const values = trend.years.map((p) => p.value).filter((v): v is number => v !== null);
   const max = trend.percent ? 100 : Math.max(...values, 0) || 1;
@@ -23,14 +19,12 @@ export function MetricTrendToggle({ trend, environmental = false }: { trend: Met
     <div className="mt-4 border-t border-border pt-3">
       <div className="flex min-h-8 items-center justify-between gap-2">
         <p className={`min-w-0 font-display text-xs font-bold uppercase tracking-[0.12em] ${environmental ? "text-brand-orange" : "text-brand-green"}`}>{trend.title?.trim() || "Trend"}</p>
-        {environmental && <div className="flex shrink-0 gap-1" role="group" aria-label={`${trend.label} chart type`}>
-          <Button size="icon" variant="ghost" className="size-8" title="Bar chart" aria-label={`${trend.label}: Bar chart`} aria-pressed={chartType === "bar"} onClick={() => setChartOverride("bar")}><BarChart3 /></Button>
-          <Button size="icon" variant="ghost" className="size-8" title="Line chart" aria-label={`${trend.label}: Line chart`} aria-pressed={chartType === "line"} onClick={() => setChartOverride("line")}><ChartLine /></Button>
-        </div>}
       </div>
       {(
         <div data-testid="metric-trend" className="mt-4">
-          {chartType === "line" ? <LineChart trend={trend} max={max} color={environmental ? "var(--brand-orange)" : change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year`} className="flex h-44 items-end gap-3 border-b border-l border-border pl-2">
+          {chartType === "line" ? <LineChart trend={trend} max={max} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year${environmental ? ", bars with overlaid trend line" : ""}`} className="relative h-44 border-b border-l border-border pl-2">
+            <div className="relative flex h-full items-end gap-3">
+            {environmental && <BarTrendOverlay trend={trend} max={max} />}
             {trend.years.map((p, i) => {
               const y = p.year;
               const last = i === trend.years.length - 1;
@@ -53,6 +47,7 @@ export function MetricTrendToggle({ trend, environmental = false }: { trend: Met
                 </div>
               );
             })}
+            </div>
           </div>}
           <div className="mt-1 flex gap-3 pl-2">
             {trend.years.map(({ year: y }) => (
@@ -72,6 +67,24 @@ export function MetricTrendToggle({ trend, environmental = false }: { trend: Met
       )}
     </div>
   );
+}
+
+/** Connect bar tops on the same plot; undisclosed years never become zero or get bridged. */
+function BarTrendOverlay({ trend, max }: { trend: MetricTrend; max: number }) {
+  const n = trend.years.length;
+  if (!n) return null;
+  const top = (value: number) => 100 - Math.max((value / max) * 100, value === 0 ? 0 : 3) * 0.78;
+  const center = (i: number) => `calc(${((i + 0.5) / n) * 100}% + ${((i + 0.5) / n - 0.5) * 12}px)`;
+  return <svg data-testid="metric-trend-overlay" className="pointer-events-none absolute inset-0 z-10 h-full w-full overflow-visible text-brand-green" aria-hidden="true">
+    {trend.years.map((point, i) => {
+      if (point.value === null) return null;
+      const next = trend.years[i + 1];
+      return <g key={point.year}>
+        {next && next.value !== null && <line x1={center(i)} y1={`${top(point.value)}%`} x2={center(i + 1)} y2={`${top(next.value)}%`} stroke="currentColor" strokeWidth={2.5} />}
+        <circle cx={center(i)} cy={`${top(point.value)}%`} r={4} className="fill-background" stroke="currentColor" strokeWidth={2} />
+      </g>;
+    })}
+  </svg>;
 }
 
 /** Line variant: same labels and "not disclosed" handling as the bars; missing years break the line. */

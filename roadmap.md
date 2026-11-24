@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Overlay trend lines on Environmental bars and remove the separate chart-view controls — verified on desktop and mobile
 - [x] Add optional per-content image uploads to Environmental In Detail sections
 - [ ] Verify Environmental detail image upload/save/remove as staff — requires the user to sign in to admin in preview
 - [x] Update Environment charts to orange/white, add a line option, hide details and color signed percentages
