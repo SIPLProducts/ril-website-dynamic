@@ -260,8 +260,9 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
     e.preventDefault();
     const errs: Partial<Record<"title" | "doc_date" | "file", string>> = {};
     if (!d.doc_date) errs.doc_date = "Please choose a date";
+    const isPageLink = d.url.trim().startsWith("/") || /^na$/i.test(d.url.trim());
     if (!file && !d.url.trim()) errs.file = "Upload a file or paste a link";
-    else if (!file && !d.url.startsWith(STORAGE_PREFIX) && !/^https?:\/\//.test(d.url)) errs.file = "Link must start with https://";
+    else if (!file && !isPageLink && !d.url.startsWith(STORAGE_PREFIX) && !/^https?:\/\//.test(d.url)) errs.file = "Link must start with https://, or / for a page on this website";
     if (file && file.size > 50 * 1048576) errs.file = "File must be 50 MB or smaller";
     setErrors(errs);
     if (Object.keys(errs).length) return;
@@ -319,7 +320,7 @@ function DocDialog({ draft, sectionLabel, layout, onClose, onSaved }: { draft: D
         <FormSection title="File">
           <FileDropzone file={file} onFile={setFile} accept="application/pdf,.pdf,.ppt,.pptx,.xls,.xlsx,.doc,.docx,.mp3,.mp4" hint={d.url && !file ? "A file is already attached — upload a new one to replace it" : "PDF, Office or media files up to 50 MB"} />
           {!file && (
-            <div><Label className="text-xs text-muted-foreground">Or paste an external link</Label><Input placeholder="https://…" value={d.url.startsWith(STORAGE_PREFIX) ? "" : d.url} onChange={(e) => set("url", e.target.value)} className="mt-1.5 h-10" /></div>
+            <div><Label className="text-xs text-muted-foreground">Or paste a link — a web address, a page on this website (e.g. /#businesses or /investors?cat=financials), or NA for not applicable</Label><Input placeholder="https://… or /#businesses" value={d.url.startsWith(STORAGE_PREFIX) ? "" : d.url} onChange={(e) => set("url", e.target.value)} className="mt-1.5 h-10" /></div>
           )}
           <FieldError msg={errors.file} />
           <label className="flex cursor-pointer items-center justify-between gap-4 rounded-lg border border-border p-4">

@@ -276,6 +276,13 @@ function DocList({ docs, onView, detailed }: { docs: IrDocument[]; onView: (d: I
                   Open <ArrowRight className="size-3.5" />
                 </a>
               );
+              if (!d.url || /^na$/i.test(d.url.trim())) return d.url ? <span className="text-xs font-semibold text-muted-foreground">Not applicable</span> : null;
+              const internal = internalPath(d.url);
+              if (internal) return (
+                <a href={internal} className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
+                  Open <ArrowRight className="size-3.5" />
+                </a>
+              );
               const t = linkTarget(d.title);
               return t ? (
                 <Link to="/investors" search={{ cat: t[0], sub: t[1] }} className="inline-flex items-center gap-1.5 rounded-sm bg-brand-blue px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90">
@@ -303,6 +310,13 @@ const LINKS: [RegExp, string, string][] = [
   [/familiari[sz]ation|independent director/i, "corporate-governance", "board-and-committees"],
   [/details of business/i, "financials", "quarterly-results"],
 ];
+/** Admin-entered page links such as "/#businesses" or "/investors?cat=…" open on this site's own address. */
+function internalPath(url: string) {
+  const u = url.trim();
+  if (u.startsWith("/") && !u.startsWith("//") && !u.startsWith("/files/")) return u;
+  const m = u.match(/^https?:\/\/(?:38\.31\.132\.10|10\.200\.1\.8|ril\.siplproducts\.com)(\/[^\s]*)?$/i);
+  return m ? (m[1] || "/") : null;
+}
 function linkTarget(title: string) {
   const m = LINKS.find(([re]) => re.test(title));
   return m ? [m[1], m[2]] as const : null;
