@@ -63,7 +63,7 @@ export function EsgRatingEditor() {
         if (error) throw error;
         pdf = STORAGE_PREFIX + path;
       }
-      const value = { ...f, pdf, ratings: f.ratings.filter((r) => r.year.trim() && r.score.trim()) };
+      const value = { ...f, drivers: [], pdf, ratings: f.ratings.filter((r) => r.year.trim() && r.score.trim()) };
       const { error } = await supabase.from("site_settings").upsert({ key: "esg_rating", value: value as never });
       if (error) throw error;
       setFile(null);
@@ -116,10 +116,6 @@ export function EsgRatingEditor() {
           ))}
         </div>
         <div><Label>Synopsis</Label><Textarea rows={5} value={f.synopsis} onChange={(e) => set("synopsis", e.target.value)} /></div>
-        {f.drivers.map((d, i) => (
-          <div key={d.pillar}><Label>{d.pillar} — key drivers (one per line)</Label>
-            <Textarea rows={4} value={d.points.join("\n")} onChange={(e) => set("drivers", upd(f.drivers, i, { points: e.target.value.split("\n") }))} /></div>
-        ))}
         <div className="flex justify-end"><Button onClick={() => void save()} disabled={busy}><Save className="size-4" /> Save</Button></div>
       </div>
     </section>

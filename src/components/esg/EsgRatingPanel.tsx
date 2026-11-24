@@ -1,4 +1,4 @@
-import { Download, FileText, Leaf, Scale, Users } from "lucide-react";
+import { FileText, Leaf, Scale, Users } from "lucide-react";
 import nseLogo from "@/assets/nse-sustainability-logo.png.asset.json";
 import { RATING_CATEGORIES, type EsgRating } from "@/lib/esg-rating";
 import { publishedFileUrl } from "@/lib/file-url";
@@ -14,7 +14,6 @@ export function EsgRatingPanel({ rating, onOpen }: { rating: EsgRating | null; o
   const latest = rating.ratings[0];
   const prev = rating.ratings[1];
   const diff = latest && prev ? Number(latest.score) - Number(prev.score) : NaN;
-  const dl = pdf ? (pdf.startsWith("/files/") ? `${pdf}?download` : pdf) : null;
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-14 lg:px-10 lg:py-20">
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
@@ -44,7 +43,6 @@ export function EsgRatingPanel({ rating, onOpen }: { rating: EsgRating | null; o
           {pdf && (
             <div className="mt-6 flex flex-wrap gap-2">
               <button type="button" onClick={() => onOpen({ title: "NSE ESG Rating Report", url: pdf })} className="inline-flex items-center gap-2 rounded-sm bg-brand-orange px-4 py-2 text-sm font-semibold text-primary-foreground"><FileText className="size-4" /> Explore</button>
-              <a href={dl!} download className="inline-flex items-center gap-2 rounded-sm border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-surface"><Download className="size-4" /> Download PDF</a>
             </div>
           )}
         </div>
@@ -70,18 +68,6 @@ export function EsgRatingPanel({ rating, onOpen }: { rating: EsgRating | null; o
             <div className="mt-6">
               <h2 className="font-display text-xl font-semibold">Synopsis</h2>
               <p className="mt-2 leading-relaxed text-muted-foreground">{rating.synopsis}</p>
-            </div>
-          )}
-          {rating.drivers.length > 0 && (
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
-              {rating.drivers.map((d) => (
-                <div key={d.pillar}>
-                  <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-brand-green">{d.pillar} — key drivers</h3>
-                  <ul className="mt-2 space-y-1.5 text-sm text-muted-foreground">
-                    {d.points.map((p) => <li key={p} className="flex gap-2"><span className="mt-2 size-1.5 shrink-0 rounded-full bg-brand-orange" />{p}</li>)}
-                  </ul>
-                </div>
-              ))}
             </div>
           )}
         </div>

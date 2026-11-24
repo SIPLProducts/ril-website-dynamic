@@ -262,7 +262,7 @@ export const ESG_SECTIONS: EsgSection[] = [
     slug: "esg-rating",
     title: "ESG Rating",
     eyebrow: "Independent Assessment",
-    hero: "Our ESG performance as independently rated by NSE Sustainability Ratings & Analytics — year-wise ratings, rating category and the key drivers behind each pillar score.",
+    hero: "Our ESG performance as independently rated by NSE Sustainability Ratings & Analytics — year-wise ratings and rating category.",
     metrics: [],
     accordions: [],
   },
