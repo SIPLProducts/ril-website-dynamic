@@ -1,3 +1,5 @@
+import { AutoScrollRail } from "@/components/site/AutoScrollRail";
+import type React from "react";
 import { isHtml, plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
 import { SustainabilityContactButton } from "@/components/esg/SustainabilityContact";
@@ -84,6 +86,11 @@ const REPORTING_METRIC_ICONS = {
   SASB: BarChart3,
 } as const;
 
+function MetricRow({ social, children }: { social: boolean; children: React.ReactNode }) {
+  if (social) return <div className="mt-8 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4">{children}</div>;
+  return <AutoScrollRail className="mt-8">{children}</AutoScrollRail>;
+}
+
 function EsgPage() {
   const section = Route.useLoaderData();
   const Icon = ICONS[section.slug as keyof typeof ICONS] ?? Leaf;
@@ -160,9 +167,7 @@ function EsgPage() {
             )}
           </p>
           {section.metrics.length > 0 && (
-            <div
-              className={section.slug === "social" ? "mt-8 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4" : "mt-8 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}
-            >
+            <MetricRow social={section.slug === "social"}>
               {section.metrics.map((metric) => {
                 if (section.slug === "social") return <SocialKpiCard key={metric.label} label={metric.label} value={metric.value} trend={findTrendFor(metric, settings.esgTrends)} />;
                 const trend = section.slug === "environmental" ? findTrendFor(metric, settings.esgTrends) : undefined;
@@ -200,7 +205,7 @@ function EsgPage() {
                   </div>
                 );
               })}
-            </div>
+            </MetricRow>
           )}
           {section.metricGroups?.map((group) => (
             <div key={group.title} className="mt-10">
@@ -304,7 +309,7 @@ function EsgPage() {
                 return years.map((year) => (
                   <div key={year} className="mt-10">
                     <h3 className="border-b border-border pb-3 font-display text-2xl font-bold text-brand-orange">{year}</h3>
-                    <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                    <AutoScrollRail className="mt-6">
                       {byYear.get(year)!.map((report) => (
                         <div key={report.title} className="flex flex-col rounded-sm border border-border bg-background p-6 transition-shadow hover:shadow-lg">
                           <FileText className="size-8 text-emerald-700" strokeWidth={1.5} aria-hidden="true" />
@@ -336,7 +341,7 @@ function EsgPage() {
                           )}
                         </div>
                       ))}
-                    </div>
+                    </AutoScrollRail>
                   </div>
                 ));
               })()}
