@@ -89,7 +89,7 @@ export function EsgExcelImport({ page }: { page: GraphPage }) {
         </div>
         <p className="mt-2 text-xs text-muted-foreground">Saving replaces the years for these graphs only. Other graphs and the other Sustainability page stay unchanged. Review summaries when figures change.</p>
         <div className="mt-4 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {preview.map((m) => <div key={m.metricId} className="min-w-0"><h3 className="font-display text-sm font-semibold">{m.label}</h3><MetricTrendToggle trend={m} /></div>)}
+          {preview.map((m) => <div key={m.metricId} className="min-w-0"><h3 className="font-display text-sm font-semibold">{m.label}</h3><MetricTrendToggle trend={m} environmental={page === "environmental"} /></div>)}
         </div>
       </div>}
     </section>

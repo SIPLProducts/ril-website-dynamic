@@ -12,6 +12,8 @@ import { getStaff } from "@/lib/admin-auth";
 import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import { imageFileError } from "@/lib/admin-validation";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
+import { findTrendFor, trendSign } from "@/lib/esg-metric-trends";
+import { useSiteSettings } from "@/lib/site-settings.functions";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection } from "@/components/admin/AdminDialog";
 import { confirmDelete } from "@/components/admin/ConfirmDelete";
@@ -178,6 +180,12 @@ function PageEditor({ slug, label }: { slug: string; label: string }) {
 function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: boolean }) {
   const qc = useQueryClient();
   const info = kindInfo(slug, kind);
+  const settings = useSiteSettings();
+  const figureColor = (r: Item) => {
+    if (slug !== "environmental") return "text-emerald-700";
+    const sign = trendSign(findTrendFor({ id: r.id, label: r.title }, settings.esgTrends));
+    return sign === "negative" ? "text-destructive" : sign === "positive" ? "text-brand-green" : "text-foreground";
+  };
   const [editing, setEditing] = useState<Item | "new" | null>(null);
   const qk = ["admin-esg-items", slug, kind];
   const { data: rows = [] } = useQuery({ queryKey: qk, queryFn: async () => {
@@ -254,7 +262,7 @@ function ItemList({ slug, kind, grouped }: { slug: string; kind: Kind; grouped: 
                   <button aria-label="Move down" disabled={i === rows.length - 1} onClick={() => move(i, 1)} className="rounded border border-border p-1 disabled:opacity-30"><ArrowDown className="size-3.5" /></button>
                 </div>
               </td>
-              {kind === "metric" && <><td className="px-4 py-2 font-display text-base font-bold text-emerald-700">{r.value}</td><td className="px-4 py-2 font-medium">{r.title}</td>{grouped && <td className="px-4 py-2 text-muted-foreground">{r.group_title ?? "—"}</td>}</>}
+              {kind === "metric" && <><td className={`px-4 py-2 font-display text-base font-bold ${figureColor(r)}`}>{r.value}</td><td className="px-4 py-2 font-medium">{r.title}</td>{grouped && <td className="px-4 py-2 text-muted-foreground">{r.group_title ?? "—"}</td>}</>}
               {kind === "report" && <><td className="px-4 py-2">{r.year}</td><td className="px-4 py-2 font-medium">{r.title}</td><td className="px-4 py-2">{r.url ? <FileLink url={r.url} /> : <span className="text-muted-foreground">No file yet</span>}</td></>}
               {kind === "accordion" && <><td className="px-4 py-2 font-medium">{plainText(r.title)}</td><td className="max-w-xl px-4 py-2 text-muted-foreground"><span className="line-clamp-2">{plainText(r.body)}</span></td></>}
               {kind === "governance_item" && <td className="px-4 py-2 font-medium">{plainText(r.title)}</td>}

@@ -12,13 +12,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
-import { METRIC_TRENDS, computeChange, type MetricTrend, type Polarity } from "@/lib/esg-metric-trends";
+import { METRIC_TRENDS, computeChange, findTrendFor, trendSign, type MetricTrend, type Polarity } from "@/lib/esg-metric-trends";
 import { DEFAULT_PDF, DEFAULT_THEME, THEME_FONTS, THEME_SIZES, themeFontsHref, type ThemeSettings, esgLabel, type EsgLabels, IMAGE_SLOTS, MAIN_MENU, orderSustainability, parseSettings, type MainMenuKey, type PdfViewerSettings, type SustainabilityNavItem } from "@/lib/site-settings";
 import { removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 export const Route = createFileRoute("/admin/site-settings")({
   ssr: false,
-  head: () => ({ meta: [{ title: "Website settings — Admin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Website settings — Admin | Ramky Infrastructure" }, { name: "description", content: "Manage Ramky Infrastructure website appearance, Sustainability charts and navigation." }, { property: "og:title", content: "Website settings — Admin | Ramky Infrastructure" }, { property: "og:description", content: "Manage Ramky Infrastructure website appearance, Sustainability charts and navigation." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }, { name: "robots", content: "noindex" }] }),
   beforeLoad: async () => {
     const staff = await getStaff();
     if (!staff) throw redirect({ to: "/admin/login" });
@@ -116,6 +116,8 @@ function TrendsEditor({ initial }: { initial: MetricTrend[] }) {
   };
   const years = [...new Set(list.flatMap((x) => x.years.map((y) => y.year)))];
   const change = m ? computeChange(m) : null;
+  const environmental = m ? cards.some((c) => c.page === "Environmental" && findTrendFor({ id: c.id, label: c.title }, list) === m) : false;
+  const sign = trendSign(m);
   return (
     <Card title="ESG year-wise trend charts" actions={<div className="flex flex-wrap gap-2">
       <Button size="sm" variant="outline" onClick={addYearAll}><Plus className="size-4" /> Add financial year</Button>
@@ -174,7 +176,7 @@ function TrendsEditor({ initial }: { initial: MetricTrend[] }) {
               </tbody>
             </table>
             <Button size="sm" variant="outline" onClick={() => upd({ years: [...m.years, { year: "", value: null, note: "Not disclosed" }] })}><Plus className="size-4" /> Add year to this metric</Button>
-            {change && <p className="rounded-sm bg-surface px-3 py-2 text-xs"><span className="font-semibold">Preview:</span> {change.text}</p>}
+            {change && <p className={`rounded-sm bg-surface px-3 py-2 text-xs ${environmental ? sign === "negative" ? "text-destructive" : sign === "positive" ? "text-brand-green" : "text-muted-foreground" : "text-foreground"}`}><span className="font-semibold">Preview:</span> {change.text}</p>}
             <label className="block text-xs font-semibold">Trend summary<Textarea rows={3} value={m.summary} onChange={(e) => upd({ summary: e.target.value })} /></label>
             <label className="block text-xs font-semibold">Source<Input value={m.source} onChange={(e) => upd({ source: e.target.value })} /></label>
             <Button size="sm" variant="ghost" className="text-destructive" onClick={() => { if (window.confirm(`Delete "${m.label}"?`)) { setList((l) => l.filter((_, i) => i !== sel)); setSel(0); } }}><Trash2 className="size-4" /> Delete metric</Button>

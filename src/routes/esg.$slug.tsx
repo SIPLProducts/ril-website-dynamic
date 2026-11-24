@@ -228,16 +228,19 @@ function EsgPage() {
                 {group.title}
               </h2>
               <div className={"mt-5 gap-5 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-10px)] lg:[&>*]:basis-[calc(25%-16px)]"}>
-                {group.metrics.map((metric) => (
+                {group.metrics.map((metric) => {
+                  const trend = section.slug === "environmental" || section.slug === "social" ? findTrendFor(metric, settings.esgTrends) : undefined;
+                  const sign = trendSign(trend);
+                  return (
                   <div
                     key={metric.label}
                     className="overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg"
                   >
-                    <p className="font-display text-4xl font-bold text-emerald-700">{metric.value}</p>
+                    <p className={`font-display text-4xl font-bold ${section.slug === "environmental" ? sign === "negative" ? "text-destructive" : sign === "positive" ? "text-brand-green" : "text-foreground" : "text-emerald-700"}`}>{metric.value}</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{metric.label}</p>
-                    {section.slug === "social" && (() => { const tr = findTrendFor(metric, settings.esgTrends); return tr ? <MetricTrendToggle trend={tr} /> : null; })()}
+                    {trend && <MetricTrendToggle trend={trend} environmental={section.slug === "environmental"} />}
                   </div>
-                ))}
+                ); })}
               </div>
             </div>
           ))}

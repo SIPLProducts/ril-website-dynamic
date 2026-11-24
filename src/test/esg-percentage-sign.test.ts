@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getMetricTrend, percentageSign, trendSign, type MetricTrend } from "@/lib/esg-metric-trends";
+import { findTrendFor, getMetricTrend, percentageSign, trendSign, type MetricTrend } from "@/lib/esg-metric-trends";
+import { GRAPH_COLUMNS, graphRows, parseGraphRows } from "@/lib/esg-excel";
 
 describe("Environmental displayed percentage signs", () => {
   it("classifies 22%, 32%, 83% and 100% as positive", () => {
@@ -41,5 +42,14 @@ describe("Environmental numerical year-on-year direction", () => {
     expect(trendSign(getMetricTrend("of Waste Generated Was Recycled"))).toBe("neutral");
     const trend: MetricTrend = { label: "Approximate", unit: "GJ", polarity: "lower", years: [{ year: "FY 2024–25", value: 100 }, { year: "FY 2025–26", value: 80, approximate: true }], summary: "", source: "" };
     expect(trendSign(trend)).toBe("neutral");
+  });
+  it("uses the same negative direction for an Excel-imported, explicitly linked figure", () => {
+    const energy = getMetricTrend("Reduction in Energy Consumption");
+    if (!energy) throw new Error("Missing energy trend");
+    const card = { id: "energy-card", title: energy.label };
+    const imported = parseGraphRows([...GRAPH_COLUMNS], graphRows([card], [energy]), [card]);
+    const linked = findTrendFor({ id: card.id, label: "Renamed energy figure" }, imported);
+    expect(linked?.years.map((y) => y.value)).toEqual([210866, 164283]);
+    expect(trendSign(linked)).toBe("negative");
   });
 });
