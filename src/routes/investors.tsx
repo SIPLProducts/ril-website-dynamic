@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Scale } from "lucide-react";
 import { resolveIn, rollingFyLabels, withDocuments, type IrContact, type IrDocument, type IrSubTab } from "@/lib/investor-relations";
 import { irDataQuery } from "@/lib/ir-data.functions";
+import { publishedFileUrl } from "@/lib/file-url";
 
 const TITLE = "Investor Relations | Ramky Infrastructure";
 const DESC = "Quarterly results, annual reports, general meetings, MOA & AOA, Regulation 46 disclosures and investor contacts of Ramky Infrastructure Limited.";
@@ -267,7 +268,7 @@ function DocList({ docs, onView, detailed }: { docs: IrDocument[]; onView: (d: I
               <span>{fmt(d.date)}</span>
             </p>
             {detailed && d.description && <p className="mt-1 text-sm text-muted-foreground">{d.description}</p>}
-            {/composition of board committees/i.test(d.title) && <BoardCommittees />}
+            {/composition of board committees/i.test(d.title) && <BoardCommittees onView={onView} base={d} />}
           </div>
           <div className="flex shrink-0 gap-2 sm:self-start">
             {!/composition of board committees/i.test(d.title) && (() => {
@@ -371,18 +372,25 @@ function Viewer({ doc, onClose }: { doc: IrDocument; onClose: () => void }) {
   );
 }
 
-function BoardCommittees() {
+function BoardCommittees({ onView, base }: { onView: (d: IrDocument) => void; base: IrDocument }) {
   const { data = [] } = useQuery({ queryKey: ["board-committees"], queryFn: async () => {
-    const { data } = await supabase.from("esg_items").select("id,title,body").eq("page_slug", "board-committees").eq("kind", "governance_item").eq("published", true).order("sort_order");
+    const { data } = await supabase.from("esg_items").select("id,title,body,url").eq("page_slug", "board-committees").eq("kind", "governance_item").eq("published", true).order("sort_order");
     return data ?? [];
   } });
   if (!data.length) return null;
-  return <ul className="mt-4 grid gap-3 sm:grid-cols-2">{data.map((c) => <CommitteeCard key={c.id} title={c.title} details={c.body} />)}</ul>;
+  return <ul className="mt-4 grid gap-3 sm:grid-cols-2">{data.map((c) => <CommitteeCard key={c.id} title={c.title} details={c.body} url={publishedFileUrl(c.url)} onView={(url) => onView({ ...base, id: c.id, title: c.title.replace(/<[^>]*>/g, ""), url })} />)}</ul>;
 }
 
-function CommitteeCard({ title, details }: { title: string; details: string }) {
+function CommitteeCard({ title, details, url, onView }: { title: string; details: string; url: string | null; onView: (url: string) => void }) {
   const [open, setOpen] = useState(false);
   const lines = details.split(/\n+/).filter((l) => l.trim());
+  if (url && !lines.length) return (
+    <li className="flex items-center gap-3 rounded-sm border border-border bg-surface p-5 transition-shadow hover:shadow-lg">
+      <Scale className="size-5 shrink-0 text-brand-orange" aria-hidden="true" />
+      <span className="flex-1 font-display text-base font-semibold text-foreground"><Formatted text={title} /></span>
+      <button type="button" onClick={() => onView(url)} className="inline-flex items-center gap-1.5 rounded-sm border border-brand-blue px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue hover:text-primary-foreground"><Eye className="size-3.5" /> View</button>
+    </li>
+  );
   return (
     <li className={`rounded-sm border bg-surface transition-shadow hover:shadow-lg ${open ? "border-brand-blue/40 sm:col-span-2" : "border-border"}`}>
       <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 p-5 text-left">
@@ -396,6 +404,7 @@ function CommitteeCard({ title, details }: { title: string; details: string }) {
             const m = line.match(/^([^:]{1,40}):\s*(.+)$/);
             return m ? <p key={i}><span className="font-semibold text-foreground">{m[1]}:</span> {m[2]}</p> : <p key={i}>{line}</p>;
           })}
+          {url && <button type="button" onClick={() => onView(url)} className="mt-2 inline-flex items-center gap-1.5 rounded-sm border border-brand-blue px-3 py-1.5 text-xs font-semibold text-brand-blue hover:bg-brand-blue hover:text-primary-foreground"><Eye className="size-3.5" /> View document</button>}
         </div>
       )}
     </li>

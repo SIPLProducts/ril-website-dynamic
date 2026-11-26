@@ -336,7 +336,7 @@ function FileLink({ url }: { url: string }) {
 function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder, onClose, onSaved }: { slug: string; kind: Kind; grouped: boolean; groups: string[]; initialTitle: string; row: Item | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const info = kindInfo(slug, kind);
   const hasDetailImage = (slug === "environmental" || slug === "social") && kind === "accordion";
-  const hasPdf = kind === "report" || (slug === "esg-reporting" && kind === "metric");
+  const hasPdf = kind === "report" || (slug === "esg-reporting" && kind === "metric") || slug === BOARD_SLUG;
   const [imageUrl, setImageUrl] = useState(row?.url ?? null);
   const imagePreview = usePreview(hasDetailImage ? imageUrl : null);
   const [f, setF] = useState({ title: row?.title ?? initialTitle, value: row?.value ?? "", body: row?.body ?? "", year: row?.year ?? "", group_title: row?.group_title ?? (groups[0] ?? ""), published: row?.published ?? true });
@@ -369,7 +369,7 @@ function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder,
       let url = row?.url ?? null;
       if (hasDetailImage) url = file ? await upload(file, `${slug}/details`) : imageUrl;
       if (hasPdf) {
-        if (mode === "file" && file) url = await upload(file, kind === "report" ? "reports" : "frameworks");
+        if (mode === "file" && file) url = await upload(file, kind === "report" ? "reports" : slug === BOARD_SLUG ? "committees" : "frameworks");
         else if (mode === "link") url = link.trim() || null;
       }
       const payload = { title: f.title.trim(), value: f.value.trim(), body: f.body.trim(), year: f.year.trim(), group_title: grouped ? f.group_title.trim() || null : null, published: f.published, url };
@@ -399,7 +399,7 @@ function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder,
         <label className="flex items-center gap-3 text-sm"><Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} /> Live on website</label>
       </FormSection>
       {hasPdf && (
-        <FormSection title={kind === "report" ? "Report file (optional)" : "Framework PDF (optional — adds a Download button on the card)"}>
+        <FormSection title={kind === "report" ? "Report file (optional)" : slug === BOARD_SLUG ? "Policy / committee document (optional — adds a View button on the website)" : "Framework PDF (optional — adds a Download button on the card)"}>
           <div className="flex gap-2">
             <Button type="button" size="sm" variant={mode === "file" ? "default" : "outline"} onClick={() => setMode("file")}>Upload PDF</Button>
             <Button type="button" size="sm" variant={mode === "link" ? "default" : "outline"} onClick={() => setMode("link")}>External link</Button>
@@ -409,7 +409,7 @@ function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder,
             : <Input value={link} placeholder="https://…" onChange={(e) => setLink(e.target.value)} />}
           <FieldError msg={errs.file || undefined} />
           {(row?.url || link) && <Button type="button" variant="outline" size="sm" onClick={() => { setLink(""); setFile(null); setMode("link"); }}><Trash2 className="size-4" /> Remove PDF</Button>}
-          <p className="text-xs text-muted-foreground">{kind === "report" ? 'Without a file, the website shows "Coming soon" on this report.' : "Without a file, the card shows no Download button."}</p>
+          <p className="text-xs text-muted-foreground">{kind === "report" ? 'Without a file, the website shows "Coming soon" on this report.' : slug === BOARD_SLUG ? "Without a document, the card shows only its text." : "Without a file, the card shows no Download button."}</p>
         </FormSection>
       )}
       {hasDetailImage && (
