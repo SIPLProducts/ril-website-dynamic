@@ -360,19 +360,16 @@ function EsgPage() {
           <div className="mx-auto flex max-w-[1400px] flex-col items-start gap-8 px-5 py-16 lg:flex-row lg:items-center lg:justify-between lg:px-10 lg:py-20">
             <div className="max-w-2xl">
               <p className="font-display text-xs font-bold uppercase tracking-[0.22em] text-emerald-300">
-                Talk To Us
+                {settings.talkToUs.eyebrow}
               </p>
               <h2 className="mt-4 font-display text-3xl font-bold leading-tight lg:text-4xl">
-                Questions about our sustainability commitments?
+                {settings.talkToUs.heading}
               </h2>
-              <p className="mt-4 text-white/70">
-                Our sustainability team is happy to share data, discuss partnerships or walk you
-                through our reports.
-              </p>
+              <p className="mt-4 whitespace-pre-line text-white/70">{settings.talkToUs.body}</p>
             </div>
             <div className="flex flex-col items-start gap-3">
-              <SustainabilityContactButton className="inline-flex items-center gap-2 rounded-sm bg-emerald-500 px-7 py-4 font-display text-sm font-semibold uppercase tracking-[0.12em] text-[#0d2b1f] transition-opacity hover:opacity-90" />
-              <p className="max-w-sm text-sm text-white/80">Send us your question and our team will get back to you. Office: <a href="tel:+914023015000" className="font-semibold text-emerald-300 hover:underline">+91 40 2301 5000</a></p>
+              <SustainabilityContactButton label={settings.talkToUs.button} className="inline-flex items-center gap-2 rounded-sm bg-emerald-500 px-7 py-4 font-display text-sm font-semibold uppercase tracking-[0.12em] text-[#0d2b1f] transition-opacity hover:opacity-90" />
+              <p className="max-w-sm text-sm text-white/80">{settings.talkToUs.note} <a href={`tel:${settings.talkToUs.phone.replace(/[^\d+]/g, "")}`} className="font-semibold text-emerald-300 hover:underline">{settings.talkToUs.phone}</a></p>
             </div>
           </div>
         </section>

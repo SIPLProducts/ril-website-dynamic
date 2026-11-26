@@ -11,7 +11,7 @@ import { contactSchema, submitSustainabilityContact } from "@/lib/contact.functi
 
 const blank = { full_name: "", email: "", mobile: "", organisation: "", message: "", website: "" };
 
-export function SustainabilityContactButton({ className }: { className?: string }) {
+export function SustainabilityContactButton({ className, label = "Contact us" }: { className?: string; label?: string }) {
   const submit = useServerFn(submitSustainabilityContact);
   const [open, setOpen] = useState(false);
   const [f, setF] = useState(blank);
@@ -28,7 +28,7 @@ export function SustainabilityContactButton({ className }: { className?: string 
   }
   return (
     <>
-      <button type="button" onClick={() => setOpen(true)} className={className}><Mail className="size-4" /> Contact us</button>
+      <button type="button" onClick={() => setOpen(true)} className={className}><Mail className="size-4" /> {label}</button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader><DialogTitle>Contact us</DialogTitle></DialogHeader>

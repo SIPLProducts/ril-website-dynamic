@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { METRIC_TRENDS, computeChange, findTrendFor, trendSign, type MetricTrend, type Polarity } from "@/lib/esg-metric-trends";
-import { DEFAULT_PDF, DEFAULT_THEME, THEME_FONTS, THEME_SIZES, themeFontsHref, type ThemeSettings, esgLabel, type EsgLabels, IMAGE_SLOTS, MAIN_MENU, orderSustainability, parseSettings, type MainMenuKey, type PdfViewerSettings, type SustainabilityNavItem } from "@/lib/site-settings";
+import { DEFAULT_PDF, DEFAULT_THEME, THEME_FONTS, THEME_SIZES, themeFontsHref, type ThemeSettings, esgLabel, type EsgLabels, IMAGE_SLOTS, MAIN_MENU, orderSustainability, parseSettings, type MainMenuKey, type PdfViewerSettings, type SustainabilityNavItem, DEFAULT_TALK, type TalkToUs } from "@/lib/site-settings";
 import { removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 export const Route = createFileRoute("/admin/site-settings")({
@@ -60,6 +60,7 @@ function Page() {
             <TabsTrigger value="pdf">PDF viewer</TabsTrigger>
             <TabsTrigger value="sus">Sustainability navigation</TabsTrigger>
             <TabsTrigger value="labels">Section headings</TabsTrigger>
+            <TabsTrigger value="talk">Talk To Us</TabsTrigger>
           </TabsList>
           <TabsContent value="theme"><ThemeEditor initial={data.theme} /></TabsContent>
           <TabsContent value="trends"><TrendsEditor initial={data.esgTrends} /></TabsContent>
@@ -68,6 +69,7 @@ function Page() {
           <TabsContent value="pdf"><PdfEditor initial={data.pdfViewer} /></TabsContent>
           <TabsContent value="sus"><SusNavEditor initial={data.sustainabilityNav} /></TabsContent>
           <TabsContent value="labels"><LabelsEditor initial={data.esgLabels} /></TabsContent>
+          <TabsContent value="talk"><TalkEditor initial={data.talkToUs} /></TabsContent>
         </Tabs>
       )}
     </AdminShell>
@@ -359,5 +361,30 @@ function ThemeEditor({ initial }: { initial: ThemeSettings }) {
         {themeFontsHref(v) && <link rel="stylesheet" href={themeFontsHref(v)} />}
       </div>
     </Card>
+  );
+}
+
+const TALK_FIELDS: { k: keyof TalkToUs; label: string; long?: boolean }[] = [
+  { k: "eyebrow", label: "Small heading" }, { k: "heading", label: "Heading" }, { k: "body", label: "Description", long: true },
+  { k: "button", label: "Button text" }, { k: "note", label: "Text under the button" }, { k: "phone", label: "Office phone number" },
+];
+function TalkEditor({ initial }: { initial: TalkToUs }) {
+  const save = useSave();
+  const [f, setF] = useState<TalkToUs>(initial);
+  return (
+    <div className="max-w-2xl space-y-4 rounded-lg border bg-card p-5">
+      <p className="text-sm text-muted-foreground">Shown at the bottom of every Sustainability page. Messages sent from the Contact form go to the "Sustainability enquiries go to" address in Email Configuration.</p>
+      {TALK_FIELDS.map(({ k, label, long }) => (
+        <div key={k} className="space-y-1">
+          <label className="text-sm font-medium">{label}</label>
+          {long ? <Textarea rows={3} maxLength={500} value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} />
+            : <Input maxLength={160} value={f[k]} onChange={(e) => setF({ ...f, [k]: e.target.value })} />}
+        </div>
+      ))}
+      <div className="flex gap-2">
+        <Button onClick={() => save("talk_to_us", f, "Talk To Us saved")}>Save</Button>
+        <Button variant="outline" onClick={() => setF(DEFAULT_TALK)}><RotateCcw className="size-4" /> Restore defaults</Button>
+      </div>
+    </div>
   );
 }

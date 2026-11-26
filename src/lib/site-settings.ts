@@ -80,12 +80,23 @@ export interface SiteSettings {
   sustainabilityNav: SustainabilityNavItem[];
   pdfViewer: PdfViewerSettings;
   esgRating: EsgRating | null;
+  talkToUs: TalkToUs;
 }
 
+/** Sustainability "Talk To Us" block; empty fields fall back to these defaults. */
+export interface TalkToUs { eyebrow: string; heading: string; body: string; button: string; note: string; phone: string }
+export const DEFAULT_TALK: TalkToUs = { eyebrow: "Talk To Us", heading: "Questions about our sustainability commitments?", body: "Our sustainability team is happy to share data, discuss partnerships or walk you through our reports.", button: "Contact us", note: "Send us your question and our team will get back to you. Office:", phone: "+91 40 2301 5000" };
+export function parseTalk(v: unknown): TalkToUs {
+  const o = (v && typeof v === "object" ? v : {}) as Record<string, unknown>;
+  const out = { ...DEFAULT_TALK };
+  for (const k of Object.keys(DEFAULT_TALK) as (keyof TalkToUs)[]) { const x = o[k]; if (typeof x === "string" && x.trim()) out[k] = x.trim(); }
+  return out;
+}
 export const DEFAULT_PDF: PdfViewerSettings = { allowDownload: true, downloadLabel: "Download Report", exploreLabel: "Explore" };
 export const DEFAULT_SETTINGS: SiteSettings = {
   theme: DEFAULT_THEME,
   esgLabels: {},
+  talkToUs: DEFAULT_TALK,
   esgTrends: METRIC_TRENDS,
   images: {},
   mainMenu: MAIN_MENU.map((m) => m.key),
@@ -118,6 +129,7 @@ export function parseSettings(rows: Row[]): SiteSettings {
     sustainabilityNav: Array.isArray(sus) ? (sus as SustainabilityNavItem[]).filter((s) => s && typeof s.slug === "string") : [],
     pdfViewer: { ...DEFAULT_PDF, ...(pdf && typeof pdf === "object" ? pdf : {}) },
     esgRating: parseRating(get("esg_rating")),
+    talkToUs: parseTalk(get("talk_to_us")),
   };
 }
 

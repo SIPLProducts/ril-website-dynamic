@@ -31,7 +31,7 @@ export const submitSustainabilityContact = createServerFn({ method: "POST" })
         const rows: [string, string][] = [["Name", data.full_name], ["Email", data.email], ["Mobile", data.mobile], ["Organisation", data.organisation || "—"], ["Message", data.message]];
         const html = brandedEmail("New sustainability enquiry", `<table style="width:100%;border-collapse:collapse;font-size:14px">${rows.map(([k, v]) => `<tr><td style="padding:6px 8px;color:#6b7785;vertical-align:top;white-space:nowrap">${k}</td><td style="padding:6px 8px">${esc(v).replace(/\n/g, "<br>")}</td></tr>`).join("")}</table>`);
         const { sendMail } = await import("@/lib/send-mail.server");
-        await sendMail(settings, { from: { name: settings.from_name, email: settings.from_email }, to: "investors@ramky.com", replyTo: { email: data.email, name: data.full_name }, subject: `Sustainability enquiry — ${data.full_name}`, html });
+        await sendMail(settings, { from: { name: settings.from_name, email: settings.from_email }, to: settings.sustainability_to?.trim() || "investors@ramky.com", replyTo: { email: data.email, name: data.full_name }, subject: `Sustainability enquiry — ${data.full_name}`, html });
         sent = true;
         await admin.from("contact_submissions").update({ email_sent: true }).eq("id", ins.data.id);
       }
