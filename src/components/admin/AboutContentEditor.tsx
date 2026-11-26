@@ -133,7 +133,7 @@ export function AboutContentEditor({ slug, label, card1, card2 }: { slug: string
 function ExtraFields({ f, set, items, rich }: { f: Record<string, string>; set: (v: Record<string, string>) => void; items: [string, string, boolean?][]; rich?: boolean }) {
   return (
     <div className="grid gap-4">
-      {items.map(([k, label, long]) => rich ? <RichField key={k} label={label} long={!!long} max={long ? 1500 : 160} value={f[k] ?? ""} onChange={(v) => set({ ...f, [k]: v })} /> : (
+      {items.map(([k, label, long]) => rich !== false ? <RichField key={k} label={label} long={!!long} max={long ? 1500 : 160} value={f[k] ?? ""} onChange={(v) => set({ ...f, [k]: v })} /> : (
         <div key={k}><Label>{label}</Label>
           {long ? <Textarea rows={3} maxLength={1500} value={f[k] ?? ""} onChange={(e) => set({ ...f, [k]: e.target.value })} />
             : <Input value={f[k] ?? ""} maxLength={160} onChange={(e) => set({ ...f, [k]: e.target.value })} />}

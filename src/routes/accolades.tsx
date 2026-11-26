@@ -1,3 +1,4 @@
+import { Formatted } from "@/components/site/Formatted";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -42,11 +43,11 @@ function AwardItem({ a }: { a: PublicAward }) {
         </div>
       )}
       <div className="min-w-0">
-        {a.category && <p className="eyebrow">{a.category}</p>}
-        <h3 className="mt-2 font-display text-xl font-semibold text-brand-blue">{a.title}</h3>
-        <p className="mt-2 font-display text-sm font-semibold text-brand-orange">{a.organisation}</p>
-        {a.project && <p className="mt-2 text-sm text-foreground/80">{a.project}</p>}
-        {a.description && <p className="mt-4 leading-relaxed text-muted-foreground">{a.description}</p>}
+        {a.category && <p className="eyebrow"><Formatted text={a.category} /></p>}
+        <h3 className="mt-2 font-display text-xl font-semibold text-brand-blue"><Formatted text={a.title} /></h3>
+        <p className="mt-2 font-display text-sm font-semibold text-brand-orange"><Formatted text={a.organisation} /></p>
+        {a.project && <p className="mt-2 text-sm text-foreground/80"><Formatted text={a.project} /></p>}
+        {a.description && <p className="mt-4 leading-relaxed text-muted-foreground"><Formatted text={a.description} /></p>}
       </div>
     </article>
   );

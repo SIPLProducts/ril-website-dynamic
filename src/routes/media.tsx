@@ -1,3 +1,4 @@
+import { Formatted } from "@/components/site/Formatted";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ExternalLink, Newspaper } from "lucide-react";
@@ -87,7 +88,7 @@ function MediaRow({ m }: { m: MediaItem }) {
   );
   return (
     <li className="media-rule py-8">
-      {m.kicker && <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-brand-orange">{m.kicker}</p>}
+      {m.kicker && <p className="mb-2 text-xs font-semibold uppercase tracking-[0.12em] text-brand-orange"><Formatted text={m.kicker} /></p>}
       {href ? (
         <a href={href} target="_blank" rel="noopener noreferrer" className="group block">
           <span className="group-hover:text-brand-blue">{title}</span>
@@ -98,7 +99,7 @@ function MediaRow({ m }: { m: MediaItem }) {
       {m.date && <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">{fmt(m.date)}</p>}
       {m.paragraphs
         ? m.paragraphs.map((p, i) => <p key={i} className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{p}</p>)
-        : m.summary && <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">{m.summary}</p>}
+        : m.summary && <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground"><Formatted text={m.summary} /></p>}
       {m.source && <p className="mt-3 text-sm text-foreground"><span className="font-semibold">Published in:</span> {m.source}</p>}
       {href && m.linkLabel && (
         <p className="mt-2 text-sm">

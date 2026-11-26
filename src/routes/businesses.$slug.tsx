@@ -1,3 +1,4 @@
+import { Formatted } from "@/components/site/Formatted";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ArrowLeft, MapPin, Building2, X } from "lucide-react";
@@ -62,9 +63,9 @@ function VerticalPage() {
           <Link to="/" hash="businesses" className="inline-flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-blue">
             <ArrowLeft className="size-4" />  All capabilities
           </Link>
-          <p className="eyebrow mt-8">{data.eyebrow}</p>
-          <h1 className="mt-4 text-3xl font-bold sm:text-5xl">{vertical.title}</h1>
-          <p className="mt-4 max-w-2xl text-muted-foreground">{vertical.description}</p>
+          <p className="eyebrow mt-8"><Formatted text={data.eyebrow} /></p>
+          <h1 className="mt-4 text-3xl font-bold sm:text-5xl"><Formatted text={vertical.title} /></h1>
+          <p className="mt-4 max-w-2xl text-muted-foreground"><Formatted text={vertical.description} /></p>
           <div className="mt-6 flex flex-wrap gap-2">
             {data.verticals.map((v) => (
               <Link key={v.slug} to="/businesses/$slug" params={{ slug: v.slug }}
@@ -116,8 +117,8 @@ function ProjectList({ projects }: { projects: BusinessProject[] }) {
           ...["Completed", "Ongoing", "O&M"].map((s) => ({ label: s, value: counted.filter((p) => p.status === s).length })),
         ].map((c) => (
           <div key={c.label} className="rounded-sm border border-border bg-card p-4">
-            <p className="font-display text-3xl font-bold text-brand-blue">{c.value}</p>
-            <p className="mt-1 font-display text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{c.label}</p>
+            <p className="font-display text-3xl font-bold text-brand-blue"><Formatted text={c.value} /></p>
+            <p className="mt-1 font-display text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground"><Formatted text={c.label} /></p>
           </div>
         ))}
       </div>
@@ -154,10 +155,10 @@ function ProjectList({ projects }: { projects: BusinessProject[] }) {
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {shown.map((p) => (
               <article key={projects.indexOf(p)} className="card-lift rounded-sm border border-border bg-card p-6">
-                <span className={`inline-block rounded-sm px-2.5 py-1 font-display text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${STATUS_STYLE[p.status]}`}>{p.status}</span>
-                <h2 className="mt-4 font-display text-lg font-semibold">{p.name}</h2>
-                <p className="mt-3 flex items-start gap-2 text-sm text-muted-foreground"><MapPin className="mt-0.5 size-4 shrink-0" />{p.location}</p>
-                {p.client && <p className="mt-1.5 flex items-start gap-2 text-sm text-muted-foreground"><Building2 className="mt-0.5 size-4 shrink-0" />{p.client}</p>}
+                <span className={`inline-block rounded-sm px-2.5 py-1 font-display text-[0.7rem] font-semibold uppercase tracking-[0.12em] ${STATUS_STYLE[p.status]}`}><Formatted text={p.status} /></span>
+                <h2 className="mt-4 font-display text-lg font-semibold"><Formatted text={p.name} /></h2>
+                <p className="mt-3 flex items-start gap-2 text-sm text-muted-foreground"><MapPin className="mt-0.5 size-4 shrink-0" /><Formatted text={p.location} /></p>
+                {p.client && <p className="mt-1.5 flex items-start gap-2 text-sm text-muted-foreground"><Building2 className="mt-0.5 size-4 shrink-0" /><Formatted text={p.client} /></p>}
               </article>
             ))}
           </div>

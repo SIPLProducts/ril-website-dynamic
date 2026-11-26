@@ -24,7 +24,7 @@ function Page() {
         fields={[
           { key: "title", label: "Title", required: true, max: 80 },
           { key: "eyebrow", label: "Small heading", max: 60 },
-          { key: "href", label: "Button link", required: true, max: 200, placeholder: "/life-at-ramky" },
+          { key: "href", label: "Button link", plain: true, required: true, max: 200, placeholder: "/life-at-ramky" },
           { key: "text", label: "Text", long: true, max: 400 },
         ]} />
     </AdminShell>

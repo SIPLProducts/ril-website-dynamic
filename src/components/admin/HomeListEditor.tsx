@@ -16,7 +16,7 @@ import { DEFAULT_RESOLUTION, IMAGE_RESOLUTIONS, isVideo, uniformImage } from "@/
 import { refreshHome, removeHomeFile, uploadHomeFile, useHomePreview } from "@/lib/home-highlights-admin";
 
 type Table = "home_hero_slides" | "home_stats" | "home_journey_milestones" | "history_milestones" | "subsidiaries" | "management_system_items" | "careers_landing_cards" | "strength_pillars" | "strength_items";
-export type Field = { key: string; label: string; required?: boolean; long?: boolean; max?: number; placeholder?: string; options?: { value: string; label: string }[]; rich?: boolean };
+export type Field = { key: string; label: string; required?: boolean; long?: boolean; max?: number; placeholder?: string; options?: { value: string; label: string }[]; rich?: boolean; plain?: boolean };
 /** Optional extra file (e.g. a PDF) saved as "storage:" in `key`. */
 export type DocField = { key: string; label: string; accept: string; hint: string };
 type Row = Record<string, unknown> & { id: string; published: boolean; sort_order: number; image_url?: string | null };
@@ -153,11 +153,11 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
               <select className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })}>
                 {x.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select></div>
-          ) : x.rich ? <div key={x.key} className="sm:col-span-2"><RichField label={`${x.label}$`} max={x.max ?? 200} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /></div> : (
+          ) : !x.plain ? <div key={x.key} className="sm:col-span-2"><RichField label={x.label} max={x.max ?? 200} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /></div> : (
             <div key={x.key}><Label>{x.label}</Label><Input maxLength={x.max ?? 200} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
           ))}
         </div>
-        {fields.filter((x) => x.long).map((x) => x.rich ? <RichField key={x.key} long label={`${x.label}$`} max={x.max ?? 800} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /> : (
+        {fields.filter((x) => x.long).map((x) => !x.plain ? <RichField key={x.key} long label={x.label} max={x.max ?? 800} value={f[x.key] ?? ""} onChange={(v) => setF({ ...f, [x.key]: v })} /> : (
           <div key={x.key}><Label>{x.label}</Label><Textarea rows={3} maxLength={x.max ?? 800} placeholder={x.placeholder} value={f[x.key]} onChange={(e) => setF({ ...f, [x.key]: e.target.value })} /></div>
         ))}
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Live on website</label>

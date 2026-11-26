@@ -1,3 +1,5 @@
+import { plainText } from "@/lib/strength-style";
+import { Formatted } from "@/components/site/Formatted";
 import { createFileRoute } from "@tanstack/react-router";
 import { Compass, Target, BadgeCheck } from "lucide-react";
 import { CareersLayout } from "@/components/site/CareersLayout";
@@ -22,8 +24,8 @@ function LifeAtRamkyPage() {
         {PURPOSE.map((card) => {
           const Icon = /vision/i.test(card.title) ? Compass : /mission/i.test(card.title) ? Target : BadgeCheck;
           return <div key={card.id} className={CARD}>
-            <h3 className="flex items-center gap-3 text-xl font-semibold text-brand-blue"><Icon aria-hidden="true" className="size-5" />{card.title}</h3>
-            {card.body && <p className="mt-3 text-base leading-relaxed text-muted-foreground">{card.body}</p>}
+            <h3 className="flex items-center gap-3 text-xl font-semibold text-brand-blue"><Icon aria-hidden="true" className="size-5" /><Formatted text={card.title} /></h3>
+            {card.body && <p className="mt-3 text-base leading-relaxed text-muted-foreground"><Formatted text={card.body} /></p>}
             {card.bullets.length > 0 && <ul className="mt-4 space-y-3">{card.bullets.map((value) => <li key={value} className="flex items-start gap-3 text-base font-semibold"><BadgeCheck aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand-green" />{value}</li>)}</ul>}
           </div>;
         })}
@@ -31,8 +33,8 @@ function LifeAtRamkyPage() {
     </section>
     <div className="divide-y divide-border">
       {LIFE_SECTIONS.map((section) => <section key={section.id} className="grid gap-5 py-10 lg:grid-cols-[1fr_2fr] lg:gap-14">
-        <div><h2 className="text-2xl font-semibold leading-snug">{section.title}</h2></div>
-        <div className="space-y-4">{section.imageUrl && <img src={section.imageUrl} alt={section.title} className="w-full rounded-md object-cover" loading="lazy" />}{section.paragraphs.map((text, j) => <p key={j} className="text-base leading-relaxed text-muted-foreground">{text}</p>)}</div>
+        <div><h2 className="text-2xl font-semibold leading-snug"><Formatted text={section.title} /></h2></div>
+        <div className="space-y-4">{section.imageUrl && <img src={section.imageUrl} alt={plainText(String(section.title ?? ""))} className="w-full rounded-md object-cover" loading="lazy" />}{section.paragraphs.map((text, j) => <p key={j} className="text-base leading-relaxed text-muted-foreground">{text}</p>)}</div>
       </section>)}
     </div>
   </CareersLayout>;

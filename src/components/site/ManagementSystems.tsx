@@ -1,3 +1,4 @@
+import { Formatted } from "@/components/site/Formatted";
 import { useState } from "react";
 import { Award, ExternalLink, FileText, HardHat, Leaf, ShieldCheck } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -56,9 +57,9 @@ export function ManagementSystems() {
                   </span>
                   <ShieldCheck className="size-5 text-brand-orange" aria-hidden="true" />
                 </div>
-                <p className="mt-6 font-display text-3xl font-bold text-brand-blue">{c.standard}</p>
-                <h3 className="mt-2 font-display text-lg font-semibold leading-snug">{c.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{c.summary}</p>
+                <p className="mt-6 font-display text-3xl font-bold text-brand-blue"><Formatted text={c.standard} /></p>
+                <h3 className="mt-2 font-display text-lg font-semibold leading-snug"><Formatted text={c.title} /></h3>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground"><Formatted text={c.summary} /></p>
                 <ul className="mb-7 mt-5 flex flex-wrap gap-2" aria-label="Key focus areas">
                   {c.focusAreas.map((t) => (
                     <li key={t} className="border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground">
@@ -92,8 +93,8 @@ export function ManagementSystems() {
                 key={p.id}
                 className="flex h-full flex-col border-l-4 border-brand-blue bg-card p-7 transition-shadow hover:shadow-lg lg:p-9"
               >
-                <h3 className="font-display text-2xl font-bold">{p.title}</h3>
-                <p className="mt-4 leading-relaxed text-muted-foreground">{p.summary}</p>
+                <h3 className="font-display text-2xl font-bold"><Formatted text={p.title} /></h3>
+                <p className="mt-4 leading-relaxed text-muted-foreground"><Formatted text={p.summary} /></p>
                 <button
                   type="button"
                   onClick={() => p.document.url && setOpen(p.document)}

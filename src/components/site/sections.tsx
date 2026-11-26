@@ -1,3 +1,4 @@
+import { plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
 import { useQuery } from "@tanstack/react-query";
 import { csrQuery, mediaQuery } from "@/lib/site-content.functions";
@@ -164,8 +165,8 @@ export function StatsBand() {
       <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 px-5 py-12 sm:px-8 lg:px-10">
         {items.map((s) => (
           <div key={s.label} className="rule-accent pt-6">
-            <p className="font-display text-4xl font-bold text-brand-blue lg:text-[1.75rem] xl:text-4xl">{s.value}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{s.label}</p>
+            <p className="font-display text-4xl font-bold text-brand-blue lg:text-[1.75rem] xl:text-4xl"><Formatted text={s.value} /></p>
+            <p className="mt-2 text-sm text-muted-foreground"><Formatted text={s.label} /></p>
           </div>
         ))}
       </div>
@@ -267,9 +268,9 @@ export function Businesses() {
     <section id="businesses" className="bg-surface py-20 lg:py-28">
       <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
         <div className="max-w-3xl">
-          <p className="eyebrow">{data.eyebrow}</p>
-          <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{data.title}</h2>
-          {data.intro && <p className="mt-4 text-lg text-muted-foreground">{data.intro}</p>}
+          <p className="eyebrow"><Formatted text={data.eyebrow} /></p>
+          <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl"><Formatted text={data.title} /></h2>
+          {data.intro && <p className="mt-4 text-lg text-muted-foreground"><Formatted text={data.intro} /></p>}
         </div>
         <div className="mt-12 gap-6 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-12px)] lg:[&>*]:basis-[calc(33.333%-16px)] xl:[&>*]:basis-[calc(25%-18px)]">
           {data.verticals.map((v) => {
@@ -283,8 +284,8 @@ export function Businesses() {
                 <Icon className="absolute bottom-4 left-4 size-7 text-ink-foreground" />
               </div>
               <div className="flex flex-1 flex-col p-6">
-                <h3 className="font-display text-lg font-semibold">{v.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{v.cardText}</p>
+                <h3 className="font-display text-lg font-semibold"><Formatted text={v.title} /></h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground"><Formatted text={v.cardText} /></p>
                 <span className="mt-auto inline-flex min-h-11 items-center gap-1.5 pt-4 font-display text-xs font-semibold uppercase tracking-[0.12em] text-brand-blue">
                   Explore <ArrowRight className="size-3.5" />
                 </span>
@@ -317,8 +318,8 @@ export function Projects() {
   return (
     <section id="projects" className="mx-auto max-w-[1400px] px-5 py-20 lg:px-10 lg:py-28">
       <div className="max-w-2xl">
-        <p className="eyebrow">{data.landmarkEyebrow}</p>
-        <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">{data.landmarkTitle}</h2>
+        <p className="eyebrow"><Formatted text={data.landmarkEyebrow} /></p>
+        <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl"><Formatted text={data.landmarkTitle} /></h2>
       </div>
       <div className="mt-12 overflow-hidden rounded-sm bg-ink">
         <div className={`group relative w-full ${current.fit === "contain" ? "aspect-[3/1] md:aspect-[16/9] lg:aspect-[21/9]" : "aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]"}`}>
@@ -328,7 +329,7 @@ export function Projects() {
               <img
                 key={p.id}
                 src={src}
-                alt={p.name}
+                alt={plainText(String(p.name ?? ""))}
                 loading={i === 0 ? "eager" : "lazy"}
                 className={`absolute inset-0 size-full ${p.fit === "contain" ? "object-contain object-top" : "object-cover"} transition-all duration-1000 group-hover:scale-[1.02] ${i === index ? "opacity-100" : "opacity-0"}`}
               />
@@ -336,8 +337,8 @@ export function Projects() {
           })}
           <div className="absolute inset-x-0 bottom-0 hidden h-3/5 bg-gradient-to-t from-ink/80 via-ink/35 to-transparent md:block" />
           <div key={index} className="absolute inset-x-0 bottom-0 hidden max-w-3xl p-10 md:block md:pr-40 lg:pr-10">
-            <h3 className="text-3xl font-semibold text-ink-foreground">{current.name}</h3>
-            <p className="mt-3 text-base leading-relaxed text-ink-foreground/80">{current.detail}</p>
+            <h3 className="text-3xl font-semibold text-ink-foreground"><Formatted text={current.name} /></h3>
+            <p className="mt-3 text-base leading-relaxed text-ink-foreground/80"><Formatted text={current.detail} /></p>
           </div>
           {total > 1 && (
           <div className="absolute right-4 top-4 flex gap-2 md:bottom-10 md:right-10 md:top-auto">
@@ -353,8 +354,8 @@ export function Projects() {
           )}
         </div>
         <div className="bg-surface p-5 md:hidden">
-          <h3 className="text-xl font-semibold">{current.name}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{current.detail}</p>
+          <h3 className="text-xl font-semibold"><Formatted text={current.name} /></h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground"><Formatted text={current.detail} /></p>
         </div>
       </div>
       <div className="mt-1 flex flex-wrap justify-center gap-1">
@@ -377,15 +378,15 @@ export function Sustainability({ standalone = false }: { standalone?: boolean })
     <section id="sustainability" className={`sustainability-panel ${standalone ? "pb-16" : ""}`}>
       <div className="mx-auto grid max-w-[1400px] gap-12 px-5 py-20 lg:grid-cols-2 lg:items-center lg:px-10 lg:py-28">
         <div>
-          <p className="eyebrow">{s.eyebrow}</p>
-          <Heading className="mt-4 text-[1.2rem] font-bold leading-tight text-sustainability-foreground sm:text-[1.9rem] xl:text-[2.5rem]">{s.title}</Heading>
-          {s.body && <p className="mt-6 text-base leading-relaxed text-sustainability-muted">{s.body}</p>}
+          <p className="eyebrow"><Formatted text={s.eyebrow} /></p>
+          <Heading className="mt-4 text-[1.2rem] font-bold leading-tight text-sustainability-foreground sm:text-[1.9rem] xl:text-[2.5rem]"><Formatted text={s.title} /></Heading>
+          {s.body && <p className="mt-6 text-base leading-relaxed text-sustainability-muted"><Formatted text={s.body} /></p>}
           {s.sideStats.length > 0 && (
           <div className="mt-9 grid max-w-xl grid-cols-2 gap-6 sm:gap-10">
             {s.sideStats.map((i, k) => (
               <div key={k} className="brand-rule pt-4">
-                <p className="font-display text-2xl font-bold text-sustainability-foreground">{i.v}</p>
-                <p className="mt-1 text-sm text-sustainability-muted">{i.l}</p>
+                <p className="font-display text-2xl font-bold text-sustainability-foreground"><Formatted text={i.v} /></p>
+                <p className="mt-1 text-sm text-sustainability-muted"><Formatted text={i.l} /></p>
               </div>
             ))}
           </div>
@@ -398,9 +399,9 @@ export function Sustainability({ standalone = false }: { standalone?: boolean })
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-8">
           {s.stats.map((x) => (
             <div key={x.id} className="brand-rule pt-4">
-              <p className="font-display text-xl font-bold text-sustainability-foreground sm:text-2xl">{x.v}</p>
-              <p className="mt-1 text-sm text-sustainability-muted">{x.l}</p>
-              {x.d && <p className="mt-2 text-xs leading-relaxed text-sustainability-muted">{x.d}</p>}
+              <p className="font-display text-xl font-bold text-sustainability-foreground sm:text-2xl"><Formatted text={x.v} /></p>
+              <p className="mt-1 text-sm text-sustainability-muted"><Formatted text={x.l} /></p>
+              {x.d && <p className="mt-2 text-xs leading-relaxed text-sustainability-muted"><Formatted text={x.d} /></p>}
             </div>
           ))}
         </div>
@@ -443,9 +444,9 @@ export function InvestorsCareers() {
       <div className="mx-auto grid max-w-[1400px] items-stretch gap-6 px-5 lg:grid-cols-3 lg:px-10">
         {cards.map((c) => (
           <div key={c.id} id={c.id} className="card-lift flex h-full scroll-mt-24 flex-col rounded-sm border border-border bg-card p-8">
-            <p className="eyebrow">{c.eyebrow}</p>
-            <h3 className="mt-3 text-2xl font-semibold sm:text-3xl">{c.title}</h3>
-            <p className="mb-6 mt-3 text-sm leading-relaxed text-muted-foreground">{c.text}</p>
+            <p className="eyebrow"><Formatted text={c.eyebrow} /></p>
+            <h3 className="mt-3 text-2xl font-semibold sm:text-3xl"><Formatted text={c.title} /></h3>
+            <p className="mb-6 mt-3 text-sm leading-relaxed text-muted-foreground"><Formatted text={c.text} /></p>
             <a href={c.to} className="mt-auto inline-flex self-start items-center gap-2 rounded-sm bg-brand-orange px-5 py-3 font-display text-xs font-semibold uppercase tracking-[0.12em] text-accent-foreground">
               {c.cta} <ArrowRight className="size-4" />
             </a>
@@ -494,8 +495,8 @@ function CsrCard() {
         <div id="csr-details" className="mt-5 space-y-4 border-l-2 border-brand-green pl-4">
           {(csr?.areas ?? []).map((a) => (
             <div key={a.id}>
-              <h4 className="text-sm font-semibold">{a.title}</h4>
-              <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{a.text}</p>
+              <h4 className="text-sm font-semibold"><Formatted text={a.title} /></h4>
+              <p className="mt-1 text-sm leading-relaxed text-muted-foreground"><Formatted text={a.text} /></p>
             </div>
           ))}
         </div>
@@ -557,14 +558,14 @@ export function Journey() {
             const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6]!]!;
             return (
               <article key={i} className="overflow-hidden bg-card shadow-md transition-transform duration-300 hover:-translate-y-1">
-                {m.image && <img src={m.image} alt={m.title} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
+                {m.image && <img src={m.image} alt={plainText(String(m.title ?? ""))} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
                 <div className={`flex items-center justify-between px-5 py-3 text-primary-foreground ${JOURNEY_BANDS[i % 3]}`}>
-                  <span className="font-display text-2xl font-bold">{m.year}</span>
+                  <span className="font-display text-2xl font-bold"><Formatted text={m.year} /></span>
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div className="px-5 py-5">
-                  <h3 className="font-display text-base font-semibold">{m.title}</h3>
-                  {m.text && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{m.text}</p>}
+                  <h3 className="font-display text-base font-semibold"><Formatted text={m.title} /></h3>
+                  {m.text && <p className="mt-2 text-sm leading-relaxed text-muted-foreground"><Formatted text={m.text} /></p>}
                 </div>
               </article>
             );

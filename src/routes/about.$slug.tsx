@@ -1,3 +1,4 @@
+import { Formatted } from "@/components/site/Formatted";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowUpRight, Building2, Globe2, Handshake, ShieldCheck, TrendingUp } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -115,7 +116,7 @@ function AboutSectionPage() {
                     <span className="font-display text-xs font-bold text-muted-foreground">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <span className="font-display text-base font-semibold">{item.title}</span>
+                    <span className="font-display text-base font-semibold"><Formatted text={item.title} /></span>
                   </span>
                   <ArrowUpRight className="size-4 shrink-0 text-brand-orange transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </Link>
@@ -144,7 +145,7 @@ function ClientGrid({ items }: { items: ClientItem[] }) {
       {items.map((o) => (
         <li key={o.id} className="flex items-center gap-4 break-words border-b border-border py-4 font-display text-[0.95rem] font-medium leading-snug text-foreground">
           {o.image ? <span className="flex h-20 w-36 shrink-0 items-center justify-center rounded-md border border-border bg-background p-2"><img src={o.image} alt={o.description || "Client logo"} loading="lazy" className="max-h-full max-w-full object-contain" /></span> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
-          {o.description && <span className="min-w-0">{o.description}</span>}
+          {o.description && <span className="min-w-0"><Formatted text={o.description} /></span>}
         </li>
       ))}
     </ul>
