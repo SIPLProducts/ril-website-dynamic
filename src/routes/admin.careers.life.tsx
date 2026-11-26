@@ -111,7 +111,7 @@ function SectionDialog({ row, nextOrder, onClose, onSaved }: { row: Section | nu
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Live on website</label>
       </FormSection>
       <FormSection title="Image (optional)">
-        <FileDropzone file={file} onFile={setFile} accept="image/*" hint="JPG, PNG or WebP" />
+        <FileDropzone imageRef={clearImage ? null : row?.image_url} file={file} onFile={setFile} accept="image/*" hint="JPG, PNG or WebP" />
         {row?.image_url && !file && <label className="flex items-center gap-3 text-sm"><Switch checked={clearImage} onCheckedChange={setClearImage} /> Remove current image</label>}
       </FormSection>
     </AdminDialog>

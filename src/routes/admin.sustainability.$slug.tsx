@@ -1,3 +1,4 @@
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { plainText } from "@/lib/strength-style";
 import { RichField } from "@/components/admin/RichField";
 import { EsgExcelImport } from "@/components/admin/EsgExcelImport";
@@ -66,10 +67,12 @@ function kindInfo(slug: string, kind: Kind) {
 const MAX_PDF = 50 * 1024 * 1024;
 
 async function upload(file: File, folder: string) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
   const path = `esg/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 async function removeStored(url: string | null) {
@@ -161,7 +164,7 @@ function PageEditor({ slug, label }: { slug: string; label: string }) {
               {shown ? <img src={shown} alt="" className="h-full w-full object-cover" /> : <ImagePlus className="size-7 text-muted-foreground" />}
             </div>
             <div className="space-y-2">
-              <FileDropzone file={file} onFile={setFile} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
+              <FileDropzone imageRef={f.banner_image_url} file={file} onFile={setFile} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
               {f.banner_image_url && !file && <Button type="button" size="sm" variant="outline" onClick={() => setF({ ...f, banner_image_url: null })}><Trash2 className="size-4" /> Remove image</Button>}
             </div>
           </div>
@@ -419,7 +422,7 @@ function ItemDialog({ slug, kind, grouped, groups, initialTitle, row, nextOrder,
               {localImage || imagePreview ? <img src={localImage ?? imagePreview ?? ""} alt="Content image preview" className="h-full w-full object-contain" /> : <ImagePlus className="size-8 text-muted-foreground" />}
             </div>
             <div className="space-y-3">
-              <FileDropzone file={file} onFile={(next) => {
+              <FileDropzone imageRef={imageUrl} file={file} onFile={(next) => {
                 const error = imageFileError(next, false);
                 setErrs({ ...errs, file: error ?? "" });
                 if (!error) setFile(next);

@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { Formatted } from "@/components/site/Formatted";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ArrowUpRight, Building2, Globe2, Handshake, ShieldCheck, TrendingUp } from "lucide-react";
@@ -69,7 +70,7 @@ function AboutSectionPage() {
       <SiteHeader />
       <main>
         <section className="ink-panel relative overflow-hidden pb-20 pt-36 lg:pb-28 lg:pt-44">
-          {banner && (<><img src={banner} alt="" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-ink/75" aria-hidden="true" /></>)}
+          {banner && (<><AdjustableImage src={banner} alt="" className="absolute inset-0 h-full w-full object-cover" /><div className="absolute inset-0 bg-ink/75" aria-hidden="true" /></>)}
           <div className="absolute inset-y-0 right-0 w-1/3 border-l border-ink-foreground/10" aria-hidden="true" />
           <div className="relative mx-auto grid max-w-[1400px] gap-12 px-5 lg:grid-cols-[1fr_18rem] lg:items-end lg:px-10">
             <div className="max-w-4xl">
@@ -94,7 +95,7 @@ function AboutSectionPage() {
               <p className="mt-5 max-w-3xl font-display text-2xl font-semibold leading-relaxed text-foreground sm:text-3xl">
                 {statement}
               </p>
-              {sideImage && <img src={sideImage} alt={title} className="mt-8 w-full max-w-3xl rounded-lg object-cover" />}
+              {sideImage && <AdjustableImage src={sideImage} alt={title} className="mt-8 w-full max-w-3xl rounded-lg object-cover" />}
               <a
                 href="/#about"
                 className="mt-9 inline-flex items-center gap-2 font-display text-sm font-semibold uppercase text-brand-blue transition-colors hover:text-brand-orange"
@@ -144,7 +145,7 @@ function ClientGrid({ items }: { items: ClientItem[] }) {
     <ul className="grid grid-cols-1 border-t border-border sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3">
       {items.map((o) => (
         <li key={o.id} className="flex items-center gap-4 break-words border-b border-border py-4 font-display text-[0.95rem] font-medium leading-snug text-foreground">
-          {o.image ? <span className="flex h-20 w-36 shrink-0 items-center justify-center rounded-md border border-border bg-background p-2"><img src={o.image} alt={o.description || "Client logo"} loading="lazy" className="max-h-full max-w-full object-contain" /></span> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
+          {o.image ? <span className="flex h-20 w-36 shrink-0 items-center justify-center rounded-md border border-border bg-background p-2"><AdjustableImage src={o.image} alt={o.description || "Client logo"} loading="lazy" className="max-h-full max-w-full object-contain" /></span> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
           {o.description && <span className="min-w-0"><Formatted text={o.description} /></span>}
         </li>
       ))}

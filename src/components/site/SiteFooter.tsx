@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { Formatted } from "@/components/site/Formatted";
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
@@ -169,7 +170,7 @@ export function SiteFooter({ sustainabilityOnly = false }: { sustainabilityOnly?
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {GROUP_COMPANIES.map((company) => {
               const withName = "showName" in company && company.showName;
-              const inner = company.logo ? <div className="flex h-full w-full flex-col items-center justify-center gap-1"><img src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className={`${withName ? "max-h-28" : "h-full max-h-36"} min-h-0 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]`} />{withName && <span className="text-center text-xs font-semibold text-foreground"><Formatted text={company.name} /></span>}</div> : <span className="text-center text-sm font-semibold text-foreground"><Formatted text={company.name} /></span>;
+              const inner = company.logo ? <div className="flex h-full w-full flex-col items-center justify-center gap-1"><AdjustableImage src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className={`${withName ? "max-h-28" : "h-full max-h-36"} min-h-0 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]`} />{withName && <span className="text-center text-xs font-semibold text-foreground"><Formatted text={company.name} /></span>}</div> : <span className="text-center text-sm font-semibold text-foreground"><Formatted text={company.name} /></span>;
               const cls = "group relative flex h-40 items-center justify-center p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
               if (!company.href) return <div key={company.name} className={cls}>{inner}</div>;
               return (

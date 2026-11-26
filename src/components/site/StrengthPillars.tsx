@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { STRENGTH_DEFAULTS } from "@/lib/strength-defaults";
 import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -38,7 +39,7 @@ export function PillarCard({ p, n, legacyBody }: { p: Pillar; n: number; legacyB
         <Dialog>
           <DialogTrigger asChild>
             <button type="button" aria-label="Enlarge image" className="block w-full cursor-zoom-in overflow-hidden rounded-lg border border-border">
-              <img src={p.image_url} alt={plainText(p.title)} loading="lazy" className="h-auto w-full object-contain" />
+              <AdjustableImage src={p.image_url} alt={plainText(p.title)} loading="lazy" className="h-auto w-full object-contain" />
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-[95vw] p-2 sm:max-w-[95vw]">

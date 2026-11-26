@@ -15,6 +15,7 @@
 - Store imported binary media as Lovable asset pointers; keep the favicon as a real public file so browser icons resolve.
 
 ## Admin & dynamic content
+- Shared image display controls reuse `site_settings.accolade_images` with namespaced `media:` keys normalized to same-origin references; legacy award-ID entries remain intact, and optimistic timestamp checks prevent concurrent edits from replacing each other.
 - Investor Relations documents and contacts live in the database (`ir_documents` keyed by `section_key` = `category/subTab[/child]`, `ir_contacts`); the tab structure stays in `src/lib/investor-relations.ts` so layouts stay code-controlled while content is admin-editable.
 - The admin portal lives at `/admin` (client-only, noindex, never linked from the public site). Staff = `admin` or `super_admin` in `user_roles` plus an active `admin_profiles` row; RLS uses `is_staff`/`is_super_admin`. There is no public sign-up: super admins create accounts through server functions in `src/lib/admin-users.functions.ts`.
 - Per-user email OTP is enforced in the login flow: password check, then sign-out, then `signInWithOtp` and `verifyOtp` (because the auth provider has no per-user MFA flag).

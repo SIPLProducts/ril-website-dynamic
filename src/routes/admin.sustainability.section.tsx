@@ -122,7 +122,7 @@ function ContentEditor() {
             {custom && <Button type="button" size="sm" variant="outline" className="mt-2" onClick={useDefaultVideo}>Use original hummingbird video</Button>}
           </div>
           <div><Label>Upload new video (MP4, max 20 MB)</Label><FileDropzone file={video} onFile={setVideo} accept="video/mp4,video/webm" hint="Short, silent loop works best — it plays muted" /></div>
-          <div><Label>Cover picture (optional, shown while the video loads)</Label><FileDropzone file={poster} onFile={setPoster} accept="image/png,image/jpeg,image/webp" /></div>
+          <div><Label>Cover picture (optional, shown while the video loads)</Label><FileDropzone imageRef={data?.poster_url} file={poster} onFile={setPoster} accept="image/png,image/jpeg,image/webp" /></div>
         </div>
       </div>
     </section>

@@ -1,4 +1,5 @@
 import { parseRating, type EsgRating } from "@/lib/esg-rating";
+import { parseImageDisplays, type ImageDisplay } from "@/lib/image-display";
 import { METRIC_TRENDS, type MetricTrend } from "@/lib/esg-metric-trends";
 
 /** Top-level website menu items; their order is admin-controlled. */
@@ -76,6 +77,7 @@ export interface SiteSettings {
   esgTrends: MetricTrend[];
   /** slot → file reference (storage:... or URL) */
   images: Record<string, string>;
+  imageDisplays: Record<string, ImageDisplay>;
   mainMenu: MainMenuKey[];
   sustainabilityNav: SustainabilityNavItem[];
   pdfViewer: PdfViewerSettings;
@@ -99,6 +101,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   talkToUs: DEFAULT_TALK,
   esgTrends: METRIC_TRENDS,
   images: {},
+  imageDisplays: {},
   mainMenu: MAIN_MENU.map((m) => m.key),
   sustainabilityNav: [],
   pdfViewer: DEFAULT_PDF,
@@ -125,6 +128,7 @@ export function parseSettings(rows: Row[]): SiteSettings {
     esgLabels: lab && typeof lab === "object" && !Array.isArray(lab) ? (lab as Record<string, EsgLabels>) : {},
     esgTrends: Array.isArray(trends) && trends.length ? (trends as MetricTrend[]) : METRIC_TRENDS,
     images,
+    imageDisplays: parseImageDisplays(get("accolade_images")),
     mainMenu: [...menuOrder, ...keys.filter((k) => !menuOrder.includes(k))] as MainMenuKey[],
     sustainabilityNav: Array.isArray(sus) ? (sus as SustainabilityNavItem[]).filter((s) => s && typeof s.slug === "string") : [],
     pdfViewer: { ...DEFAULT_PDF, ...(pdf && typeof pdf === "object" ? pdf : {}) },

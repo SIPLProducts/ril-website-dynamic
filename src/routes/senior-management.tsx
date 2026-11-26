@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft, UserRound } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -44,7 +45,7 @@ function SeniorManagementPage() {
               {members.map((m) => (
                 <li key={m.id} className="text-center">
                   {m.image ? (
-                    <img src={m.image} alt={m.name} loading="lazy" className="aspect-[4/5] w-full rounded-sm border border-border bg-surface object-cover object-[50%_20%]" />
+                    <AdjustableImage src={m.image} alt={m.name} loading="lazy" className="aspect-[4/5] w-full rounded-sm border border-border bg-surface object-cover object-[50%_20%]" />
                   ) : (
                     <div className="flex aspect-[4/5] w-full items-center justify-center rounded-sm border border-border bg-surface text-muted-foreground">
                       <UserRound className="size-16" strokeWidth={1} />

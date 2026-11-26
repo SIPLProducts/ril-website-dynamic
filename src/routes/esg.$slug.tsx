@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import * as React from "react";
 import { AutoScrollRail } from "@/components/site/AutoScrollRail";
 import { isHtml, plainText } from "@/lib/strength-style";
@@ -113,7 +114,7 @@ function EsgPage() {
         {/* Hero */}
         <section className="relative isolate flex min-h-[30rem] items-center overflow-hidden bg-[#0d2b1f] pb-14 pt-32 text-white sm:min-h-[34rem] lg:min-h-[38rem] lg:pb-16 lg:pt-36">
           {(sideImage ?? section.bannerImage) && (
-            <img
+            <AdjustableImage
               src={sideImage ?? section.bannerImage ?? undefined}
               alt={section.slug === "social" ? "Team members planting and watering a sapling together at a tree-planting drive in India" : `${section.title} at Ramky Infrastructure`}
               className={`absolute inset-0 -z-10 h-full w-full object-cover ${section.slug === "social" ? "object-[70%_30%] sm:object-[50%_20%]" : "object-center"}`}
@@ -191,7 +192,7 @@ function EsgPage() {
                   >
                     {section.slug === "esg-reporting" && frameworkImg(metric.value) ? (
                       <div className="-mx-6 -mt-6 mb-5 flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border bg-background p-6">
-                        <img src={frameworkImg(metric.value)} alt={metric.label || metric.value} loading="lazy" className="h-full w-auto max-w-full object-contain" />
+                        <AdjustableImage src={frameworkImg(metric.value)} alt={metric.label || metric.value} loading="lazy" className="h-full w-auto max-w-full object-contain" />
                       </div>
                     ) : MetricIcon && (
                       <div className="mb-5 flex size-11 items-center justify-center rounded-sm bg-emerald-700/10 text-emerald-700">
@@ -297,7 +298,7 @@ function EsgPage() {
                       <div className="max-w-3xl pb-6 leading-relaxed text-muted-foreground">
                         <Formatted as="div" text={item.body} />
                         {(section.slug === "environmental" || section.slug === "social") && item.imageUrl && (
-                          <img src={item.imageUrl} alt={plainText(item.title)} loading="lazy" className="mt-5 max-h-96 w-full rounded-sm object-contain object-left" />
+                          <AdjustableImage src={item.imageUrl} alt={plainText(item.title)} loading="lazy" className="mt-5 max-h-96 w-full rounded-sm object-contain object-left" />
                         )}
                       </div>
                     )}

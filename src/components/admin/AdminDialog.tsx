@@ -2,6 +2,7 @@ import { useRef, useState, type ReactNode } from "react";
 import { UploadCloud, X, type LucideIcon } from "lucide-react";
 import logo from "@/assets/ramky-infra-logo.png.asset.json";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+import { ImageDisplayControls } from "@/components/admin/ImageDisplayControls";
 
 /** Branded popup used across the admin portal: gradient header, scrollable body, sticky footer. */
 export function AdminDialog({ icon: Icon, title, subtitle, onClose, footer, children, wide, xwide }: { icon: LucideIcon; title: string; subtitle?: string; onClose: () => void; footer: ReactNode; children: ReactNode; wide?: boolean; xwide?: boolean }) {
@@ -42,10 +43,11 @@ export function FieldError({ msg }: { msg?: string | undefined }) {
 
 const fmtSize = (n: number) => (n > 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.ceil(n / 1024)} KB`);
 
-export function FileDropzone({ file, onFile, accept, hint }: { file: File | null; onFile: (f: File | null) => void; accept: string; hint?: string }) {
+export function FileDropzone({ file, onFile, accept, hint, imageRef, imageOptions = true }: { file: File | null; onFile: (f: File | null) => void; accept: string; hint?: string; imageRef?: string | null | undefined; imageOptions?: boolean }) {
   const ref = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   return (
+    <div>
     <div
       onClick={() => ref.current?.click()}
       onDragOver={(e) => { e.preventDefault(); setOver(true); }}
@@ -67,6 +69,8 @@ export function FileDropzone({ file, onFile, accept, hint }: { file: File | null
           {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
         </>
       )}
+    </div>
+    {imageOptions && accept.includes("image/") && (!file || file.type.startsWith("image/")) && <ImageDisplayControls imageRef={imageRef} file={file} />}
     </div>
   );
 }

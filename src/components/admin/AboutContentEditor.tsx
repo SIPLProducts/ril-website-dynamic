@@ -1,3 +1,4 @@
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { STRENGTH_DEFAULTS } from "@/lib/strength-defaults";
 import { RichField } from "@/components/admin/RichField";
 import { safeRandomUUID } from "@/lib/uuid";
@@ -15,10 +16,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 async function uploadImage(file: File, folder: string) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
   const path = `about/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 async function removeStored(url: string | null) {
@@ -46,7 +49,7 @@ function ImageField({ label, url, file, onFile, onRemove }: { label: string; url
           {shown ? <img src={shown} alt="" className="h-full w-full object-cover" /> : <ImagePlus className="size-7 text-muted-foreground" />}
         </div>
         <div className="space-y-2">
-          <FileDropzone file={file} onFile={onFile} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
+          <FileDropzone imageRef={url} file={file} onFile={onFile} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
           {url && !file && <Button type="button" size="sm" variant="outline" onClick={onRemove}><Trash2 className="size-4" /> Remove image</Button>}
         </div>
       </div>

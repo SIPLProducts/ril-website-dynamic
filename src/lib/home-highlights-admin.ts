@@ -1,3 +1,4 @@
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { publishedFileUrl } from "@/lib/file-url";
 import { safeRandomUUID } from "@/lib/uuid";
 import { useEffect, useState } from "react";
@@ -7,10 +8,12 @@ import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import { resolveHomeAsset } from "@/lib/home-assets";
 
 export async function uploadHomeFile(folder: string, file: File) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "bin";
   const path = `home/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 export async function removeHomeFile(url: string | null | undefined) {

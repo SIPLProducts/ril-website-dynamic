@@ -1,3 +1,4 @@
+import { hasImageOptions } from "@/lib/image-display-admin";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowDown, ArrowUp, Pencil, Plus, Trash2, type LucideIcon } from "lucide-react";
@@ -128,8 +129,8 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
         const b = await (await fetch(current)).blob();
         upload = new File([b], "photo." + (b.type === "image/png" ? "png" : "jpg"), { type: b.type || "image/jpeg" });
       }
-      if (resolution && upload) upload = await uniformImage(upload, res);
-      else if (withImage && upload && upload.type.startsWith("image/")) upload = await uniformImage(upload, "1600x900");
+      if (resolution && upload && !hasImageOptions(upload)) upload = await uniformImage(upload, res);
+      else if (withImage && upload && !hasImageOptions(upload) && upload.type.startsWith("image/")) upload = await uniformImage(upload, "1600x900");
       if (withImage && upload) payload["image_url"] = await uploadHomeFile(table, upload);
       else if (withImage && imageOptional && clearImage && row?.image_url) payload["image_url"] = null;
       if (doc && docFile) payload[doc.key] = await uploadHomeFile(table, docFile);
@@ -171,7 +172,7 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
             </div>
           )}
           {clearImage && !file && <p className="text-sm text-muted-foreground">Photo will be removed when you save. <button type="button" className="underline" onClick={() => setClearImage(false)}>Undo</button></p>}
-          <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept={resolution ? "image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" : "image/png,image/jpeg,image/webp"} hint={resolution ? "Photo, GIF or video (MP4/WebM, up to 50 MB). Photos are cropped to the same wide shape so every slide matches." : "Recommended: landscape photo, at least 1600 × 900. It is trimmed to the same 16:9 shape automatically so every card matches."} />
+          <FileDropzone imageRef={clearImage ? null : row?.image_url as string | undefined} file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept={resolution ? "image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" : "image/png,image/jpeg,image/webp"} hint={resolution ? "Photo, GIF or video (MP4/WebM, up to 50 MB). Photos are cropped to the same wide shape so every slide matches." : "Recommended: landscape photo, at least 1600 × 900. It is trimmed to the same 16:9 shape automatically so every card matches."} />
           {resolution && (
             <div><Label>Image resolution</Label>
               <select aria-label="Image resolution" className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={res} onChange={(e) => { setRes(e.target.value); setResChanged(true); }}>

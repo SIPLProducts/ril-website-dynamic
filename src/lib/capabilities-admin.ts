@@ -1,3 +1,4 @@
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { publishedFileUrl } from "@/lib/file-url";
 import { safeRandomUUID } from "@/lib/uuid";
 import { useEffect, useState } from "react";
@@ -22,10 +23,12 @@ export async function fetchVerticals() {
 }
 
 export async function uploadCapabilityImage(file: File) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
   const path = `capabilities/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 export async function removeStored(url: string | null) {

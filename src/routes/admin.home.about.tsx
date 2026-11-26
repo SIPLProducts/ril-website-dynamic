@@ -139,7 +139,7 @@ function PhotoSlot({ label, img, file, onFile, onAlt }: { label: string; img: Im
     <div className="space-y-2 rounded-lg border border-border p-3">
       <p className="font-display text-sm font-semibold">{label}</p>
       {src && !file && <img src={src} alt="" className="h-28 w-full rounded border border-border object-cover" />}
-      <FileDropzone file={file} onFile={onFile} accept="image/png,image/jpeg,image/webp" hint="Landscape photo" />
+      <FileDropzone imageRef={img.url} file={file} onFile={onFile} accept="image/png,image/jpeg,image/webp" hint="Landscape photo" />
       <div><Label>Photo description</Label><Input maxLength={200} value={img.alt} onChange={(e) => onAlt(e.target.value)} /></div>
     </div>
   );

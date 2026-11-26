@@ -225,7 +225,7 @@ function VerticalDialog({ row, existing, nextOrder, onClose, onSaved }: { row: V
             {row?.image_url && <Button type="button" variant="outline" size="sm" onClick={() => setClearImage(true)}>Use default photo</Button>}
           </div>
         )}
-        <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept="image/png,image/jpeg,image/webp" hint="JPG, PNG or WEBP — landscape photos look best" />
+        <FileDropzone imageRef={clearImage ? null : row?.image_url} file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept="image/png,image/jpeg,image/webp" hint="JPG, PNG or WEBP — landscape photos look best" />
         <div><Label>Image description (for accessibility)</Label><Input value={f.image_alt} maxLength={160} onChange={(e) => setF({ ...f, image_alt: e.target.value })} /></div>
       </FormSection>
     </AdminDialog>

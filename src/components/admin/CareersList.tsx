@@ -1,3 +1,4 @@
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { safeRandomUUID } from "@/lib/uuid";
 import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,10 +15,12 @@ type Base = { id: string; title: string; published: boolean; sort_order: number;
 
 /** Uploads an image to private storage and returns its `storage:` reference. */
 export async function uploadImage(file: File, folder: string) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
   const path = `careers/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw error;
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 export async function removeStored(url: string | null | undefined) {

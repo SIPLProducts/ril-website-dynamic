@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft, UserRound } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
@@ -28,7 +29,7 @@ export function ProfileView({ person: d, others }: { person: MgmtPerson; others:
             <div className="mx-auto w-full max-w-xs md:mx-0 md:max-w-none">
               <div className="md:sticky md:top-32">
                 {d.image ? (
-                  <img src={d.image} alt={d.name} className="aspect-[4/5] w-full rounded-sm border border-border bg-surface object-cover object-[50%_25%]" />
+                  <AdjustableImage src={d.image} alt={d.name} className="aspect-[4/5] w-full rounded-sm border border-border bg-surface object-cover object-[50%_25%]" />
                 ) : (
                   <div className="flex aspect-[4/5] w-full flex-col items-center justify-center gap-3 rounded-sm border border-border bg-surface text-muted-foreground" role="img" aria-label={`Photograph of ${d.name} to be added`}>
                     <UserRound className="size-20" strokeWidth={1} />

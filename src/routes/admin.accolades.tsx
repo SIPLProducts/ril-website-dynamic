@@ -252,7 +252,7 @@ function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, on
             <Button type="button" size="sm" variant="outline" onClick={() => setF({ ...f, image_url: null })}><Trash2 className="size-4" /> Remove photo</Button>
           </div>
         )}
-        <FileDropzone file={file} onFile={(x) => { setFile(x); setErrs({ ...errs, image: "" }); }} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
+        <FileDropzone imageOptions={false} file={file} onFile={(x) => { setFile(x); setErrs({ ...errs, image: "" }); }} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
         <FieldError msg={errs.image || undefined} />
         <div className="grid gap-4 sm:grid-cols-2">
           <div><Label>Photo shape on the website</Label>

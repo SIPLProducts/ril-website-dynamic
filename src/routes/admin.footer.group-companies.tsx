@@ -1,3 +1,4 @@
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -28,10 +29,12 @@ export const Route = createFileRoute("/admin/footer/group-companies")({
 type Company = { id: string; name: string; url: string | null; logo_url: string | null; published: boolean; show_logo: boolean; show_name: boolean; show_link: boolean; sort_order: number };
 
 async function uploadLogo(file: File) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
   const path = `footer/group-companies/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 async function removeStored(url: string | null) {
@@ -221,7 +224,7 @@ function CompanyDialog({ row, nextOrder, onClose, onSaved }: { row: Company | nu
           </div>
         )}
         {clearLogo && !file && <p className="text-sm text-muted-foreground">Logo will be removed when you save. <button type="button" className="underline" onClick={() => setClearLogo(false)}>Undo</button></p>}
-        <FileDropzone file={file} onFile={(x) => { setFile(x); if (x) setClearLogo(false); }} accept="image/png,image/jpeg,image/svg+xml,image/webp" hint="PNG, JPG, SVG or WEBP — a transparent background looks best" />
+        <FileDropzone imageRef={clearLogo ? null : row?.logo_url} file={file} onFile={(x) => { setFile(x); if (x) setClearLogo(false); }} accept="image/png,image/jpeg,image/svg+xml,image/webp" hint="PNG, JPG, SVG or WEBP — a transparent background looks best" />
       </FormSection>
     </AdminDialog>
   );

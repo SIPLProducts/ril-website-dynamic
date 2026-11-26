@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
 import { createFileRoute } from "@tanstack/react-router";
@@ -30,7 +31,7 @@ function CareersPage() {
     <div className="grid items-stretch gap-6 md:grid-cols-2">
       {cards.map((c) => (
         <article key={c.id} className="flex flex-col overflow-hidden rounded-sm border border-border bg-card">
-          {c.image && <img src={c.image} alt={plainText(String(c.title ?? ""))} width={1536} height={864} className="aspect-[16/9] w-full object-cover" />}
+          {c.image && <AdjustableImage src={c.image} alt={plainText(String(c.title ?? ""))} width={1536} height={864} className="aspect-[16/9] w-full object-cover" />}
           <div className="flex flex-1 flex-col items-start p-6 lg:p-8">
             {c.eyebrow && <p className="eyebrow"><Formatted text={c.eyebrow} /></p>}
             <h2 className="mt-3 text-2xl font-semibold sm:text-3xl"><Formatted text={c.title} /></h2>

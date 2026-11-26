@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
 import { createFileRoute } from "@tanstack/react-router";
@@ -34,7 +35,7 @@ function LifeAtRamkyPage() {
     <div className="divide-y divide-border">
       {LIFE_SECTIONS.map((section) => <section key={section.id} className="grid gap-5 py-10 lg:grid-cols-[1fr_2fr] lg:gap-14">
         <div><h2 className="text-2xl font-semibold leading-snug"><Formatted text={section.title} /></h2></div>
-        <div className="space-y-4">{section.imageUrl && <img src={section.imageUrl} alt={plainText(String(section.title ?? ""))} className="w-full rounded-md object-cover" loading="lazy" />}{section.paragraphs.map((text, j) => <p key={j} className="text-base leading-relaxed text-muted-foreground">{text}</p>)}</div>
+        <div className="space-y-4">{section.imageUrl && <AdjustableImage src={section.imageUrl} alt={plainText(String(section.title ?? ""))} className="w-full rounded-md object-cover" loading="lazy" />}{section.paragraphs.map((text, j) => <p key={j} className="text-base leading-relaxed text-muted-foreground">{text}</p>)}</div>
       </section>)}
     </div>
   </CareersLayout>;

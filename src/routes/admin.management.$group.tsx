@@ -1,3 +1,4 @@
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -34,10 +35,12 @@ export const Route = createFileRoute("/admin/management/$group")({
 type Row = { id: string; grp: string; slug: string; name: string; designation: string; image_url: string | null; sections: Record<string, string[]>; published: boolean; sort_order: number };
 
 async function uploadImage(file: File) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
   const path = `management/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 async function removeStored(url: string | null) {
@@ -191,7 +194,7 @@ function PersonDialog({ group, row, taken, nextOrder, onClose, onSaved }: { grou
             {file ? <img src={URL.createObjectURL(file)} alt="" className="h-full w-full object-cover object-top" /> : preview ? <img src={preview} alt="" className="h-full w-full object-cover object-top" /> : <UserRound className="size-7 text-muted-foreground" />}
           </div>
           <div>
-            <FileDropzone file={file} onFile={(f) => { setFile(f); setErrs((x) => ({ ...x, image: "" })); }} accept="image/png,image/jpeg,image/webp" hint={`PNG, JPG or WebP, up to 5 MB${row?.image_url ? " — leave empty to keep current" : " — optional"}`} />
+            <FileDropzone imageRef={row?.image_url} file={file} onFile={(f) => { setFile(f); setErrs((x) => ({ ...x, image: "" })); }} accept="image/png,image/jpeg,image/webp" hint={`PNG, JPG or WebP, up to 5 MB${row?.image_url ? " — leave empty to keep current" : " — optional"}`} />
             <FieldError msg={errs["image"] || undefined} />
           </div>
         </div>

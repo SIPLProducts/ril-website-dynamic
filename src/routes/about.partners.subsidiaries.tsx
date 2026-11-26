@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -48,7 +49,7 @@ function SubsidiariesPage() {
                     {r["image_url"] ? (
                       <div className="flex h-full flex-col">
                         <div className="grid h-24 place-items-center px-4 py-3">
-                          <img src={r["image_url"]} alt={`${name} logo`} loading="lazy" className="max-h-20 max-w-full object-contain" />
+                          <AdjustableImage src={r["image_url"]} alt={`${name} logo`} loading="lazy" className="max-h-20 max-w-full object-contain" />
                         </div>
                         <p className="border-t border-border px-4 py-2.5 text-center font-display text-xs font-semibold leading-snug">{name}</p>
                       </div>

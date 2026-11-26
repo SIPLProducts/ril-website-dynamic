@@ -193,7 +193,7 @@ function SlideDialog({ row, nextOrder, onClose, onSaved }: { row: Slide | null; 
       </FormSection>
       <FormSection title={row ? "Photo (upload a new one to replace)" : "Photo *"}>
         {current && !file && <img src={current} alt="Current" className="h-24 max-w-[260px] rounded border border-border object-cover" />}
-        <FileDropzone file={file} onFile={setFile} accept="image/png,image/jpeg,image/webp" hint="Wide landscape photo (about 21:9) looks best" />
+        <FileDropzone imageRef={row?.image_url} file={file} onFile={setFile} accept="image/png,image/jpeg,image/webp" hint="Wide landscape photo (about 21:9) looks best" />
       </FormSection>
     </AdminDialog>
   );

@@ -1,3 +1,5 @@
+import { hasImageOptions } from "@/lib/image-display-admin";
+import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -34,10 +36,12 @@ export const Route = createFileRoute("/admin/about/clientele")({
 type ClientRow = { id: string; image_url: string | null; description: string; published: boolean; sort_order: number };
 
 async function uploadImage(file: File, folder: string) {
+  file = await prepareImageUpload(file);
   const ext = file.name.split(".").pop()?.toLowerCase() || "png";
   const path = `about/${folder}/${safeRandomUUID()}.${ext}`;
   const { error } = await supabase.storage.from(IR_BUCKET).upload(path, file, { contentType: file.type });
   if (error) throw new Error(error.message);
+  await saveUploadedImageOptions(file, STORAGE_PREFIX + path);
   return STORAGE_PREFIX + path;
 }
 async function removeStored(url: string | null) {
@@ -159,7 +163,7 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
     setSaving(true);
     try {
       let image_url = existing;
-      if (file) image_url = await uploadImage(await uniformLogo(file, file.name), "clients");
+      if (file) image_url = await uploadImage(hasImageOptions(file) ? file : await uniformLogo(file, file.name), "clients");
       else if (existing && preview) {
         // Re-save keeps older logos in line with the uniform size.
         const blob = await fetch(preview).then((r) => r.blob());
@@ -186,7 +190,7 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
             <Button type="button" variant="outline" size="sm" onClick={() => { setRemoveImg(true); setErr(null); }}>Remove logo</Button>
           </div>
         )}
-        <FileDropzone file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, WebP or SVG with transparent background recommended (any size, up to 5 MB). Empty edges are trimmed and the logo is centred in a standard box so all logos match${existing ? " — leave empty to keep current" : " — optional"}`} />
+        <FileDropzone imageRef={existing} file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, WebP or SVG with transparent background recommended (any size, up to 5 MB). Empty edges are trimmed and the logo is centred in a standard box so all logos match${existing ? " — leave empty to keep current" : " — optional"}`} />
         <FieldError msg={err ?? undefined} />
       </FormSection>
       <FormSection title="Details">

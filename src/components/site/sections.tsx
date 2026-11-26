@@ -1,3 +1,4 @@
+import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
 import { useQuery } from "@tanstack/react-query";
@@ -94,7 +95,7 @@ export function Hero() {
         return isVideo(slide.src) ? (
           <video key={slide.src} src={slide.src} autoPlay muted loop playsInline preload={i === 0 ? "auto" : "metadata"} aria-hidden className={cls} />
         ) : (
-          <img key={slide.src} src={slide.src} alt={slide.alt} width={1920} height={1080}
+          <AdjustableImage key={slide.src} src={slide.src} alt={slide.alt} width={1920} height={1080}
             loading={i === 0 ? undefined : "lazy"} aria-hidden={i !== active} className={cls} />
         );
       })}
@@ -241,7 +242,7 @@ export function About() {
                 i === 0 ? "col-span-2 aspect-[16/9] lg:aspect-[16/8.5]" : "aspect-[4/3]"
               }`}
             >
-              <img
+              <AdjustableImage
                 src={img.url}
                 alt={img.alt}
                 width={i === 0 ? 1920 : 1200}
@@ -279,7 +280,7 @@ export function Businesses() {
             return (
             <Link key={v.slug} to="/businesses/$slug" params={{ slug: v.slug }} className="card-lift group flex flex-col overflow-hidden rounded-sm bg-card">
               <div className="relative h-48 overflow-hidden bg-muted">
-                {src && <img src={src} alt={v.imageAlt || v.title} width={1200} height={900} loading="lazy" className="size-full object-cover transition-transform duration-500 group-hover:scale-105" />}
+                {src && <AdjustableImage src={src} alt={v.imageAlt || v.title} width={1200} height={900} loading="lazy" className="size-full object-cover transition-transform duration-500 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
                 <Icon className="absolute bottom-4 left-4 size-7 text-ink-foreground" />
               </div>
@@ -326,7 +327,7 @@ export function Projects() {
           {slides.map((p, i) => {
             const src = resolveHomeAsset(p.image);
             return src ? (
-              <img
+              <AdjustableImage
                 key={p.id}
                 src={src}
                 alt={plainText(String(p.name ?? ""))}
@@ -429,7 +430,7 @@ function SustainabilityVideo({ src, poster }: { src: string | null; poster: stri
       {src ? (
         <video ref={ref} src={src} poster={poster ?? undefined} autoPlay muted loop playsInline preload="metadata"
           aria-label="Sustainability video" className="absolute inset-0 h-full w-full object-cover object-center" />
-      ) : poster ? <img src={poster} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
+      ) : poster ? <AdjustableImage src={poster} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
     </div>
   );
 }
@@ -558,7 +559,7 @@ export function Journey() {
             const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6]!]!;
             return (
               <article key={i} className="overflow-hidden bg-card shadow-md transition-transform duration-300 hover:-translate-y-1">
-                {m.image && <img src={m.image} alt={plainText(String(m.title ?? ""))} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
+                {m.image && <AdjustableImage src={m.image} alt={plainText(String(m.title ?? ""))} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
                 <div className={`flex items-center justify-between px-5 py-3 text-primary-foreground ${JOURNEY_BANDS[i % 3]}`}>
                   <span className="font-display text-2xl font-bold"><Formatted text={m.year} /></span>
                   <Icon className="h-5 w-5" aria-hidden="true" />

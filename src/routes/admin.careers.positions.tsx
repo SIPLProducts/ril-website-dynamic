@@ -174,7 +174,7 @@ function FlyerDialog({ row, nextOrder, onClose, onSaved }: { row: Flyer | null; 
         <label className="flex items-center gap-3 text-sm"><Switch checked={published} onCheckedChange={setPublished} /> Open (shown on website)</label>
       </FormSection>
       <FormSection title={row?.image_url ? "Flyer image (upload to replace)" : "Flyer image (required)"}>
-        <FileDropzone file={file} onFile={setFile} accept="image/*" hint="JPG, PNG or WebP" />
+        <FileDropzone imageRef={row?.image_url} file={file} onFile={setFile} accept="image/*" hint="JPG, PNG or WebP" />
       </FormSection>
     </AdminDialog>
   );
