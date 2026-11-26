@@ -549,6 +549,7 @@ const JOURNEY_MILESTONES: { year: string; title: string; text: string; image?: s
 const JOURNEY_ICONS: Record<string, LucideIcon> = { flag: Flag, leaf: Leaf, route: RouteIcon, chart: TrendingUp, globe: Globe, rocket: Rocket };
 const JOURNEY_ICON_ORDER = ["flag", "leaf", "route", "chart", "globe", "rocket"];
 const JOURNEY_BANDS = ["bg-brand-orange", "bg-brand-green", "bg-brand-blue"];
+const JOURNEY_STEPS = ["lg:mt-24", "lg:mt-[4.75rem]", "lg:mt-[3.25rem]", "lg:mt-8", "lg:mt-4", "lg:mt-0"];
 
 export function Journey() {
   const { data: top } = useQuery(homeTopQuery());
@@ -563,11 +564,12 @@ export function Journey() {
             {j?.title || "Three decades of building, milestone by milestone."}
           </h2>
         </div>
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+        <div className="mt-12 grid grid-cols-1 items-start gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
           {milestones.map((m, i) => {
-            const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6]!]!;
+            const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6] ?? "flag"] ?? Flag;
+            const step = JOURNEY_STEPS[i % JOURNEY_STEPS.length] ?? "lg:mt-0";
             return (
-              <article key={i} className="overflow-hidden bg-card shadow-md transition-transform duration-300 hover:-translate-y-1">
+              <article key={i} className={`min-w-0 overflow-hidden bg-card shadow-md ${step}`}>
                 {m.image && <AdjustableImage src={m.image} alt={plainText(String(m.title ?? ""))} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
                 <div className={`flex items-center justify-between px-5 py-3 text-primary-foreground ${JOURNEY_BANDS[i % 3]}`}>
                   <span className="font-display text-2xl font-bold"><Formatted text={m.year} /></span>
