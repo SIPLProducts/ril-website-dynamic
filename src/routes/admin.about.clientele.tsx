@@ -1,4 +1,6 @@
 import { hasImageOptions } from "@/lib/image-display-admin";
+import { useSiteSettings } from "@/lib/site-settings.functions";
+import { imageDisplaySource } from "@/lib/image-display";
 import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
 import { safeRandomUUID } from "@/lib/uuid";
 import { createFileRoute, redirect } from "@tanstack/react-router";
@@ -147,6 +149,7 @@ function ClientList() {
 }
 
 function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
+  const imageDisplays = useSiteSettings().imageDisplays;
   const [file, setFile] = useState<File | null>(null);
   const [description, setDescription] = useState(row?.description ?? "");
   const [published, setPublished] = useState(row?.published ?? true);
@@ -164,7 +167,7 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
     try {
       let image_url = existing;
       if (file) image_url = await uploadImage(hasImageOptions(file) ? file : await uniformLogo(file, file.name), "clients");
-      else if (existing && preview) {
+      else if (existing && preview && !imageDisplays[imageDisplaySource(existing)]) {
         // Re-save keeps older logos in line with the uniform size.
         const blob = await fetch(preview).then((r) => r.blob());
         image_url = await uploadImage(await uniformLogo(blob), "clients");

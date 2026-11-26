@@ -1,3 +1,5 @@
+import { imageDisplaySource, imageFrameStyle } from "@/lib/image-display";
+import { useSiteSettings } from "@/lib/site-settings.functions";
 import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { plainText } from "@/lib/strength-style";
 import { Formatted } from "@/components/site/Formatted";
@@ -184,6 +186,7 @@ const ABOUT_PARAGRAPHS = [
 ];
 
 export function About() {
+  const imageDisplays = useSiteSettings().imageDisplays;
   const [expanded, setExpanded] = useState(false);
   const { data: top } = useQuery(homeTopQuery());
   const a = top?.about;
@@ -238,6 +241,7 @@ export function About() {
             <figure
               key={img.slot}
               data-slot={img.slot}
+              style={imageFrameStyle(img.url, imageDisplays)}
               className={`group relative overflow-hidden rounded-sm bg-surface ${
                 i === 0 ? "col-span-2 aspect-[16/9] lg:aspect-[16/8.5]" : "aspect-[4/3]"
               }`}
@@ -263,6 +267,7 @@ export function About() {
 }
 
 export function Businesses() {
+  const imageDisplays = useSiteSettings().imageDisplays;
   const { data } = useQuery(capabilitiesQuery());
   if (!data) return null;
   return (
@@ -279,7 +284,7 @@ export function Businesses() {
             const src = imageFor(v.slug, v.image);
             return (
             <Link key={v.slug} to="/businesses/$slug" params={{ slug: v.slug }} className="card-lift group flex flex-col overflow-hidden rounded-sm bg-card">
-              <div className="relative h-48 overflow-hidden bg-muted">
+              <div style={imageFrameStyle(src, imageDisplays)} className="relative h-48 overflow-hidden bg-muted">
                 {src && <AdjustableImage src={src} alt={v.imageAlt || v.title} width={1200} height={900} loading="lazy" className="size-full object-cover transition-transform duration-500 group-hover:scale-105" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent" />
                 <Icon className="absolute bottom-4 left-4 size-7 text-ink-foreground" />
@@ -301,6 +306,7 @@ export function Businesses() {
 }
 
 export function Projects() {
+  const imageDisplays = useSiteSettings().imageDisplays;
   const { data } = useQuery(homeHighlightsQuery());
   const slides = data?.landmarks ?? [];
   const [index, setIndex] = useState(0);
@@ -323,7 +329,8 @@ export function Projects() {
         <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl"><Formatted text={data.landmarkTitle} /></h2>
       </div>
       <div className="mt-12 overflow-hidden rounded-sm bg-ink">
-        <div className={`group relative w-full ${current.fit === "contain" ? "aspect-[3/1] md:aspect-[16/9] lg:aspect-[21/9]" : "aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]"}`}>
+        <div style={imageFrameStyle(resolveHomeAsset(current.image), imageDisplays)} className={`group relative w-full ${current.fit === "contain" ? "aspect-[3/1] md:aspect-[16/9] lg:aspect-[21/9]" : "aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]"}`}>
+          {imageDisplays[imageDisplaySource(current.image)]?.shape === "auto" && <img src={resolveHomeAsset(current.image) ?? undefined} alt="" aria-hidden="true" className="invisible block h-auto w-full" />}
           {slides.map((p, i) => {
             const src = resolveHomeAsset(p.image);
             return src ? (
@@ -413,6 +420,7 @@ export function Sustainability({ standalone = false }: { standalone?: boolean })
 }
 
 function SustainabilityVideo({ src, poster }: { src: string | null; poster: string | null }) {
+  const imageDisplays = useSiteSettings().imageDisplays;
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const v = ref.current;
@@ -426,7 +434,8 @@ function SustainabilityVideo({ src, poster }: { src: string | null; poster: stri
     }
   }, [src]);
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-sm bg-sustainability-deep lg:aspect-auto lg:h-[30rem]">
+    <div style={imageFrameStyle(poster, imageDisplays)} className="relative aspect-video w-full overflow-hidden rounded-sm bg-sustainability-deep lg:aspect-auto lg:h-[30rem]">
+      {poster && imageDisplays[imageDisplaySource(poster)]?.shape === "auto" && <img src={poster} alt="" aria-hidden="true" className="invisible block h-auto w-full" />}
       {src ? (
         <video ref={ref} src={src} poster={poster ?? undefined} autoPlay muted loop playsInline preload="metadata"
           aria-label="Sustainability video" className="absolute inset-0 h-full w-full object-cover object-center" />

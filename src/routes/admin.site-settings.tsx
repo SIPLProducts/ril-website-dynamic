@@ -1,3 +1,6 @@
+import { ImageDisplayControls } from "@/components/admin/ImageDisplayControls";
+import { registerImageOptions } from "@/lib/image-display-admin";
+import type { ImageDisplay } from "@/lib/image-display";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
@@ -206,6 +209,7 @@ function ImagesEditor({ images }: { images: Record<string, string> }) {
   );
 }
 function ImageSlot({ label, value, onChange }: { label: string; value?: string | undefined; onChange: (url: string | null) => Promise<void> }) {
+  const [uploadOptions, setUploadOptions] = useState<ImageDisplay | null>(null);
   const src = useHomePreview(value);
   const [busy, setBusy] = useState(false);
   return (
@@ -219,12 +223,14 @@ function ImageSlot({ label, value, onChange }: { label: string; value?: string |
           <ImagePlus className="size-4" /> {busy ? "Uploading…" : value ? "Replace" : "Upload"}
           <input type="file" accept="image/*" className="hidden" disabled={busy} onChange={async (e) => {
             const f = e.target.files?.[0]; e.target.value = ""; if (!f) return;
+            if (uploadOptions) registerImageOptions(f, uploadOptions);
             setBusy(true);
             try { await onChange(await uploadHomeFile("esg", f)); } catch (err) { toast.error(err instanceof Error ? err.message : "Upload failed"); } finally { setBusy(false); }
           }} />
         </label>
         {value && <Button size="sm" variant="outline" onClick={() => onChange(null)}><Trash2 className="size-4" /></Button>}
       </div>
+      <ImageDisplayControls imageRef={value} onOptionsChange={setUploadOptions} />
     </div>
   );
 }

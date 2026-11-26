@@ -1,4 +1,5 @@
 import { AdjustableImage } from "@/components/site/AdjustableImage";
+import { imageFrameStyle } from "@/lib/image-display";
 import * as React from "react";
 import { AutoScrollRail } from "@/components/site/AutoScrollRail";
 import { isHtml, plainText } from "@/lib/strength-style";
@@ -191,7 +192,7 @@ function EsgPage() {
                     className={`overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg ${section.slug === "environmental" ? "min-w-0 flex flex-col" : ""}`}
                   >
                     {section.slug === "esg-reporting" && frameworkImg(metric.value) ? (
-                      <div className="-mx-6 -mt-6 mb-5 flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border bg-background p-6">
+                      <div style={imageFrameStyle(frameworkImg(metric.value), settings.imageDisplays)} className="-mx-6 -mt-6 mb-5 flex aspect-[16/10] items-center justify-center overflow-hidden border-b border-border bg-background p-6">
                         <AdjustableImage src={frameworkImg(metric.value)} alt={metric.label || metric.value} loading="lazy" className="h-full w-auto max-w-full object-contain" />
                       </div>
                     ) : MetricIcon && (

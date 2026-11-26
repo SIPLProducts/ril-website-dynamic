@@ -1,4 +1,6 @@
-import { hasImageOptions } from "@/lib/image-display-admin";
+import { hasImageOptions, registerImageOptions } from "@/lib/image-display-admin";
+import { useSiteSettings } from "@/lib/site-settings.functions";
+import { imageDisplaySource } from "@/lib/image-display";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowDown, ArrowUp, Pencil, Plus, Trash2, type LucideIcon } from "lucide-react";
@@ -111,6 +113,7 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
   table: Table; icon: LucideIcon; itemName: string; fields: Field[]; withImage?: boolean | undefined; imageOptional?: boolean | undefined; doc?: DocField | undefined; defaults: Record<string, string>; row: Row | null; nextOrder: number; onClose: () => void; onSaved: () => void;
 }) {
   const [f, setF] = useState<Record<string, string>>(() => Object.fromEntries(fields.map((x) => [x.key, String(row?.[x.key] ?? defaults[x.key] ?? x.options?.[0]?.value ?? "")])));
+  const imageDisplays = useSiteSettings().imageDisplays;
   const [docFile, setDocFile] = useState<File | null>(null);
   const [published, setPublished] = useState(row?.published ?? true);
   const [file, setFile] = useState<File | null>(null);
@@ -128,6 +131,8 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
       if (resolution && !upload && resChanged && row?.image_url && current && !isVideo(row.image_url) && !/\.gif$/i.test(row.image_url)) {
         const b = await (await fetch(current)).blob();
         upload = new File([b], "photo." + (b.type === "image/png" ? "png" : "jpg"), { type: b.type || "image/jpeg" });
+        const stored = imageDisplays[imageDisplaySource(row.image_url)];
+        if (stored) registerImageOptions(upload, { ...stored, resolution: IMAGE_RESOLUTIONS.find((x) => x.value === res)?.value ?? stored.resolution });
       }
       if (resolution && upload && !hasImageOptions(upload)) upload = await uniformImage(upload, res);
       else if (withImage && upload && !hasImageOptions(upload) && upload.type.startsWith("image/")) upload = await uniformImage(upload, "1600x900");
@@ -172,7 +177,7 @@ function ItemDialog({ resolution, table, icon, itemName, fields, withImage, imag
             </div>
           )}
           {clearImage && !file && <p className="text-sm text-muted-foreground">Photo will be removed when you save. <button type="button" className="underline" onClick={() => setClearImage(false)}>Undo</button></p>}
-          <FileDropzone imageRef={clearImage ? null : row?.image_url as string | undefined} file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept={resolution ? "image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" : "image/png,image/jpeg,image/webp"} hint={resolution ? "Photo, GIF or video (MP4/WebM, up to 50 MB). Photos are cropped to the same wide shape so every slide matches." : "Recommended: landscape photo, at least 1600 × 900. It is trimmed to the same 16:9 shape automatically so every card matches."} />
+          <FileDropzone imageRef={clearImage || isVideo(row?.image_url) ? null : row?.image_url as string | undefined} file={file} onFile={(x) => { setFile(x); if (x) setClearImage(false); }} accept={resolution ? "image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" : "image/png,image/jpeg,image/webp"} hint={resolution ? "Photo, GIF or video (MP4/WebM, up to 50 MB)." : "PNG, JPG or WebP."} />
           {resolution && (
             <div><Label>Image resolution</Label>
               <select aria-label="Image resolution" className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={res} onChange={(e) => { setRes(e.target.value); setResChanged(true); }}>

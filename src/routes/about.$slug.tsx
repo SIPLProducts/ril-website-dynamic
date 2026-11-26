@@ -1,3 +1,5 @@
+import { imageFrameStyle } from "@/lib/image-display";
+import { useSiteSettings } from "@/lib/site-settings.functions";
 import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { Formatted } from "@/components/site/Formatted";
 import { Link, createFileRoute, notFound } from "@tanstack/react-router";
@@ -140,12 +142,13 @@ function AboutSectionPage() {
 }
 
 function ClientGrid({ items }: { items: ClientItem[] }) {
+  const imageDisplays = useSiteSettings().imageDisplays;
   if (!items.length) return <p className="text-muted-foreground">Client list coming soon.</p>;
   return (
     <ul className="grid grid-cols-1 border-t border-border sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-3">
       {items.map((o) => (
         <li key={o.id} className="flex items-center gap-4 break-words border-b border-border py-4 font-display text-[0.95rem] font-medium leading-snug text-foreground">
-          {o.image ? <span className="flex h-20 w-36 shrink-0 items-center justify-center rounded-md border border-border bg-background p-2"><AdjustableImage src={o.image} alt={o.description || "Client logo"} loading="lazy" className="max-h-full max-w-full object-contain" /></span> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
+          {o.image ? <span style={imageFrameStyle(o.image, imageDisplays)} className="flex h-20 w-36 shrink-0 items-center justify-center rounded-md border border-border bg-background p-2"><AdjustableImage src={o.image} alt={o.description || "Client logo"} loading="lazy" className="max-h-full max-w-full object-contain" /></span> : <span className="mt-0.5 size-1.5 shrink-0 self-start translate-y-2 bg-brand-orange" aria-hidden="true" />}
           {o.description && <span className="min-w-0"><Formatted text={o.description} /></span>}
         </li>
       ))}

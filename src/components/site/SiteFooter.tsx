@@ -1,3 +1,5 @@
+import { imageFrameStyle } from "@/lib/image-display";
+import { useSiteSettings } from "@/lib/site-settings.functions";
 import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { Formatted } from "@/components/site/Formatted";
 import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
@@ -73,6 +75,7 @@ const FALLBACK_COMPANIES = [
 ] as const;
 
 export function SiteFooter({ sustainabilityOnly = false }: { sustainabilityOnly?: boolean }) {
+  const imageDisplays = useSiteSettings().imageDisplays;
   const { data } = useQuery(footerQuery());
   const st = data?.settings;
   const COLUMNS = data ? data.columns : FALLBACK_COLUMNS.map((c) => ({ title: c.title, links: c.links.map((l) => ({ ...l, newTab: false })) }));
@@ -172,9 +175,9 @@ export function SiteFooter({ sustainabilityOnly = false }: { sustainabilityOnly?
               const withName = "showName" in company && company.showName;
               const inner = company.logo ? <div className="flex h-full w-full flex-col items-center justify-center gap-1"><AdjustableImage src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className={`${withName ? "max-h-28" : "h-full max-h-36"} min-h-0 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]`} />{withName && <span className="text-center text-xs font-semibold text-foreground"><Formatted text={company.name} /></span>}</div> : <span className="text-center text-sm font-semibold text-foreground"><Formatted text={company.name} /></span>;
               const cls = "group relative flex h-40 items-center justify-center p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2";
-              if (!company.href) return <div key={company.name} className={cls}>{inner}</div>;
+              if (!company.href) return <div key={company.name} className={cls} style={imageFrameStyle(company.logo, imageDisplays)}>{inner}</div>;
               return (
-              <a key={company.name} href={company.href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${company.name} website (opens in a new tab)`} className={cls}>
+              <a key={company.name} href={company.href} target="_blank" rel="noopener noreferrer" aria-label={`Visit ${company.name} website (opens in a new tab)`} className={cls} style={imageFrameStyle(company.logo, imageDisplays)}>
                 {inner}
                 <ExternalLink aria-hidden="true" className="absolute right-2 top-2 size-3.5 text-muted-foreground transition-colors group-hover:text-footer-accent" />
               </a>

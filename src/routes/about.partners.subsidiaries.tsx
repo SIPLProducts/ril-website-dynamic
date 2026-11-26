@@ -1,3 +1,5 @@
+import { imageFrameStyle } from "@/lib/image-display";
+import { useSiteSettings } from "@/lib/site-settings.functions";
 import { AdjustableImage } from "@/components/site/AdjustableImage";
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
@@ -24,6 +26,7 @@ export const Route = createFileRoute("/about/partners/subsidiaries")({
 });
 
 function SubsidiariesPage() {
+  const imageDisplays = useSiteSettings().imageDisplays;
   const { data } = useQuery(pageListQuery("subsidiaries"));
   const items: Organisation[] = data?.length ? data.map((r, i) => ({ id: r.id, name: r["name"] ?? "", displayOrder: i + 1, status: "published" })) : SUBSIDIARIES;
   const withLogos = data?.some((r) => r["image_url"]) ? data : null;
@@ -48,7 +51,7 @@ function SubsidiariesPage() {
                     <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-gradient-to-r from-brand-orange to-brand-green transition-transform duration-300 group-hover:scale-x-100" aria-hidden="true" />
                     {r["image_url"] ? (
                       <div className="flex h-full flex-col">
-                        <div className="grid h-24 place-items-center px-4 py-3">
+                        <div style={imageFrameStyle(r["image_url"], imageDisplays)} className="grid h-24 place-items-center px-4 py-3">
                           <AdjustableImage src={r["image_url"]} alt={`${name} logo`} loading="lazy" className="max-h-20 max-w-full object-contain" />
                         </div>
                         <p className="border-t border-border px-4 py-2.5 text-center font-display text-xs font-semibold leading-snug">{name}</p>

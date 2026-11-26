@@ -1,6 +1,6 @@
 # Roadmap
-- [ ] Extend image shape, fit, size and resolution controls to other admin photo uploads; preserve unchanged layouts
-- [ ] Verify public image adjustments and admin saving
+- [x] Extend image shape, fit, size and resolution controls to other admin photo uploads; preserve unchanged layouts
+- [x] Verify public image adjustments and admin saving — uploaded a portrait photo, checked square display on desktop/mobile, reopened saved choices, changed to portrait and restored the original layout; temporary content removed
 - [x] Replace Social KPI rails with compact 5/3/2-column grids and hover/tap detail panels; all 16 cards fit their grids, details retain figures/charts/remarks/sources, keyboard access verified, and 30 calculation regression tests pass
 - [x] Replace the Social opening photo with authentic community-volunteering imagery; verified image loading on desktop/mobile without browser errors
 - [x] Compact all three Social KPI card rails and show metric name/value on hover or keyboard focus while preserving figures and graphs — verified desktop, tablet and mobile
