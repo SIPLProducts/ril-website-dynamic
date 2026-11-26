@@ -161,9 +161,9 @@ export function StatsBand() {
   if (!items.length) return null;
   return (
     <section className="border-b border-border bg-surface">
-      <div className="mx-auto flex max-w-[1280px] flex-wrap justify-center gap-x-8 gap-y-10 px-5 py-12 sm:px-8 lg:px-10">
+      <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 px-5 py-12 sm:px-8 lg:px-10">
         {items.map((s) => (
-          <div key={s.label} className="rule-accent w-full pt-6 sm:w-[calc(50%-1rem)] md:w-[calc(33.333%-1.333rem)] lg:w-[calc(20%-1.6rem)]">
+          <div key={s.label} className="rule-accent pt-6">
             <p className="font-display text-4xl font-bold text-brand-blue lg:text-[1.75rem] xl:text-4xl">{s.value}</p>
             <p className="mt-2 text-sm text-muted-foreground">{s.label}</p>
           </div>
