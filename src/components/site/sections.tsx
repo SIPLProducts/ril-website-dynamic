@@ -538,14 +538,11 @@ const JOURNEY_MILESTONES: { year: string; title: string; text: string; image?: s
 const JOURNEY_ICONS: Record<string, LucideIcon> = { flag: Flag, leaf: Leaf, route: RouteIcon, chart: TrendingUp, globe: Globe, rocket: Rocket };
 const JOURNEY_ICON_ORDER = ["flag", "leaf", "route", "chart", "globe", "rocket"];
 const JOURNEY_BANDS = ["bg-brand-orange", "bg-brand-green", "bg-brand-blue"];
-/** Staircase offsets (desktop only): each card sits a little higher than the one before. */
-const JOURNEY_STEPS = ["lg:mt-24", "lg:mt-[4.75rem]", "lg:mt-[3.25rem]", "lg:mt-8", "lg:mt-4", "lg:mt-0"];
 
 export function Journey() {
   const { data: top } = useQuery(homeTopQuery());
   const j = top?.journey;
   const milestones = j ? j.milestones : JOURNEY_MILESTONES;
-  const n = milestones.length;
   return (
     <section id="journey" className="scroll-mt-24 bg-surface py-20 lg:py-28">
       <div className="mx-auto max-w-[1400px] px-5 lg:px-10">
@@ -555,12 +552,11 @@ export function Journey() {
             {j?.title || "Three decades of building, milestone by milestone."}
           </h2>
         </div>
-        <div className="mt-12 items-start gap-6 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-12px)] lg:[&>*]:basis-[calc(25%-18px)]">
+        <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
           {milestones.map((m, i) => {
             const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6]!]!;
-            const step = JOURNEY_STEPS[Math.max(0, 6 - n) + i] ?? "lg:mt-0";
             return (
-              <article key={i} className={`overflow-hidden bg-card shadow-md transition-transform duration-300 hover:-translate-y-1 ${step}`}>
+              <article key={i} className="overflow-hidden bg-card shadow-md transition-transform duration-300 hover:-translate-y-1">
                 {m.image && <img src={m.image} alt={m.title} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
                 <div className={`flex items-center justify-between px-5 py-3 text-primary-foreground ${JOURNEY_BANDS[i % 3]}`}>
                   <span className="font-display text-2xl font-bold">{m.year}</span>
