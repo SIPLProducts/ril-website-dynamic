@@ -220,7 +220,7 @@ function EsgPage() {
               <h2 className="border-l-4 border-emerald-600 pl-3 font-display text-xl font-bold text-foreground">
                 {group.title}
               </h2>
-              <div className={section.slug === "social" ? "mt-4 grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" : "mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"}>
+              <div className={section.slug === "social" ? "mt-4 grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[repeat(3,minmax(0,20rem))]" : "mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"}>
                 {section.slug === "social" && groupSocialMetrics(group.metrics).map(({ metric, details }) => {
                   const present = (m: typeof metric) => {
                     const inc = group.title === "Inclusion & Responsible Business" ? inclusionPresentation(m, settings.esgTrends) : undefined;
