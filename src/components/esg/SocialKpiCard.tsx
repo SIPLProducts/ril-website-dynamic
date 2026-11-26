@@ -13,18 +13,18 @@ export function SocialKpiCard({ label, value, trend, details = [] }: { label: st
   useEffect(() => () => clearTimeout(timer.current), []);
   const title = plainText(label);
   const head = <>
-    <p className={`font-display font-bold tabular-nums text-brand-green ${value === "Not Disclosed" ? "text-xl" : "text-4xl lg:text-5xl"}`}>{value}</p>
-    <p className="mt-3 min-h-10 text-sm font-medium leading-relaxed text-muted-foreground">{title}</p>
+    <p className={`font-display font-bold tabular-nums text-brand-green ${value === "Not Disclosed" ? "text-lg" : "text-3xl lg:text-4xl"}`}>{value}</p>
+    <p className="mt-2 min-h-8 text-sm font-medium leading-relaxed text-muted-foreground">{title}</p>
   </>;
   return (
-    <div data-social-kpi="" className="flex min-w-0 flex-col overflow-hidden rounded-sm border border-border bg-surface p-6 transition-shadow hover:shadow-lg">
+    <div data-social-kpi="" className="flex min-w-0 flex-col overflow-hidden rounded-sm border border-border bg-surface p-4 transition-shadow hover:shadow-lg">
       {details.length > 0 ? (
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <button type="button" aria-label={`${title} — ${value}. Show breakdown`}
               onPointerEnter={(e) => { if (e.pointerType === "mouse") { cancel(); setOpen(true); } }}
               onPointerLeave={(e) => { if (e.pointerType === "mouse") close(); }}
-              className="relative w-full rounded-sm text-left focus-visible:outline-2 focus-visible:outline-brand-orange">
+              className="relative flex w-full flex-col rounded-sm text-left focus-visible:outline-2 focus-visible:outline-brand-orange">
               {head}
               <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-brand-orange"><Info className="size-3.5" aria-hidden="true" /> View breakdown</span>
             </button>
@@ -39,8 +39,8 @@ export function SocialKpiCard({ label, value, trend, details = [] }: { label: st
             </dl>
           </PopoverContent>
         </Popover>
-      ) : head}
-      {trend ? <MetricTrendToggle trend={trend} social /> : <p className="mt-5 border-t border-border pt-5 text-xs text-muted-foreground">Year-on-year comparison: Not Disclosed</p>}
+      ) : <>{head}<span aria-hidden="true" className="invisible mt-1 inline-flex items-center gap-1 text-xs font-semibold text-brand-orange"><Info className="size-3.5" aria-hidden="true" /> View breakdown</span></>}
+      {trend ? <MetricTrendToggle trend={trend} social /> : <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">Year-on-year comparison: Not Disclosed</p>}
     </div>
   );
 }

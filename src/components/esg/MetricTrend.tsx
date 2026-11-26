@@ -34,13 +34,13 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
   const barColor = change.direction === "worsened" ? "bg-destructive/80" : change.direction === "improved" ? "bg-emerald-600" : "bg-muted-foreground/60";
 
   return (
-    <div className={compact ? "mt-3 border-t border-border pt-3" : comparison ? "mt-5 border-t border-border pt-5" : "mt-4 border-t border-border pt-3"}>
+    <div className={compact || social ? "mt-3 border-t border-border pt-3" : comparison ? "mt-5 border-t border-border pt-5" : "mt-4 border-t border-border pt-3"}>
       <div className="flex min-h-8 items-center justify-between gap-2">
         <p className={`min-w-0 font-display text-xs font-bold uppercase leading-relaxed ${comparison ? "text-brand-orange" : "text-brand-green"}`}>{comparison ? "Year-on-year comparison" : trend.title?.trim() || "Trend"}</p>
       </div>
       {(
-        <div data-testid="metric-trend" className="mt-4">
-          {chartType === "line" ? <LineChart trend={trend} max={max} compact={compact} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year${environmental ? ", bars with overlaid trend line" : ""}`} className={`relative ${compact ? "h-32" : "h-44"} border-b border-l border-border pl-2`}>
+        <div data-testid="metric-trend" className={social ? "mt-2" : "mt-4"}>
+          {chartType === "line" ? <LineChart trend={trend} max={max} compact={compact} social={social} color={change.direction === "worsened" ? "var(--destructive)" : change.direction === "improved" ? "var(--brand-green)" : "currentColor"} /> : <div role="img" aria-label={`${trend.label} by financial year${environmental ? ", bars with overlaid trend line" : ""}`} className={`relative ${compact ? "h-32" : social ? "h-24" : "h-44"} border-b border-l border-border pl-2`}>
             <div className="relative flex h-full items-end gap-3">
             {trend.years.map((p, i) => {
               const y = p.year;
@@ -48,7 +48,7 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
               if (p.value === null) {
                 return (
                   <div key={y} className="flex h-full flex-1 flex-col justify-end">
-                    <div className="flex h-24 items-center justify-center rounded-t-sm border border-dashed border-muted-foreground/50 px-1 text-center text-[10px] font-semibold uppercase leading-tight text-muted-foreground">
+                    <div className={`flex ${social ? "h-12" : "h-24"} items-center justify-center rounded-t-sm border border-dashed border-muted-foreground/50 px-1 text-center text-[10px] font-semibold uppercase leading-tight text-muted-foreground`}>
                       {p.note ?? "Not available"}
                     </div>
                   </div>
@@ -60,7 +60,7 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
                   <p className={comparison ? "mb-2 break-words text-center text-xs font-semibold leading-snug tabular-nums text-foreground" : "mb-1 text-center text-[11px] font-bold leading-tight text-foreground"}>
                     {p.approximate ? `${p.value}+` : formatTrendValue(trend, p.value)}
                   </p>
-                  <div className={`rounded-t-sm ${comparison ? `mx-auto w-full max-w-20 ${last ? !environmental && change.direction === "improved" ? "bg-brand-green" : "bg-brand-orange" : "bg-muted-foreground/40"}` : last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
+                  <div className={`rounded-t-sm ${comparison ? `mx-auto w-full ${social ? "max-w-14" : "max-w-20"} ${last ? !environmental && change.direction === "improved" ? "bg-brand-green" : "bg-brand-orange" : "bg-muted-foreground/40"}` : last ? barColor : "bg-muted-foreground/40"}`} style={{ height: `${h * 0.78}%`, minHeight: p.value === 0 ? 2 : undefined }} />
                 </div>
               );
             })}
@@ -72,7 +72,7 @@ export function MetricTrendToggle({ trend, environmental = false, social = false
               <p key={y} className={comparison ? "flex-1 text-center text-xs font-medium leading-relaxed text-muted-foreground" : "flex-1 text-center text-[10px] font-semibold text-muted-foreground"}>{y}</p>
             ))}
           </div>
-          <p className={`${comparison ? "mt-4 inline-block rounded-sm px-3 py-2 text-xs font-medium leading-relaxed" : "mt-3 inline-block rounded-sm px-2 py-1 text-xs font-semibold"} ${changeStyle}`}>
+          <p className={`${comparison ? (social ? "mt-2 inline-block rounded-sm px-2 py-1 text-[11px] font-medium leading-relaxed" : "mt-4 inline-block rounded-sm px-3 py-2 text-xs font-medium leading-relaxed") : "mt-3 inline-block rounded-sm px-2 py-1 text-xs font-semibold"} ${changeStyle}`}>
             {change.text}
             {!comparison && change.direction === "improved" && " · Positive"}
             {!comparison && change.direction === "worsened" && " · Needs attention"}
@@ -106,7 +106,7 @@ function BarTrendOverlay({ trend, max }: { trend: MetricTrend; max: number }) {
 }
 
 /** Line variant: same labels and "not disclosed" handling as the bars; missing years break the line. */
-function LineChart({ trend, max, color, compact = false }: { trend: MetricTrend; max: number; color: string; compact?: boolean }) {
+function LineChart({ trend, max, color, compact = false, social = false }: { trend: MetricTrend; max: number; color: string; compact?: boolean; social?: boolean }) {
   const n = trend.years.length;
   const xs = (i: number) => ((i + 0.5) / n) * 100;
   const ys = (v: number) => 100 - Math.max(0, Math.min(1, v / max)) * 78 - 8;
@@ -118,7 +118,7 @@ function LineChart({ trend, max, color, compact = false }: { trend: MetricTrend;
   });
   if (cur.length) segs.push(cur);
   return (
-    <div data-testid="metric-trend-line" role="img" aria-label={`${trend.label} by financial year`} className={`relative ${compact ? "h-32" : "h-44"} border-b border-l border-border text-muted-foreground`}>
+    <div data-testid="metric-trend-line" role="img" aria-label={`${trend.label} by financial year`} className={`relative ${compact ? "h-32" : social ? "h-24" : "h-44"} border-b border-l border-border text-muted-foreground`}>
       <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden="true">
         {segs.map((sg, i) => <polyline key={i} points={sg.join(" ")} fill="none" stroke={color} strokeWidth={2} vectorEffect="non-scaling-stroke" />)}
       </svg>
