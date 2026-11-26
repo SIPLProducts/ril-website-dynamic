@@ -1,7 +1,8 @@
 import { Formatted } from "@/components/site/Formatted";
 import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
+import { shapeRatio, sizeWidth } from "@/lib/accolade-image";
 import { Award as AwardIcon, ChevronDown } from "lucide-react";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
@@ -29,13 +30,22 @@ export const Route = createFileRoute("/accolades")({
 });
 
 function AwardItem({ a }: { a: PublicAward }) {
+  const d = a.display;
+  const ratio = shapeRatio(d.shape);
+  const width = sizeWidth(d.size);
   return (
-    <article className="grid gap-6 border-b border-border py-8 last:border-b-0 md:grid-cols-[minmax(0,20rem)_1fr]">
+    <article className="grid gap-6 border-b border-border py-8 last:border-b-0 md:grid-cols-[var(--award-w)_1fr]" style={{ "--award-w": `minmax(0,${width})` } as CSSProperties}>
       {a.image ? (
-        <div className="relative isolate aspect-[4/3] w-full overflow-hidden rounded-sm border border-border bg-muted">
-          <img src={a.image} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 -z-10 h-full w-full scale-110 object-cover opacity-60 blur-xl" />
-          <img src={a.image} alt={a.altText ?? a.title} loading="lazy" className="h-full w-full object-contain p-2 drop-shadow-lg" />
-        </div>
+        ratio ? (
+          <div className="relative isolate w-full overflow-hidden rounded-sm border border-border bg-muted" style={{ aspectRatio: ratio }}>
+            {d.fit === "contain" && <img src={a.image} alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 -z-10 h-full w-full scale-110 object-cover opacity-60 blur-xl" />}
+            <img src={a.image} alt={a.altText ?? a.title} loading="lazy" className={d.fit === "cover" ? "h-full w-full object-cover" : "h-full w-full object-contain p-2 drop-shadow-lg"} />
+          </div>
+        ) : (
+          <div className="self-start overflow-hidden rounded-sm border border-border bg-muted">
+            <img src={a.image} alt={a.altText ?? a.title} loading="lazy" className="block h-auto w-full" />
+          </div>
+        )
       ) : (
         <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-3 rounded-sm border border-border bg-surface px-5 text-center text-muted-foreground">
           <AwardIcon className="size-12" strokeWidth={1} aria-hidden="true" />

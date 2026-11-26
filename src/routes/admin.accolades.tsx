@@ -9,6 +9,8 @@ import { getStaff } from "@/lib/admin-auth";
 import { IR_BUCKET, STORAGE_PREFIX } from "@/lib/investor-relations";
 import { imageFileError } from "@/lib/admin-validation";
 import { adminFyYears, fyDateBounds, fyFromEnd, fyOf, isFutureDate, pastFyStarts } from "@/lib/fiscal-year";
+import { ACCOLADE_FITS, ACCOLADE_SHAPES, ACCOLADE_SIZES, DEFAULT_ACCOLADE_IMAGE, parseAccoladeImage, type AccoladeImage } from "@/lib/accolade-image";
+import { IMAGE_RESOLUTIONS, resizeImage } from "@/lib/image-resolution";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { AdminDialog, FieldError, FileDropzone, FormSection } from "@/components/admin/AdminDialog";
 import { confirmDelete } from "@/components/admin/ConfirmDelete";
@@ -182,6 +184,12 @@ function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, on
   const [errs, setErrs] = useState<{ award_date?: string; title?: string; organisation?: string; image?: string }>({});
   const [saving, setSaving] = useState(false);
   const preview = usePreview(f.image_url);
+  const [disp, setDisp] = useState<AccoladeImage>(DEFAULT_ACCOLADE_IMAGE);
+  useEffect(() => {
+    if (!row) return;
+    supabase.from("site_settings").select("value").eq("key", "accolade_images").maybeSingle()
+      .then(({ data }) => setDisp(parseAccoladeImage(((data?.value ?? {}) as Record<string, unknown>)[row.id])));
+  }, [row]);
 
   async function save() {
     const e: { award_date?: string; title?: string; organisation?: string; image?: string } = {};
@@ -194,16 +202,20 @@ function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, on
     if (Object.keys(e).length) return;
     setSaving(true);
     try {
-      const image_url = file ? await uploadImage(file) : f.image_url;
+      const image_url = file ? await uploadImage(await resizeImage(file, disp.resolution)) : f.image_url;
       const nul = (s: string) => (s.trim() ? s.trim() : null);
       const payload = {
         award_date: f.award_date, title: f.title.trim(), category: nul(f.category), organisation: f.organisation.trim(),
         project: nul(f.project), description: nul(f.description), alt_text: nul(f.alt_text), published: f.published, image_url,
       };
-      const { error } = row
-        ? await supabase.from("accolades").update(payload).eq("id", row.id)
-        : await supabase.from("accolades").insert({ ...payload, sort_order: nextOrder });
-      if (error) throw new Error(error.message);
+      const res = row
+        ? await supabase.from("accolades").update(payload).eq("id", row.id).select("id").single()
+        : await supabase.from("accolades").insert({ ...payload, sort_order: nextOrder }).select("id").single();
+      if (res.error) throw new Error(res.error.message);
+      const cur = await supabase.from("site_settings").select("value").eq("key", "accolade_images").maybeSingle();
+      const map = { ...((cur.data?.value ?? {}) as Record<string, unknown>), [res.data.id]: disp };
+      const so = await supabase.from("site_settings").upsert({ key: "accolade_images", value: map as never });
+      if (so.error) throw new Error(so.error.message);
       if (row?.image_url && row.image_url !== image_url) await removeStored(row.image_url);
       toast.success(f.published ? `Saved in FY ${fyOf(f.award_date).label} — now live on the website` : "Saved as draft");
       onSaved(f.award_date);
@@ -242,6 +254,24 @@ function AwardDialog({ row, defaultDate, fyEnd, pickYear, nextOrder, onClose, on
         )}
         <FileDropzone file={file} onFile={(x) => { setFile(x); setErrs({ ...errs, image: "" }); }} accept="image/png,image/jpeg,image/webp" hint="PNG, JPG or WebP, up to 5 MB" />
         <FieldError msg={errs.image || undefined} />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div><Label>Photo shape on the website</Label>
+            <select aria-label="Photo shape" className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={disp.shape} onChange={(e) => setDisp({ ...disp, shape: e.target.value })}>
+              {ACCOLADE_SHAPES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select></div>
+          <div><Label>How the photo fits</Label>
+            <select aria-label="Photo fit" disabled={disp.shape === "auto"} className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50" value={disp.fit} onChange={(e) => setDisp({ ...disp, fit: e.target.value as AccoladeImage["fit"] })}>
+              {ACCOLADE_FITS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select></div>
+          <div><Label>Photo size on the page</Label>
+            <select aria-label="Photo size" className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={disp.size} onChange={(e) => setDisp({ ...disp, size: e.target.value })}>
+              {ACCOLADE_SIZES.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select></div>
+          <div><Label>Upload resolution (new photos)</Label>
+            <select aria-label="Upload resolution" className="mt-1 h-10 w-full rounded-md border border-input bg-background px-3 text-sm" value={disp.resolution} onChange={(e) => setDisp({ ...disp, resolution: e.target.value })}>
+              {IMAGE_RESOLUTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select></div>
+        </div>
         <label className="flex items-center gap-3 text-sm"><Switch checked={f.published} onCheckedChange={(v) => setF({ ...f, published: v })} /> Live on website</label>
       </FormSection>
     </AdminDialog>
