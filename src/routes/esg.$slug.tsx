@@ -18,6 +18,7 @@ import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { getEsgPage } from "@/lib/esg-data.functions";
 import { computeChange, findTrendFor } from "@/lib/esg-metric-trends";
 import { inclusionPresentation } from "@/lib/esg-inclusion";
+import { groupSocialMetrics } from "@/lib/esg-social-groups";
 import { useSiteSettings } from "@/lib/site-settings.functions";
 import { esgLabel, orderSustainability, type PdfViewerSettings } from "@/lib/site-settings";
 import { publishedFileUrl } from "@/lib/file-url";
@@ -219,8 +220,16 @@ function EsgPage() {
               <h2 className="border-l-4 border-emerald-600 pl-3 font-display text-xl font-bold text-foreground">
                 {group.title}
               </h2>
-              <div className={section.slug === "social" ? "mt-5 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5 lg:gap-4" : "mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"}>
-                {group.metrics.map((metric) => {
+              <div className={section.slug === "social" ? "mt-5 grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" : "mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"}>
+                {section.slug === "social" && groupSocialMetrics(group.metrics).map(({ metric, details }) => {
+                  const present = (m: typeof metric) => {
+                    const inc = group.title === "Inclusion & Responsible Business" ? inclusionPresentation(m, settings.esgTrends) : undefined;
+                    return { value: inc?.value ?? m.value, trend: inc ? inc.trend : findTrendFor(m, settings.esgTrends) };
+                  };
+                  const main = present(metric);
+                  return <SocialKpiCard key={metric.label} label={metric.label} value={main.value} trend={main.trend} details={details.map((d) => ({ label: d.label, value: present(d).value }))} />;
+                })}
+                {section.slug !== "social" && group.metrics.map((metric) => {
                   const inclusion = section.slug === "social" && group.title === "Inclusion & Responsible Business" ? inclusionPresentation(metric, settings.esgTrends) : undefined;
                   const trend = inclusion ? inclusion.trend : section.slug === "environmental" || section.slug === "social" ? findTrendFor(metric, settings.esgTrends) : undefined;
                   const value = inclusion?.value ?? metric.value;
