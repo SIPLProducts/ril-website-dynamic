@@ -2,7 +2,6 @@ import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { ESG_SECTIONS } from "@/lib/esg-sections";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
 import { footerQuery } from "@/lib/footer.functions";
 import logoAsset from "@/assets/ramky-logo-transparent.png.asset.json";
 import milesCityLogo from "@/assets/miles-city.png.asset.json";
@@ -73,20 +72,6 @@ const FALLBACK_COMPANIES = [
 
 export function SiteFooter({ sustainabilityOnly = false }: { sustainabilityOnly?: boolean }) {
   const { data } = useQuery(footerQuery());
-  const rail = useRef<HTMLDivElement>(null);
-  const paused = useRef(false);
-  useEffect(() => {
-    const el = rail.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setInterval(() => {
-      if (paused.current || el.scrollWidth <= el.clientWidth + 4) return;
-      const card = el.firstElementChild as HTMLElement | null;
-      const step = (card?.offsetWidth ?? 200) + 12;
-      if (el.scrollLeft + el.clientWidth >= el.scrollWidth - 4) el.scrollTo({ left: 0, behavior: "smooth" });
-      else el.scrollBy({ left: step, behavior: "smooth" });
-    }, 3000);
-    return () => window.clearInterval(t);
-  }, [data]);
   const st = data?.settings;
   const COLUMNS = data ? data.columns : FALLBACK_COLUMNS.map((c) => ({ title: c.title, links: c.links.map((l) => ({ ...l, newTab: false })) }));
   const GROUP_COMPANIES = data ? data.companies.map((c) => ({ name: c.name, href: c.showLink ? c.url : null, logo: c.showLogo ? c.logo : null, showName: c.showName })) : FALLBACK_COMPANIES;
@@ -180,7 +165,7 @@ export function SiteFooter({ sustainabilityOnly = false }: { sustainabilityOnly?
             <p className="hidden text-sm text-muted-foreground sm:block">{st?.groupSubtitle ?? "Visit our group companies"}</p>
           </div>
 
-          <div ref={rail} onMouseEnter={() => (paused.current = true)} onMouseLeave={() => (paused.current = false)} onFocus={() => (paused.current = true)} onBlur={() => (paused.current = false)} onTouchStart={() => (paused.current = true)} className="mt-6 gap-3 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[calc(50%-6px)] sm:[&>*]:basis-[calc(33.333%-8px)] lg:[&>*]:basis-[calc(25%-9px)]">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {GROUP_COMPANIES.map((company) => {
               const withName = "showName" in company && company.showName;
               const inner = company.logo ? <div className="flex h-full w-full flex-col items-center justify-center gap-1"><img src={company.logo} alt={`${company.name} logo`} loading="lazy" decoding="async" className={`${withName ? "max-h-28" : "h-full max-h-36"} min-h-0 w-auto max-w-full object-contain [image-rendering:-webkit-optimize-contrast]`} />{withName && <span className="text-center text-xs font-semibold text-foreground">{company.name}</span>}</div> : <span className="text-center text-sm font-semibold text-foreground">{company.name}</span>;
