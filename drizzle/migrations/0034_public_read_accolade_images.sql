@@ -1,0 +1,3 @@
+DROP POLICY IF EXISTS "site_settings public read known keys" ON public.site_settings;
+CREATE POLICY "site_settings public read known keys" ON public.site_settings FOR SELECT TO anon, authenticated
+USING (key = ANY (ARRAY['esg_trends','esg_images','main_menu','sustainability_nav','pdf_viewer','esg_labels','theme','esg_rating','accolade_images','talk_to_us']));
