@@ -1,5 +1,6 @@
 import { brandedEmail, smtpReady, type EmailSettings } from "@/lib/email-config";
 import { friendlySmtpError, sendMail } from "@/lib/send-mail.server";
+import { envSmtp } from "@/lib/smtp-env.server";
 
 const esc = (v: string) => v.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 function toBase64(buf: ArrayBuffer) {
@@ -19,7 +20,9 @@ export async function sendApplicationEmail(admin: any, id: string): Promise<Mail
     const { data: a } = await admin.from("career_applications").select("*").eq("id", id).maybeSingle();
     if (!a) return { status: "failed", error: "Application not found." };
     const { data: s } = await admin.from("email_settings").select("*").eq("id", 1).maybeSingle();
-    const settings = s as (EmailSettings & { careers_to: string }) | null;
+    const db = s as (EmailSettings & { careers_to: string }) | null;
+    const env = envSmtp();
+    const settings = env ? { ...env, careers_to: env.careers_to || db?.careers_to || "careers@ramky.com" } : db;
     if (!settings || !smtpReady(settings)) {
       result = { status: "pending", error: "Email is not configured yet. Fill in Admin → Email Configuration, then use Resend." };
     } else {
