@@ -198,7 +198,7 @@ export const IR_CATEGORIES: IrCategory[] = [
     label: "Stock Exchange Filings",
     summary: "Announcements, disclosures and shareholding pattern filed with the stock exchanges.",
     subTabs: [
-      yearWise("announcements-and-disclosures", "Announcements & Disclosures", [
+      yearWise("announcements-and-disclosures", "Announcement", [
         ...yearly(["Outcome of Board Meeting", "Intimation of Board Meeting"], "", 7),
         ...yearly(["Disclosure under Regulation 30", "Trading Window Closure"], "", 2),
       ]),

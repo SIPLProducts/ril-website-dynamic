@@ -314,8 +314,8 @@ function EsgPage() {
                 }
                 const years = [...byYear.keys()].sort((a, b) => b.localeCompare(a, undefined, { numeric: true }));
                 return years.map((year, yi) => (
-                  <ReportYear key={year} year={year} defaultOpen={yi === 0}>
-                    <AutoScrollRail className="mt-6">
+                  <ReportYear key={year} year={year} count={byYear.get(year)!.length} defaultOpen={yi === 0}>
+                    <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                       {byYear.get(year)!.map((report) => (
                         <div key={report.title} className="flex flex-col rounded-sm border border-border bg-background p-6 transition-shadow hover:shadow-lg">
                           <FileText className="size-8 text-emerald-700" strokeWidth={1.5} aria-hidden="true" />
@@ -347,7 +347,7 @@ function EsgPage() {
                           )}
                         </div>
                       ))}
-                    </AutoScrollRail>
+                    </div>
                   </ReportYear>
                 ));
               })()}
@@ -456,16 +456,19 @@ function GovernanceCard({ title, details }: { title: string; details?: string | 
 }
 
 
-function ReportYear({ year, defaultOpen, children }: { year: string; defaultOpen: boolean; children: React.ReactNode }) {
-  const [open] = React.useState(defaultOpen);
-  const [hover, setHover] = React.useState(false);
-  const shown = open || hover;
+function ReportYear({ year, count, defaultOpen, children }: { year: string; count: number; defaultOpen: boolean; children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(defaultOpen);
   return (
-    <div className="mt-10" onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}>
-      <div className="flex items-center justify-between border-b border-border pb-3">
-        <h3 className="font-display text-2xl font-bold text-brand-orange">{year}</h3>
-      </div>
-      {shown ? children : null}
+    <div className="mt-10">
+      <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between gap-4 border-b border-border pb-3 text-left">
+        <span className="flex items-center gap-3">
+          <span className="font-display text-2xl font-bold text-brand-orange">{year}</span>
+          <span className="rounded-full border border-border px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">{count} {count === 1 ? "report" : "reports"}</span>
+        </span>
+        <ChevronDown className={`size-5 shrink-0 text-emerald-700 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      {open ? children : null}
     </div>
   );
 }
