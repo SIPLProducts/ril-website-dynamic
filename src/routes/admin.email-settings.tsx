@@ -102,7 +102,7 @@ function EmailSettingsPage() {
               <button type="button" onClick={() => setShowPw((s) => !s)} className="absolute right-3 top-1/2 mt-[3px] -translate-y-1/2 text-xs text-muted-foreground hover:text-foreground">{showPw ? "Hide" : "Show"}</button></div></div>
           <div><Label>From Email</Label><Input className={field} type="email" value={f.from_email} onChange={(e) => set("from_email", e.target.value)} /></div>
           <div><Label>From Name</Label><Input className={field} value={f.from_name} onChange={(e) => set("from_name", e.target.value)} /></div>
-          <div><Label>Job applications go to</Label><Input className={field} type="email" value={f.careers_to} onChange={(e) => set("careers_to", e.target.value)} /></div>
+          <div><Label>Job application Recipient Email</Label><Input className={field} type="email" value={f.careers_to} onChange={(e) => set("careers_to", e.target.value)} /></div>
           <div><Label>Sustainability enquiries go to</Label><Input className={field} type="email" value={f.sustainability_to} onChange={(e) => set("sustainability_to", e.target.value)} /></div>
           <div><Label>CC Recipients (optional)</Label>
             <div className="mt-1.5 flex min-h-10 flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2 py-1.5">

@@ -22,7 +22,7 @@ export async function sendApplicationEmail(admin: any, id: string): Promise<Mail
     const { data: s } = await admin.from("email_settings").select("*").eq("id", 1).maybeSingle();
     const db = s as (EmailSettings & { careers_to: string }) | null;
     const env = envSmtp();
-    const settings = env ? { ...env, careers_to: env.careers_to || db?.careers_to || "careers@ramky.com" } : db;
+    const settings = env ? { ...env, careers_to: db?.careers_to || env.careers_to || "careers@ramky.com" } : db;
     if (!settings || !smtpReady(settings)) {
       result = { status: "pending", error: "Email is not configured yet. Fill in Admin → Email Configuration, then use Resend." };
     } else {
