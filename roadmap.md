@@ -1,6 +1,6 @@
 # Roadmap
 - [x] Restore Journey staircase layout from image-2 and verify desktop/mobile
-- [ ] Confirm admin provision to add a photo to each Journey milestone; client will supply photos through admin
+- [x] Confirm admin provision to add a photo to each Journey milestone (Home Page → Our Journey)
 - [x] Extend image shape, fit, size and resolution controls to other admin photo uploads; preserve unchanged layouts
 - [x] Verify public image adjustments and admin saving — uploaded a portrait photo, checked square display on desktop/mobile, reopened saved choices, changed to portrait and restored the original layout; temporary content removed
 - [x] Replace Social KPI rails with compact 5/3/2-column grids and hover/tap detail panels; all 16 cards fit their grids, details retain figures/charts/remarks/sources, keyboard access verified, and 30 calculation regression tests pass
