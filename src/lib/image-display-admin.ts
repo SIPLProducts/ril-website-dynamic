@@ -5,6 +5,14 @@ import type { Json } from "@/integrations/supabase/types";
 
 const uploads = new WeakMap<File, ImageDisplay>();
 export function registerImageOptions(file: File, options: ImageDisplay) { uploads.set(file, options); }
+const pending = new Map<string, ImageDisplay>();
+export function setPendingImageOptions(ref: string, options: ImageDisplay) { pending.set(ref, options); }
+export async function savePendingImageOptions(ref: string | null | undefined, target: string | null | undefined = ref) {
+  if (!ref) return;
+  const options = pending.get(ref);
+  pending.delete(ref);
+  if (options && target) await saveImageDisplay(target, options);
+}
 export const hasImageOptions = (file: File) => uploads.has(file);
 export async function prepareImageUpload(file: File) {
   const options = uploads.get(file);

@@ -43,7 +43,7 @@ export function FieldError({ msg }: { msg?: string | undefined }) {
 
 const fmtSize = (n: number) => (n > 1048576 ? `${(n / 1048576).toFixed(1)} MB` : `${Math.ceil(n / 1024)} KB`);
 
-export function FileDropzone({ file, onFile, accept, hint, imageRef, imageOptions = true }: { file: File | null; onFile: (f: File | null) => void; accept: string; hint?: string; imageRef?: string | null | undefined; imageOptions?: boolean }) {
+export function FileDropzone({ file, onFile, accept, hint, imageRef, imageOptions = true, saveImageOptionsWithForm = false }: { saveImageOptionsWithForm?: boolean; file: File | null; onFile: (f: File | null) => void; accept: string; hint?: string; imageRef?: string | null | undefined; imageOptions?: boolean }) {
   const ref = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
   return (
@@ -70,7 +70,7 @@ export function FileDropzone({ file, onFile, accept, hint, imageRef, imageOption
         </>
       )}
     </div>
-    {imageOptions && accept.includes("image/") && (!file || file.type.startsWith("image/")) && <ImageDisplayControls imageRef={imageRef} file={file} />}
+    {imageOptions && accept.includes("image/") && (!file || file.type.startsWith("image/")) && <ImageDisplayControls imageRef={imageRef} file={file} saveWithForm={saveImageOptionsWithForm} />}
     </div>
   );
 }

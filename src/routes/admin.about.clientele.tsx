@@ -1,4 +1,4 @@
-import { hasImageOptions } from "@/lib/image-display-admin";
+import { hasImageOptions, savePendingImageOptions } from "@/lib/image-display-admin";
 import { useSiteSettings } from "@/lib/site-settings.functions";
 import { imageDisplaySource } from "@/lib/image-display";
 import { prepareImageUpload, saveUploadedImageOptions } from "@/lib/image-display-admin";
@@ -150,6 +150,7 @@ function ClientList() {
 
 function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
   const imageDisplays = useSiteSettings().imageDisplays;
+  const qc = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
   const [description, setDescription] = useState(row?.description ?? "");
   const [published, setPublished] = useState(row?.published ?? true);
@@ -177,6 +178,8 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
         ? await supabase.from("clientele").update(payload).eq("id", row.id)
         : await supabase.from("clientele").insert({ ...payload, sort_order: nextOrder });
       if (error) throw new Error(error.message);
+      if (!file) await savePendingImageOptions(existing, image_url);
+      await qc.invalidateQueries({ queryKey: ["site-settings"] });
       if (image_url !== row?.image_url && row?.image_url) await removeStored(row.image_url);
       toast.success(published ? "Saved — now live on the website" : "Saved as draft");
       onSaved();
@@ -193,7 +196,7 @@ function ClientDialog({ row, nextOrder, onClose, onSaved }: { row: ClientRow | n
             <Button type="button" variant="outline" size="sm" onClick={() => { setRemoveImg(true); setErr(null); }}>Remove logo</Button>
           </div>
         )}
-        <FileDropzone imageRef={existing} file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, WebP or SVG with transparent background recommended (any size, up to 5 MB). Empty edges are trimmed and the logo is centred in a standard box so all logos match${existing ? " — leave empty to keep current" : " — optional"}`} />
+        <FileDropzone saveImageOptionsWithForm imageRef={existing} file={file} onFile={(f) => { setFile(f); setErr(null); }} accept="image/png,image/jpeg,image/webp,image/svg+xml" hint={`PNG, WebP or SVG with transparent background recommended (any size, up to 5 MB). Empty edges are trimmed and the logo is centred in a standard box so all logos match${existing ? " — leave empty to keep current" : " — optional"}`} />
         <FieldError msg={err ?? undefined} />
       </FormSection>
       <FormSection title="Details">
