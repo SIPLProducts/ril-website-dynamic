@@ -13,7 +13,7 @@ function toBase64(buf: ArrayBuffer) {
 export type MailResult = { status: "sent" | "failed" | "pending"; error: string | null };
 
 /** Email one stored application (with its stored resume) to the careers inbox and record the outcome. Never throws. */
-export async function sendApplicationEmail(admin: any, id: string): Promise<MailResult> {
+export async function sendApplicationEmail(admin: any, id: string, resume?: ArrayBuffer): Promise<MailResult> {
   let result: MailResult;
   let secrets: string[] = [];
   try {
@@ -28,7 +28,9 @@ export async function sendApplicationEmail(admin: any, id: string): Promise<Mail
     } else {
       secrets = [settings.password];
       const attachments: { filename: string; content: string; mimeType?: string }[] = [];
-      if (a.resume_path) {
+      if (a.resume_path && resume) {
+        attachments.push({ filename: a.resume_name || "resume", content: toBase64(resume) });
+      } else if (a.resume_path) {
         const dl = await admin.storage.from("investor-documents").download(a.resume_path);
         if (dl.error || !dl.data) throw new Error("Could not read the stored resume file.");
         attachments.push({ filename: a.resume_name || "resume", content: toBase64(await dl.data.arrayBuffer()), ...(dl.data.type ? { mimeType: dl.data.type } : {}) });

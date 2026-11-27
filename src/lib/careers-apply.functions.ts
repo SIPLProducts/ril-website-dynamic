@@ -54,9 +54,9 @@ export const submitApplication = createServerFn({ method: "POST" })
     if (ins.error) { console.error("application insert", ins.error); throw new Error("Could not submit application. Please try again."); }
 
     const { sendApplicationEmail } = await import("@/lib/careers-mail.server");
-    const r = await sendApplicationEmail(admin, ins.data.id);
-    const sent = r.status === "sent";
-    return { ok: true, emailed: sent };
+    // Send in the background: the candidate gets an instant reply; the outcome is recorded for admin Resend.
+    void sendApplicationEmail(admin, ins.data.id, buf).catch((e) => console.error("application email", e));
+    return { ok: true };
   });
 
 /** Staff-only: retry the careers email for one application. */

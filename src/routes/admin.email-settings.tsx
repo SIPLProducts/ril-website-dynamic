@@ -44,7 +44,6 @@ function EmailSettingsPage() {
       if (!s) return;
       setF({ enabled: s.enabled, host: s.host || blank.host, port: s.port, secure: s.secure, username: s.username, password: "", from_email: s.from_email, from_name: s.from_name, cc: s.cc ?? [], careers_to: (s as any).careers_to || "careers@ramky.com", sustainability_to: (s as any).sustainability_to || "sustainability@ramky.com" });
       setHasPw(s.hasPassword);
-      setTestTo(s.from_email);
     }).catch((e) => toast.error(e instanceof Error ? e.message : "Could not load settings"));
   }, [load]);
 
@@ -117,7 +116,7 @@ function EmailSettingsPage() {
           <p>For Gmail, use a Google <b>App password</b> (Google Account → Security → App passwords), not the normal password.</p></div>
 
         <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-t border-border pt-5">
-          <div className="w-full max-w-xs"><Label>Send test to</Label><Input className={field} type="email" value={testTo} onChange={(e) => setTestTo(e.target.value)} /></div>
+          <div className="w-full max-w-xs"><Label>Send test to</Label><Input className={field} type="email" placeholder="you@example.com" value={testTo} onChange={(e) => setTestTo(e.target.value)} /></div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={onTest} disabled={!!busy}><Send className="size-4" /> {busy === "test" ? "Sending…" : "Send Test Email"}</Button>
             <Button onClick={onSave} disabled={!!busy} className="admin-accent hover:bg-transparent border-0 px-6 hover:opacity-90">{busy === "save" ? "Saving…" : "Save Configuration"}</Button>
