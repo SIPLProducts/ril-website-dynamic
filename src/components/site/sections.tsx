@@ -278,7 +278,7 @@ export function Businesses() {
           <h2 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl"><Formatted text={data.title} /></h2>
           {data.intro && <p className="mt-4 text-lg text-muted-foreground"><Formatted text={data.intro} /></p>}
         </div>
-        <div className="mt-12 gap-6 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-12px)] lg:[&>*]:basis-[calc(33.333%-16px)] xl:[&>*]:basis-[calc(25%-18px)]">
+        <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {data.verticals.map((v) => {
             const Icon = iconFor(v.icon);
             const src = imageFor(v.slug, v.image);
@@ -630,7 +630,7 @@ export function Management() {
         {/* 1. Board of Directors */}
         <div id="board-of-directors" className="scroll-mt-32">
           <GroupHeading title="Board Of Directors" />
-          <ul className="mt-6 gap-4 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-8px)] lg:[&>*]:basis-[calc(25%-12px)]">
+          <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {board.map((p) => (
               <li key={p.id}>
                 <Link to="/board-of-directors/$slug" params={{ slug: p.slug }} aria-label={`View profile of ${p.name}`} className={linkCls}>
@@ -644,7 +644,7 @@ export function Management() {
         {/* 2. Executive Leadership */}
         <div id="executive-leadership" className="scroll-mt-32">
           <GroupHeading title="Executive Leadership" />
-          <ul className="mt-6 gap-4 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-8px)] lg:[&>*]:basis-[calc(25%-12px)]">
+          <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {executives.map((e) => (
               <li key={e.id}>
                 <Link to="/executive-leadership/$slug" params={{ slug: e.slug }} aria-label={`View profile of ${e.name}`} className={linkCls}>
@@ -658,8 +658,8 @@ export function Management() {
         {/* 3. Senior Management */}
         <div id="senior-management" className="scroll-mt-32">
           <GroupHeading title="Senior Management" />
-          <ul className="mt-6 gap-4 flex snap-x snap-mandatory overflow-x-auto pb-3 [&>*]:shrink-0 [&>*]:snap-start [&>*]:basis-[85%] sm:[&>*]:basis-[calc(50%-8px)] lg:[&>*]:basis-[calc(25%-12px)]">
-            <li className="sm:col-span-2">
+          <ul className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <li>
               <Link to="/senior-management" aria-label="View Senior Management" className={linkCls}>
                 <CardBody name={senior.name} role={senior.role} bio={senior.bio} />
               </Link>
