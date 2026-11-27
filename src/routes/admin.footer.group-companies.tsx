@@ -70,12 +70,12 @@ function HeadingEditor() {
     if (error) throw error;
     return data;
   } });
-  const [f, setF] = useState({ group_eyebrow: "", group_title: "", group_subtitle: "" });
+  const [f, setF] = useState({ group_eyebrow: "", group_title: "", group_subtitle: "", group_autoscroll: true });
   const [saving, setSaving] = useState(false);
-  useEffect(() => { if (data) setF({ group_eyebrow: data.group_eyebrow, group_title: data.group_title, group_subtitle: data.group_subtitle }); }, [data]);
+  useEffect(() => { if (data) setF({ group_eyebrow: data.group_eyebrow, group_title: data.group_title, group_subtitle: data.group_subtitle, group_autoscroll: data.group_autoscroll !== false }); }, [data]);
   async function save() {
     setSaving(true);
-    const { error } = await supabase.from("footer_settings").update({ group_eyebrow: f.group_eyebrow.trim(), group_title: f.group_title.trim(), group_subtitle: f.group_subtitle.trim() }).eq("id", 1);
+    const { error } = await supabase.from("footer_settings").update({ group_eyebrow: f.group_eyebrow.trim(), group_title: f.group_title.trim(), group_subtitle: f.group_subtitle.trim(), group_autoscroll: f.group_autoscroll }).eq("id", 1);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
     toast.success("Saved — now live on the website footer"); refreshKeys(qc);
@@ -97,6 +97,7 @@ function HeadingEditor() {
         <div><Label>Title</Label><Input maxLength={80} value={f.group_title} onChange={(e) => setF({ ...f, group_title: e.target.value })} placeholder="Group Companies" /></div>
         <div><Label>Right side text</Label><Input maxLength={80} value={f.group_subtitle} onChange={(e) => setF({ ...f, group_subtitle: e.target.value })} placeholder="Visit our group companies" /></div>
       </div>
+      <label className="mt-4 flex items-center gap-3 text-sm"><Switch checked={f.group_autoscroll} onCheckedChange={(v) => setF({ ...f, group_autoscroll: v })} /> Auto-scroll company logos (moves one logo every 3 seconds, pauses on hover/touch). Turn off to show a fixed grid.</label>
     </section>
   );
 }

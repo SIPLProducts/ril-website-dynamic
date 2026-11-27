@@ -7,7 +7,7 @@ import type { Database } from "@/integrations/supabase/types";
 export type FooterData = {
   settings: {
     description: string; address: string; phone: string; email: string; tagline: string; copyrightName: string;
-    groupEyebrow: string; groupTitle: string; groupSubtitle: string;
+    groupEyebrow: string; groupTitle: string; groupSubtitle: string; groupAutoscroll: boolean;
   };
   columns: { id: string; title: string; links: { id: string; label: string; href: string; newTab: boolean }[] }[];
   companies: { id: string; name: string; url: string | null; logo: string | null; showLogo: boolean; showName: boolean; showLink: boolean }[];
@@ -42,7 +42,7 @@ export const getFooter = createServerFn({ method: "GET" }).handler(async (): Pro
   return {
     settings: {
       description: d.description, address: d.address, phone: d.phone, email: d.email, tagline: d.tagline,
-      copyrightName: d.copyright_name, groupEyebrow: d.group_eyebrow, groupTitle: d.group_title, groupSubtitle: d.group_subtitle,
+      copyrightName: d.copyright_name, groupEyebrow: d.group_eyebrow, groupTitle: d.group_title, groupSubtitle: d.group_subtitle, groupAutoscroll: d.group_autoscroll !== false,
     },
     columns: (c.data ?? []).map((col) => ({
       id: col.id, title: col.title,

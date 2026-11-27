@@ -896,6 +896,7 @@ export type Database = {
           copyright_name: string
           description: string
           email: string
+          group_autoscroll: boolean
           group_eyebrow: string
           group_subtitle: string
           group_title: string
@@ -909,6 +910,7 @@ export type Database = {
           copyright_name?: string
           description?: string
           email?: string
+          group_autoscroll?: boolean
           group_eyebrow?: string
           group_subtitle?: string
           group_title?: string
@@ -922,6 +924,7 @@ export type Database = {
           copyright_name?: string
           description?: string
           email?: string
+          group_autoscroll?: boolean
           group_eyebrow?: string
           group_subtitle?: string
           group_title?: string

@@ -246,6 +246,13 @@
       "when": 1795701457976,
       "tag": "0034_public_read_accolade_images",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1795785543083,
+      "tag": "0035_footer_group_autoscroll",
+      "breakpoints": true
     }
   ]
 }
