@@ -549,7 +549,7 @@ const JOURNEY_MILESTONES: { year: string; title: string; text: string; image?: s
 const JOURNEY_ICONS: Record<string, LucideIcon> = { flag: Flag, leaf: Leaf, route: RouteIcon, chart: TrendingUp, globe: Globe, rocket: Rocket };
 const JOURNEY_ICON_ORDER = ["flag", "leaf", "route", "chart", "globe", "rocket"];
 const JOURNEY_BANDS = ["bg-brand-orange", "bg-brand-green", "bg-brand-blue"];
-const JOURNEY_STEPS = ["lg:mt-24", "lg:mt-[4.75rem]", "lg:mt-[3.25rem]", "lg:mt-8", "lg:mt-4", "lg:mt-0"];
+const JOURNEY_STEPS = ["lg:mt-28", "lg:mt-[5.75rem]", "lg:mt-16", "lg:mt-10", "lg:mt-5", "lg:mt-0"];
 
 export function Journey() {
   const { data: top } = useQuery(homeTopQuery());
@@ -570,7 +570,7 @@ export function Journey() {
             const step = JOURNEY_STEPS[i % JOURNEY_STEPS.length] ?? "lg:mt-0";
             return (
               <article key={i} className={`min-w-0 overflow-hidden bg-card shadow-md ${step}`}>
-                {m.image && <AdjustableImage src={m.image} alt={plainText(String(m.title ?? ""))} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
+                {m.image && <img src={m.image} alt={plainText(String(m.title ?? ""))} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
                 <div className={`flex items-center justify-between px-5 py-3 text-primary-foreground ${JOURNEY_BANDS[i % 3]}`}>
                   <span className="font-display text-2xl font-bold"><Formatted text={m.year} /></span>
                   <Icon className="h-5 w-5" aria-hidden="true" />
