@@ -564,12 +564,12 @@ export function Journey() {
             {j?.title || "Three decades of building, milestone by milestone."}
           </h2>
         </div>
-        <div className="mt-12 flex snap-x items-start gap-6 overflow-x-auto pb-4 [scrollbar-width:thin]">
+        <div className="mt-12 grid grid-cols-1 items-start gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
           {milestones.map((m, i) => {
             const Icon = JOURNEY_ICONS[m.icon || ""] ?? JOURNEY_ICONS[JOURNEY_ICON_ORDER[i % 6] ?? "flag"] ?? Flag;
             const step = JOURNEY_STEPS[i % JOURNEY_STEPS.length] ?? "lg:mt-0";
             return (
-              <article key={i} className={`w-[78vw] max-w-[260px] shrink-0 snap-start overflow-hidden bg-card shadow-md sm:w-[260px] ${step}`}>
+              <article key={i} className={`min-w-0 overflow-hidden bg-card shadow-md ${step}`}>
                 {m.image && <AdjustableImage src={m.image} alt={plainText(String(m.title ?? ""))} loading="lazy" className="aspect-[5/4] w-full object-cover" />}
                 <div className={`flex items-center justify-between px-5 py-3 text-primary-foreground ${JOURNEY_BANDS[i % 3]}`}>
                   <span className="font-display text-2xl font-bold"><Formatted text={m.year} /></span>
